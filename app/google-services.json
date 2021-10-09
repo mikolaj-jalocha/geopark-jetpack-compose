@@ -1,0 +1,97 @@
+{
+  "project_info": {
+    "project_number": "817807484088",
+    "project_id": "geopark-v1",
+    "storage_bucket": "geopark-v1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:817807484088:android:8ba0991caf4da1f454804d",
+        "android_client_info": {
+          "package_name": "com.example.geoparkcard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "817807484088-laa7jg5df83kbuhbdcdj8c1rdnrkkl7k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASFQc293V0MWCVq1zGc-0NLsYaGvDGfyo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "817807484088-laa7jg5df83kbuhbdcdj8c1rdnrkkl7k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:817807484088:android:4ee4392b8aade05454804d",
+        "android_client_info": {
+          "package_name": "com.geopark.v2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "817807484088-laa7jg5df83kbuhbdcdj8c1rdnrkkl7k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASFQc293V0MWCVq1zGc-0NLsYaGvDGfyo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "817807484088-laa7jg5df83kbuhbdcdj8c1rdnrkkl7k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:817807484088:android:37f452d82671e27e54804d",
+        "android_client_info": {
+          "package_name": "com.geoparkcompose"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "817807484088-laa7jg5df83kbuhbdcdj8c1rdnrkkl7k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASFQc293V0MWCVq1zGc-0NLsYaGvDGfyo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "817807484088-laa7jg5df83kbuhbdcdj8c1rdnrkkl7k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
