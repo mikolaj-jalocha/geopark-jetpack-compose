@@ -2,6 +2,7 @@ package com.geoparkcompose
 
 import com.geoparkcompose.data.CardData
 import com.geoparkcompose.data.DataOrException
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await

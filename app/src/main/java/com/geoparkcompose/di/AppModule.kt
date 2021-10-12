@@ -18,7 +18,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideQueryLocationsByName() = FirebaseFirestore.getInstance()
-        .collection("Hotel")
+        .collection("Locations")
         .orderBy("name",Query.Direction.ASCENDING)
 
 }
