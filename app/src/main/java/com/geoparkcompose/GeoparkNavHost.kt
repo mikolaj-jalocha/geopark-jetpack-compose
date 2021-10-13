@@ -14,13 +14,16 @@ import com.geoparkcompose.data.CardData
 import com.geoparkcompose.ui.components.components.CardContentBody
 import com.geoparkcompose.ui.composables.CategoryListBody
 import com.geoparkcompose.ui.menu.MainMenuBody
+import com.geoparkcompose.utils.CategoryType
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @ExperimentalCoilApi
 @ExperimentalMaterialApi
 @Composable
 fun GeoparkNavHost(
     navController: NavHostController,
-    data : List<CardData>,
+    data: List<CardData>,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -31,8 +34,8 @@ fun GeoparkNavHost(
 
         composable(GeoparkScreen.MainMenu.name) {
             MainMenuBody(
-                onCategoryClick = { navigateToCategoryList(navController, it) },
-                onItemClick = {data -> navigateToCard(navController,cardData = data) },
+                onSeeAllClick = { data -> navigateToCategoryList(navController,categoryName = data,) },
+                onItemClick = { data -> navigateToCard(navController, cardData = data) },
                 data
             )
         }
@@ -49,24 +52,27 @@ fun GeoparkNavHost(
             val categoryName = entry.arguments?.getString("categoryName") ?: ""
             CategoryListBody(
                 categoryName,
+                data = if(categoryName == CategoryType.All.title) data else data.filter { it.type == categoryName },
                 { navigateBack(navController) },
-                onCategoryClick = { navigateToCategoryList(navController, it) },
-                onItemClick = { data  -> navigateToCard(navController,cardData =  data) }
+                onItemClick = { data -> navigateToCard(navController, cardData = data) }
             )
         }
 
         val cardContentName = GeoparkScreen.Content.name
         composable(
-            route = "$cardContentName/{cardName}/{cardDescription}/{cardLocation}",
+            route = "$cardContentName/{cardName}/{cardDescription}/{cardLocation}/{cardPhotoPath}",
             arguments = listOf(
                 navArgument("cardName") {
                     type = NavType.StringType
-                },navArgument("cardDescription") {
+                }, navArgument("cardDescription") {
                     type = NavType.StringType
                 },
                 navArgument("cardLocation") {
                     type = NavType.StringType
                 },
+                navArgument("cardPhotoPath") {
+                    type = NavType.StringType
+                }
 
             )
         ) { entry ->
@@ -74,6 +80,7 @@ fun GeoparkNavHost(
             val cardName = entry.arguments?.getString("cardName") ?: ""
             val cardDescription = entry.arguments?.getString("cardDescription") ?: ""
             val cardLocation = entry.arguments?.getString("cardLocation") ?: ""
+            val cardPhotoPath = entry.arguments?.getString("cardPhotoPath") ?: ""
 
 
 
@@ -81,9 +88,33 @@ fun GeoparkNavHost(
                 title = cardName,
                 description = cardDescription,
                 location = cardLocation,
+                photoPath = cardPhotoPath,
                 onNavigationClick = { navigateBack(navController) })
         }
 
+    }
+}
+
+
+@ExperimentalMaterialApi
+private fun navigateToCategoryList(
+    navController: NavController,
+    categoryName: String,
+) {
+        val route =
+            "${GeoparkScreen.CategoryList.name}/$categoryName"
+        navController.navigate(route = route)
+
+}
+
+
+@ExperimentalMaterialApi
+private fun navigateToCard(
+    navController: NavController,
+    cardData: CardData
+) {
+    cardData.apply {
+        navController.navigate(route = "${GeoparkScreen.Content.name}/$name/$description/$mapLocation/${encodeUrl(photo)}")
     }
 }
 
@@ -91,24 +122,4 @@ private fun navigateBack(navController: NavController) {
     navController.navigateUp()
 }
 
-@ExperimentalMaterialApi
-private fun navigateToCategoryList(
-    navController: NavController,
-    categoryName: String
-) {
-
-    val route =
-        if (categoryName == "All") GeoparkScreen.MainMenu.name else "${GeoparkScreen.CategoryList.name}/$categoryName"
-    navController.navigate(route = route)
-}
-
-
-@ExperimentalMaterialApi
-private fun navigateToCard(
-    navController: NavController,
-    cardData : CardData
-) {
-    cardData.apply {
-        navController.navigate(route = "${GeoparkScreen.Content.name}/$name/$description/$mapLocation")
-    }
-}
+private fun encodeUrl(url : String) = URLEncoder.encode(url, StandardCharsets.UTF_8.toString())

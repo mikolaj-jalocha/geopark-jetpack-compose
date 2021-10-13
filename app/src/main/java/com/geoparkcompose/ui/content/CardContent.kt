@@ -2,6 +2,8 @@ package com.geoparkcompose.ui.components.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,17 +19,21 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
 import com.geoparkcompose.R
 import com.geoparkcompose.ui.theme.BabyBlue
 import com.google.accompanist.insets.systemBarsPadding
 
 
+@ExperimentalCoilApi
 @ExperimentalMaterialApi
 @Composable
 fun CardContentBody(
     title: String,
     description: String,
-    location: String ,
+    location: String,
+    photoPath : String,
     onNavigationClick: () -> Unit
 ) {
     Column(
@@ -36,7 +42,7 @@ fun CardContentBody(
     ) {
         Box() {
             Image(
-                painter = painterResource(id = R.drawable.ostrzyca),
+                painter =  rememberImagePainter(data = photoPath),
                 contentDescription = "Main photography",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -46,6 +52,7 @@ fun CardContentBody(
 
             CardContentNavigationBar(onNavigationClick)
         }
+
         Column(
             Modifier
                 .offset(y = (-50).dp)
@@ -53,6 +60,7 @@ fun CardContentBody(
                 .fillMaxWidth()
                 .height(500.dp)
                 .background(Color.White),
+
         ) {
             Text(
                 text = title,
@@ -95,12 +103,15 @@ fun CardContentBody(
                 modifier = Modifier.padding(start = 20.dp, top = 16.dp)
             )
 
-            // TODO: 19.09.2021 Adjust better color for text
+
+            val scroll = rememberScrollState(0)
+
             Text(
                 text = description,
                 style = MaterialTheme.typography.body1,
                 color = Color.Gray,
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 4.dp)
+                modifier = Modifier
+                    .padding(start = 20.dp, end = 20.dp, top = 4.dp).verticalScroll(scroll)
             )
 
 

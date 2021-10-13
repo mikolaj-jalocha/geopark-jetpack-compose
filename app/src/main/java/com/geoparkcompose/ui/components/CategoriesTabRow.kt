@@ -43,7 +43,7 @@ fun CategoriesTab(
                 CategoryItem(iconId = R.drawable.ic_bed, CategoryType.Hotel),
                 CategoryItem(iconId = R.drawable.ic_restaurant, CategoryType.Restaurant),
                 CategoryItem(iconId = R.drawable.ic_active, CategoryType.Active),
-                CategoryItem(iconId = R.drawable.ic_explore, CategoryType.Workshop)
+                //CategoryItem(iconId = R.drawable.ic_explore, CategoryType.Workshop)
             )){
                 onCategoryClick(it)
             }

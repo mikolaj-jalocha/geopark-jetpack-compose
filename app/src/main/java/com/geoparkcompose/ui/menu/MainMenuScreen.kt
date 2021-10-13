@@ -25,7 +25,7 @@ import com.geoparkcompose.utils.CategoryType
 @ExperimentalMaterialApi
 @Composable
 fun MainMenuBody(
-    onCategoryClick: (String) -> Unit,
+    onSeeAllClick: (String) -> Unit,
     onItemClick: (CardData) -> Unit,
     data: List<CardData>
 ) {
@@ -38,9 +38,9 @@ fun MainMenuBody(
         }
         MainCategoryContent(
             selectedCategory.title,
-            if (selectedCategory.title != CategoryType.All.title) data.filter { it.type == selectedCategory.title } else data,
+            if (selectedCategory.title == CategoryType.All.title) data else data.filter { it.type == selectedCategory.title },
             onItemClick,
-            onCategoryClick)
+            onSeeAllClick)
     }
 }
 

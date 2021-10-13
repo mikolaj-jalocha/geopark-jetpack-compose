@@ -32,9 +32,6 @@ import com.geoparkcompose.R
 import com.geoparkcompose.data.CardData
 import com.geoparkcompose.ui.theme.BabyBlue
 import com.geoparkcompose.ui.theme.CinnabarRed
-import com.geoparkcompose.ui.theme.GeoparkTheme
-import com.geoparkcompose.utils.CategoryItem
-import com.geoparkcompose.utils.DamiContentItem
 
 
 @ExperimentalCoilApi
@@ -61,7 +58,7 @@ fun CardsSection(
         if (isHorizontal) {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(20.dp)) {
                 itemsIndexed(items) { _, item ->
-                    ItemCard(backgroundId = R.drawable.gosciniec, name = item.name, isWide = isWide){
+                    ItemCard(photoPath = item.photo, name = item.name, isWide = isWide){
                                 onItemClick(item)
                     }
                 }
@@ -69,7 +66,7 @@ fun CardsSection(
         } else {
             LazyRow {
                 itemsIndexed(items) { _, item ->
-                    ItemCard(backgroundId = R.drawable.kosciol, name = item.name, isWide = isWide){
+                    ItemCard(photoPath = item.photo, name = item.name, isWide = isWide){
                         onItemClick(item)
                     }
                 }
@@ -138,14 +135,14 @@ fun ColumnTitleShort(title: String, seeAllClick: (String) -> Unit) {
 @ExperimentalCoilApi
 @ExperimentalMaterialApi
 @Composable
-fun ItemCard(backgroundId: Int, name: String, isWide: Boolean, onClick: () -> Unit) {
+fun ItemCard(photoPath: String, name: String, isWide: Boolean, onClick: () -> Unit) {
         Card(shape = RoundedCornerShape(26.dp), modifier = Modifier
             .padding(start = 16.dp)
             .width(if (isWide) 360.dp else 180.dp)
             .height(200.dp), onClick = onClick) {
             Box {
                 Image(
-                    painter = rememberImagePainter(backgroundId),
+                    painter = rememberImagePainter(data = photoPath),
                     modifier = Modifier.fillMaxWidth(),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
