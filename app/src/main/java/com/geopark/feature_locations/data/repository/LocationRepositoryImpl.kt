@@ -9,14 +9,14 @@ class LocationRepositoryImpl(
     private val dao: LocationDao
 ) : LocationRepository {
 
-
-
-
-
+    override suspend  fun updateLocation(location: Location) {
+        dao.updateLocation(location)
+    }
 
     override fun getLocations(): Flow<List<Location>> {
         return dao.getLocations()
     }
+
 
     override suspend fun getLocationByName(name: String): Location? {
         return dao.getLocationByName(name)

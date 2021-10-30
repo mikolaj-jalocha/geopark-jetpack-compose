@@ -28,11 +28,20 @@ import com.geopark.ui.theme.CinnabarRed
 @ExperimentalCoilApi
 @ExperimentalMaterialApi
 @Composable
-fun Tile(modifier : Modifier = Modifier, photoPath: String, name: String, isWide : Boolean, onFavoriteClick: () -> Unit) {
-    Card(shape = RoundedCornerShape(26.dp), modifier = modifier
-        .padding(start = 16.dp)
-        .width(if (isWide) 360.dp else 180.dp)
-        .height(200.dp)) {
+fun Tile(
+    modifier: Modifier = Modifier,
+    photoPath: String,
+    name: String,
+    isWide: Boolean,
+    isFavorite: Boolean,
+    onFavoriteClick: () -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(26.dp), modifier = modifier
+            .padding(start = 16.dp)
+            .width(if (isWide) 360.dp else 180.dp)
+            .height(200.dp)
+    ) {
         Box {
             Image(
                 painter = rememberImagePainter(data = photoPath),
@@ -41,21 +50,27 @@ fun Tile(modifier : Modifier = Modifier, photoPath: String, name: String, isWide
                 contentScale = ContentScale.Crop,
             )
 
-            val isRed = remember { mutableStateOf(value = false) }
+
+            val isRed = remember { mutableStateOf(value = isFavorite) }
 
             val animatedColor =
                 animateColorAsState(if (isRed.value) CinnabarRed else Color.Black)
 
-            IconButton(onClick = onFavoriteClick ,
+            IconButton(onClick = {
+                isRed.value = !isRed.value
+                onFavoriteClick()
+            },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(14.dp)
                     .size(35.dp)
                     .clip(CircleShape)
                     .background(Color.White)) {
-                Icon(painter = painterResource(if (isRed.value) R.drawable.ic_bookmark_filled else R.drawable.ic_bookmark_outline),
+                Icon(
+                    painter = painterResource(if (isRed.value) R.drawable.ic_bookmark_filled else R.drawable.ic_bookmark_outline),
                     tint = animatedColor.value,
-                    contentDescription = "Bookmark")
+                    contentDescription = "Bookmark"
+                )
             }
 
 
@@ -71,18 +86,23 @@ fun Tile(modifier : Modifier = Modifier, photoPath: String, name: String, isWide
                             1f,
                             if (isWide) 400f else 360f
                         )
-                    )) {
+                    )
+            ) {
 
             }
 
-            Column(modifier = Modifier
-                .padding(8.dp)
-                .align(Alignment.BottomStart)) {
-                Text(text = name,
+            Column(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .align(Alignment.BottomStart)
+            ) {
+                Text(
+                    text = name,
                     color = Color.White,
                     fontSize = if (isWide) 25.sp else 21.sp,
                     style = MaterialTheme.typography.h6,
-                    fontWeight = FontWeight.SemiBold)
+                    fontWeight = FontWeight.SemiBold
+                )
             }
         }
 

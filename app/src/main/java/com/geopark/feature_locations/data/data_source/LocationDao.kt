@@ -13,6 +13,9 @@ interface LocationDao {
     @Query("SELECT * FROM location WHERE name = :name")
     suspend fun getLocationByName(name : String) : Location?
 
+    @Update
+    suspend fun updateLocation(location: Location)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLocation(location: Location)
 

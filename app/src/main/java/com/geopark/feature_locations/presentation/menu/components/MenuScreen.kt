@@ -49,7 +49,7 @@ fun MenuScreen(
                                 //TODO :implement navigation
                                 viewModel.onEvent(
                                     LocationsEvent.ChangeRecentlyWatched(
-                                        !location.wasRecentlyWatched,
+                                        true,
                                         location
                                     )
                                 )
@@ -57,6 +57,7 @@ fun MenuScreen(
                             isWide = false,
                             photoPath = location.photo,
                             name = location.name,
+                            isFavorite = location.isFavorite,
                             onFavoriteClick = {
                                 viewModel.onEvent(
                                     LocationsEvent.ChangeFavorite(
@@ -77,7 +78,7 @@ fun MenuScreen(
                                 //TODO :implement navigation
                                 viewModel.onEvent(
                                     LocationsEvent.ChangeRecentlyWatched(
-                                        !location.wasRecentlyWatched,
+                                        true,
                                         location
                                     )
                                 )
@@ -85,6 +86,7 @@ fun MenuScreen(
                             photoPath = location.photo,
                             isWide = false,
                             name = location.name,
+                            isFavorite = location.isFavorite,
                             onFavoriteClick = {
                                 viewModel.onEvent(
                                     LocationsEvent.ChangeFavorite(
@@ -104,7 +106,7 @@ fun MenuScreen(
                                 //TODO implement navigation
                                 viewModel.onEvent(
                                     LocationsEvent.ChangeRecentlyWatched(
-                                        !location.wasRecentlyWatched,
+                                        true,
                                         location
                                     )
                                 )
@@ -112,6 +114,7 @@ fun MenuScreen(
                             photoPath = location.photo,
                             isWide = false,
                             name = location.name,
+                            isFavorite = location.isFavorite,
                             onFavoriteClick = {
                                 viewModel.onEvent(
                                     LocationsEvent.ChangeFavorite(

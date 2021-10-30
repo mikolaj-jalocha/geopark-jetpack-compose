@@ -8,12 +8,16 @@ import com.geopark.feature_locations.data.repository.LocationRepositoryImpl
 import com.geopark.feature_locations.domain.repository.LocationRepository
 import com.geopark.feature_locations.domain.use_case.ChangeLocationData
 import com.geopark.feature_locations.domain.use_case.GetLocations
+import com.geopark.feature_locations.domain.use_case.InsertLocations
 import com.geopark.feature_locations.domain.use_case.LocationUseCases
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 
@@ -23,16 +27,28 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideLocationDatabase(app: Application): LocationDatabase {
+    fun provideLocationDatabase(app: Application,
+    callback : LocationDatabase.Callback): LocationDatabase {
         return Room.databaseBuilder(
             app,LocationDatabase::class.java,
             LocationDatabase.DATABASE_NAME
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .addCallback(callback)
+            .build()
     }
-
+    @ApplicationScope
     @Provides
     @Singleton
-    fun provideFirebaseLocationsReference() = FirebaseFirestore.getInstance().collection("Locations")
+    fun provideApplicationScope() = CoroutineScope(SupervisorJob())
+
+    @LocationsQuery
+    @Provides
+    @Singleton
+    fun provideQueryLocations() = FirebaseFirestore.getInstance()
+        .collection("Locations")
+        .whereGreaterThanOrEqualTo("type","a")
+
 
     @Provides
     @Singleton
@@ -45,9 +61,19 @@ object AppModule {
     fun provideLocationUseCases(repository: LocationRepository): LocationUseCases {
         return LocationUseCases(
             getLocations = GetLocations(repository),
+            insertLocations = InsertLocations(repository),
             changeLocationData = ChangeLocationData(repository)
         )
     }
+
+
+    @Retention(AnnotationRetention.RUNTIME)
+    @Qualifier
+    annotation class ApplicationScope
+
+    @Retention(AnnotationRetention.RUNTIME)
+    @Qualifier
+    annotation class LocationsQuery
 
 
 }

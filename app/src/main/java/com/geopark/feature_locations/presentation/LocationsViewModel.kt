@@ -1,5 +1,6 @@
 package com.geopark.feature_locations.presentation
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,7 @@ import com.geopark.feature_locations.domain.model.Location
 import com.geopark.feature_locations.domain.use_case.LocationUseCases
 import com.geopark.feature_locations.domain.util.LocationType
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.ListenerRegistration
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
@@ -18,7 +20,6 @@ import javax.inject.Inject
 @HiltViewModel
 class LocationsViewModel @Inject constructor(
     private val locationUseCases: LocationUseCases,
-    private val locationsReference: CollectionReference
 ) : ViewModel() {
 
     private val _state = mutableStateOf(LocationsState())
@@ -26,26 +27,8 @@ class LocationsViewModel @Inject constructor(
 
     private var getLocationsJob: Job? = null
 
+
     init {
-
-        locationsReference.addSnapshotListener { data, e ->
-            if (e != null) {
-                // TODO handle the error here
-                return@addSnapshotListener
-            }
-            if (data != null) {
-                viewModelScope.launch {
-                    data.documents.forEach { doc ->
-                        doc.toObject(Location::class.java)?.let {
-                            locationUseCases.changeLocationData(
-                                it
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
         getLocations()
     }
 
@@ -60,6 +43,8 @@ class LocationsViewModel @Inject constructor(
             is LocationsEvent.ChangeFavorite -> {
                 viewModelScope.launch {
                     locationUseCases.changeLocationData(event.location.copy(isFavorite = event.newValue))
+                    //locationUseCases.changeLocationData(event.location.copy(wasRecentlyWatched = !event.location.wasRecentlyWatched))
+
                 }
             }
             is LocationsEvent.ChangeRecentlyWatched -> {
