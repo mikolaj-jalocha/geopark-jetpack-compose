@@ -13,11 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
-import com.geopark.feature_locations.presentation.LocationsEvent
-import com.geopark.feature_locations.presentation.LocationsViewModel
+import com.geopark.feature_locations.presentation.menu.MenuLocationsEvent
+import com.geopark.feature_locations.presentation.menu.MenuViewModel
 import com.geopark.feature_locations.presentation.components.CategoriesSection
-import com.geopark.feature_locations.presentation.menu.components.Tile
-import com.geopark.feature_locations.presentation.menu.components.TileSectionTitle
+import com.geopark.feature_locations.presentation.menu.composables.Tile
+import com.geopark.feature_locations.presentation.menu.composables.TileTitleSeeAll
 
 
 @ExperimentalCoilApi
@@ -25,7 +25,7 @@ import com.geopark.feature_locations.presentation.menu.components.TileSectionTit
 @Composable
 @Preview
 fun MenuScreen(
-    viewModel: LocationsViewModel = hiltViewModel()
+    viewModel: MenuViewModel = hiltViewModel()
 ) {
 
 
@@ -38,9 +38,11 @@ fun MenuScreen(
 
             Column(Modifier.fillMaxSize()) {
 
-                CategoriesSection()
+                CategoriesSection(locationType = state.locationType, onLocationChange = { newLocationType ->
+                    viewModel.onEvent(MenuLocationsEvent.Type(newLocationType))
+                })
 
-                TileSectionTitle(title = "Popular places", seeAllClick = {})
+                TileTitleSeeAll(title = "Popular places", seeAllClick = {})
 
                LazyRow {
                     itemsIndexed(state.locations) { _, location ->
@@ -48,7 +50,7 @@ fun MenuScreen(
                             modifier = Modifier.clickable {
                                 //TODO :implement navigation
                                 viewModel.onEvent(
-                                    LocationsEvent.ChangeRecentlyWatched(
+                                    MenuLocationsEvent.ChangeRecentlyWatched(
                                         true,
                                         location
                                     )
@@ -60,7 +62,7 @@ fun MenuScreen(
                             isFavorite = location.isFavorite,
                             onFavoriteClick = {
                                 viewModel.onEvent(
-                                    LocationsEvent.ChangeFavorite(
+                                    MenuLocationsEvent.ChangeFavorite(
                                         !location.isFavorite,
                                         location
                                     )
@@ -69,7 +71,7 @@ fun MenuScreen(
                     }
                 }
 
-                TileSectionTitle(title = "Recently watched", seeAllClick = {})
+                TileTitleSeeAll(title = "Recently watched", seeAllClick = {})
 
                 LazyRow {
                     itemsIndexed(state.locations.filter { it.wasRecentlyWatched }) { _, location ->
@@ -77,7 +79,7 @@ fun MenuScreen(
                             modifier = Modifier.clickable {
                                 //TODO :implement navigation
                                 viewModel.onEvent(
-                                    LocationsEvent.ChangeRecentlyWatched(
+                                    MenuLocationsEvent.ChangeRecentlyWatched(
                                         true,
                                         location
                                     )
@@ -89,7 +91,7 @@ fun MenuScreen(
                             isFavorite = location.isFavorite,
                             onFavoriteClick = {
                                 viewModel.onEvent(
-                                    LocationsEvent.ChangeFavorite(
+                                    MenuLocationsEvent.ChangeFavorite(
                                         !location.isFavorite,
                                         location
                                     )
@@ -97,7 +99,7 @@ fun MenuScreen(
                             })
                     }
                 }
-                TileSectionTitle(title = "Favorites", seeAllClick = {})
+                TileTitleSeeAll(title = "Favorites", seeAllClick = {})
 
                LazyRow {
                     itemsIndexed(state.locations.filter { it.isFavorite }) { _, location ->
@@ -105,7 +107,7 @@ fun MenuScreen(
                             modifier = Modifier.clickable {
                                 //TODO implement navigation
                                 viewModel.onEvent(
-                                    LocationsEvent.ChangeRecentlyWatched(
+                                    MenuLocationsEvent.ChangeRecentlyWatched(
                                         true,
                                         location
                                     )
@@ -117,7 +119,7 @@ fun MenuScreen(
                             isFavorite = location.isFavorite,
                             onFavoriteClick = {
                                 viewModel.onEvent(
-                                    LocationsEvent.ChangeFavorite(
+                                    MenuLocationsEvent.ChangeFavorite(
                                         !location.isFavorite,
                                         location
                                     )

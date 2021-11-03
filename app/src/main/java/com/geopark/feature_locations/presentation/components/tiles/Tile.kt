@@ -1,4 +1,4 @@
-package com.geopark.feature_locations.presentation.menu.components
+package com.geopark.feature_locations.presentation.menu.composables
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
@@ -57,7 +57,6 @@ fun Tile(
                 animateColorAsState(if (isRed.value) CinnabarRed else Color.Black)
 
             IconButton(onClick = {
-                isRed.value = !isRed.value
                 onFavoriteClick()
             },
                 modifier = Modifier

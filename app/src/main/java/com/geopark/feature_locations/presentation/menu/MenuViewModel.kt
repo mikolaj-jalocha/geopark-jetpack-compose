@@ -1,15 +1,12 @@
-package com.geopark.feature_locations.presentation
+package com.geopark.feature_locations.presentation.menu
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.geopark.feature_locations.domain.model.Location
 import com.geopark.feature_locations.domain.use_case.LocationUseCases
 import com.geopark.feature_locations.domain.util.LocationType
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.ListenerRegistration
+import com.geopark.feature_locations.presentation.LocationsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
@@ -18,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LocationsViewModel @Inject constructor(
+class MenuViewModel @Inject constructor(
     private val locationUseCases: LocationUseCases,
 ) : ViewModel() {
 
@@ -33,24 +30,23 @@ class LocationsViewModel @Inject constructor(
     }
 
 
-    fun onEvent(event: LocationsEvent) {
-        when (event) {
-            is LocationsEvent.Type -> {
-                _state.value = state.value.copy(
-                    locationType = event.locationType
-                )
+    fun onEvent(menuEvent: MenuLocationsEvent) {
+        when (menuEvent) {
+            is MenuLocationsEvent.Type -> {
+                if(menuEvent.locationType == state.value.locationType)
+                    return
+                getLocations(menuEvent.locationType)
             }
-            is LocationsEvent.ChangeFavorite -> {
+            is MenuLocationsEvent.ChangeFavorite -> {
                 viewModelScope.launch {
-                    locationUseCases.changeLocationData(event.location.copy(isFavorite = event.newValue))
-                    //locationUseCases.changeLocationData(event.location.copy(wasRecentlyWatched = !event.location.wasRecentlyWatched))
+                    locationUseCases.changeLocationData(menuEvent.location.copy(isFavorite = menuEvent.newValue))
+                }
+            }
+            is MenuLocationsEvent.ChangeRecentlyWatched -> {
+                viewModelScope.launch {
+                    locationUseCases.changeLocationData(menuEvent.location.copy(wasRecentlyWatched = menuEvent.newValue))
+                }
 
-                }
-            }
-            is LocationsEvent.ChangeRecentlyWatched -> {
-                viewModelScope.launch {
-                    locationUseCases.changeLocationData(event.location.copy(wasRecentlyWatched = event.newValue))
-                }
             }
         }
     }

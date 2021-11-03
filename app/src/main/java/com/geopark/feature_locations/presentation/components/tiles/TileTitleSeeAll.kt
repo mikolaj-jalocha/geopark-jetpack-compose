@@ -1,4 +1,4 @@
-package com.geopark.feature_locations.presentation.menu.components
+package com.geopark.feature_locations.presentation.menu.composables
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 import com.geopark.ui.theme.BabyBlue
 
 @Composable
-fun TileSectionTitle(title: String, seeAllClick: (String) -> Unit) {
+fun TileTitleSeeAll(title: String, seeAllClick: (String) -> Unit) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier
             .padding(start = 12.dp, end = 12.dp, bottom = 12.dp, top = 17.dp)

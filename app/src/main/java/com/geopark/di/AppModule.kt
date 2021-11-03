@@ -6,10 +6,7 @@ import com.geopark.feature_locations.data.data_source.LocationDao
 import com.geopark.feature_locations.data.data_source.LocationDatabase
 import com.geopark.feature_locations.data.repository.LocationRepositoryImpl
 import com.geopark.feature_locations.domain.repository.LocationRepository
-import com.geopark.feature_locations.domain.use_case.ChangeLocationData
-import com.geopark.feature_locations.domain.use_case.GetLocations
-import com.geopark.feature_locations.domain.use_case.InsertLocations
-import com.geopark.feature_locations.domain.use_case.LocationUseCases
+import com.geopark.feature_locations.domain.use_case.*
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
@@ -37,6 +34,7 @@ object AppModule {
             .addCallback(callback)
             .build()
     }
+
     @ApplicationScope
     @Provides
     @Singleton
@@ -61,6 +59,7 @@ object AppModule {
     fun provideLocationUseCases(repository: LocationRepository): LocationUseCases {
         return LocationUseCases(
             getLocations = GetLocations(repository),
+            getLocationByName = GetLocationByName(repository),
             insertLocations = InsertLocations(repository),
             changeLocationData = ChangeLocationData(repository)
         )

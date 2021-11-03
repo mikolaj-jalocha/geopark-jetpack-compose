@@ -29,7 +29,7 @@ fun CategoriesSection(
 
         Row {
             CategoriesTabItem(text = "All", iconId = R.drawable.ic_all, isSelected = locationType is LocationType.All, onSelect = { onLocationChange(LocationType.All) })
-            CategoriesTabItem(text = "Hotels", iconId = R.drawable.ic_bed, isSelected = locationType is LocationType.Hotel, onSelect = { onLocationChange(LocationType.Hotel) })
+            CategoriesTabItem(text = "Hotels", iconId = R.drawable.ic_bed, isSelected = locationType is LocationType.Hotel, onSelect = { onLocationChange(LocationType.Hotel)})
             CategoriesTabItem(text = "Restaurants", iconId = R.drawable.ic_restaurant, isSelected = locationType is LocationType.Restaurant, onSelect = { onLocationChange(LocationType.Restaurant) })
             CategoriesTabItem(text = "Explore", iconId = R.drawable.ic_explore, isSelected = locationType is LocationType.Place, onSelect = { onLocationChange(LocationType.Place) })
             CategoriesTabItem(text = "Active", iconId = R.drawable.ic_active, isSelected = locationType is LocationType.Active, onSelect = { onLocationChange(LocationType.Active) })
