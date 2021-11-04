@@ -39,7 +39,6 @@ class MainActivity : ComponentActivity() {
             //val dataOrException = viewModel.data.value
             ProvideWindowInsets {
                 GeoparkTheme {
-
                     val navController = rememberNavController()
                     NavHost(navController = navController,
                         startDestination = Screen.MenuScreen.route){

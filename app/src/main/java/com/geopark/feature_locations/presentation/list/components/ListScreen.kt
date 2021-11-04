@@ -28,15 +28,21 @@ fun ListScreen(
     val scope = rememberCoroutineScope()
 
     Scaffold(
-        // TODO: add top bar
+        topBar = { ListTopBar {
+
+        }}
     ) {
 
        Column(modifier = Modifier.fillMaxSize()) {
 
-           TileTitleSortBy(state.locationType.toString()) {
-               // TODO: implement sorting mechanism
-           }
+
            LazyColumn{
+               item{
+                   TileTitleSortBy(state.locationType.toString()) {
+                       // TODO: implement sorting mechanism
+                   }
+               }
+
                itemsIndexed(state.locations){_, location ->
                    Tile(
                        photoPath = location.photo,

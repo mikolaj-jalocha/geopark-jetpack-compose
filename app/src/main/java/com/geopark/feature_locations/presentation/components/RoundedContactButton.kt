@@ -16,7 +16,7 @@ import coil.compose.rememberImagePainter
 @ExperimentalCoilApi
 @ExperimentalMaterialApi
 @Composable
-fun RoundedIconButton(title : String, iconId : Int, onClick : () -> Unit) {
+fun RoundedContactButton(contentDescription : String ="", iconId : Int, onClick : () -> Unit) {
     Column(verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -29,7 +29,7 @@ fun RoundedIconButton(title : String, iconId : Int, onClick : () -> Unit) {
             backgroundColor = Color.Gray.copy(alpha = 0.1f)) {
             Icon(
                 rememberImagePainter(iconId),
-                contentDescription = title,
+                contentDescription = contentDescription,
                 modifier = Modifier.requiredSize(30.dp),
                 tint = Color.Black.copy(alpha = 0.7f))
         }
