@@ -12,24 +12,23 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import com.geopark.feature_locations.presentation.menu.MenuLocationsEvent
 import com.geopark.feature_locations.presentation.menu.MenuViewModel
 import com.geopark.feature_locations.presentation.components.CategoriesSection
 import com.geopark.feature_locations.presentation.menu.composables.Tile
 import com.geopark.feature_locations.presentation.menu.composables.TileTitleSeeAll
+import com.geopark.feature_locations.presentation.util.Screen
 
 
 @ExperimentalCoilApi
 @ExperimentalMaterialApi
 @Composable
-@Preview
 fun MenuScreen(
+    navController: NavController,
     viewModel: MenuViewModel = hiltViewModel()
 ) {
-
-
-
         val state = viewModel.state.value
         val scope = rememberCoroutineScope()
         Scaffold(
@@ -42,13 +41,15 @@ fun MenuScreen(
                     viewModel.onEvent(MenuLocationsEvent.Type(newLocationType))
                 })
 
-                TileTitleSeeAll(title = "Popular places", seeAllClick = {})
+                TileTitleSeeAll(title = "Popular places", seeAllClick = { navController.navigate(
+                    Screen.ListScreen.route +"/${state.locationType}"
+                )})
 
                LazyRow {
                     itemsIndexed(state.locations) { _, location ->
                         Tile(
                             modifier = Modifier.clickable {
-                                //TODO :implement navigation
+                                navController.navigate(Screen.ContentScreen.route+"/${location.name}")
                                 viewModel.onEvent(
                                     MenuLocationsEvent.ChangeRecentlyWatched(
                                         true,
@@ -71,7 +72,7 @@ fun MenuScreen(
                     }
                 }
 
-                TileTitleSeeAll(title = "Recently watched", seeAllClick = {})
+                TileTitleSeeAll(title = "Recently watched", seeAllClick = { /* TODO: implement list of all screens for recently watched */})
 
                 LazyRow {
                     itemsIndexed(state.locations.filter { it.wasRecentlyWatched }) { _, location ->
@@ -99,7 +100,7 @@ fun MenuScreen(
                             })
                     }
                 }
-                TileTitleSeeAll(title = "Favorites", seeAllClick = {})
+                TileTitleSeeAll(title = "Favorites", seeAllClick = { /* TODO: implement list of all screens for favorites */})
 
                LazyRow {
                     itemsIndexed(state.locations.filter { it.isFavorite }) { _, location ->
