@@ -59,7 +59,7 @@ class ListViewModel @Inject constructor(
         getLocationsJob?.cancel()
         getLocationsJob = locationUseCases.getLocations(locationType).onEach { locations ->
             _state.value = state.value.copy(
-                locations = locations.shuffled(),
+                locations = locations,
                 locationType = locationType
             )
         }.launchIn(viewModelScope)

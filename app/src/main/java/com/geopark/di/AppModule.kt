@@ -45,7 +45,7 @@ object AppModule {
     @Singleton
     fun provideQueryLocations() = FirebaseFirestore.getInstance()
         .collection("Locations")
-        .orderBy("type")
+        .limit(500)
 
 
 

@@ -31,12 +31,6 @@ class MenuViewModel @Inject constructor(
         getLocations()
     }
 
-    private fun showList() : String {
-        var s = "";
-        _state.value.locations.forEach {  s+="$it.name\n" }
-        return s
-    }
-
     fun onEvent(menuEvent: MenuLocationsEvent) {
         when (menuEvent) {
             is MenuLocationsEvent.Type -> {
@@ -63,7 +57,7 @@ class MenuViewModel @Inject constructor(
         getLocationsJob = locationUseCases.getLocations(locationType)
             .onEach { locations ->
                 _state.value = state.value.copy(
-                    locations = locations.shuffled(),
+                    locations = locations,
                     locationType = locationType
                 )
             }.launchIn(viewModelScope)
