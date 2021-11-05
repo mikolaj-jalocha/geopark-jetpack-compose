@@ -20,7 +20,7 @@ class GetLocations(
              when (locationType) {
                     is LocationType.All -> locations
                     is LocationType.Hotel -> locations.filter { it.type == "Hotel" }
-                    is LocationType.Place -> locations.filter { it.type == "Place" }
+                    is LocationType.Explore -> locations.filter { it.type == "Explore" }
                     is LocationType.Active -> locations.filter { it.type == "Active" }
                     is LocationType.Restaurant -> locations.filter { it.type == "Restaurant" }
              }

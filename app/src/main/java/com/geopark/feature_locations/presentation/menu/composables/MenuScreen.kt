@@ -1,5 +1,6 @@
 package com.geoparkcompose.ui.menu
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,7 @@ import com.geopark.feature_locations.presentation.menu.composables.MenuTopBar
 import com.geopark.feature_locations.presentation.menu.composables.Tile
 import com.geopark.feature_locations.presentation.menu.composables.TileTitleSeeAll
 import com.geopark.feature_locations.presentation.util.Screen
+import kotlin.math.log
 
 
 @ExperimentalCoilApi
@@ -38,8 +40,10 @@ fun MenuScreen(
     Scaffold(
         topBar = { MenuTopBar() }
     ) {
-
-        LazyColumn(Modifier.padding(bottom = 24.dp).fillMaxSize()) {
+        LazyColumn(
+            Modifier
+                .padding(bottom = 24.dp)
+                .fillMaxSize()) {
             item {
                 CategoriesSection(
                     locationType = state.locationType,
@@ -55,6 +59,7 @@ fun MenuScreen(
 
 
                 LazyRow {
+
                     itemsIndexed(state.locations) { _, location ->
                         Tile(
                             modifier = Modifier.clickable {

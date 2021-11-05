@@ -45,7 +45,8 @@ object AppModule {
     @Singleton
     fun provideQueryLocations() = FirebaseFirestore.getInstance()
         .collection("Locations")
-        .whereGreaterThanOrEqualTo("type","a")
+        .orderBy("type")
+
 
 
     @Provides

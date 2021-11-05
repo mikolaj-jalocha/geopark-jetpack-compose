@@ -5,9 +5,7 @@ import androidx.room.PrimaryKey
 import com.google.firebase.firestore.Exclude@Entity
 data class Location(
     @PrimaryKey
-    val name: String =
-
- "",
+    val name: String = "",
     val type: String = "",
     val location: String = "",
     val description: String = "",

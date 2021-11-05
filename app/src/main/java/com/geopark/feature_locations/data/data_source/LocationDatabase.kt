@@ -1,5 +1,6 @@
 package com.geopark.feature_locations.data.data_source
 
+import android.util.Log
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase

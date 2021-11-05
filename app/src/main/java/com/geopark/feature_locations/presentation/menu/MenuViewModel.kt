@@ -1,5 +1,6 @@
 package com.geopark.feature_locations.presentation.menu
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -9,6 +10,7 @@ import com.geopark.feature_locations.domain.util.LocationType
 import com.geopark.feature_locations.presentation.LocationsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -29,6 +31,11 @@ class MenuViewModel @Inject constructor(
         getLocations()
     }
 
+    private fun showList() : String {
+        var s = "";
+        _state.value.locations.forEach {  s+="$it.name\n" }
+        return s
+    }
 
     fun onEvent(menuEvent: MenuLocationsEvent) {
         when (menuEvent) {
@@ -53,13 +60,15 @@ class MenuViewModel @Inject constructor(
 
     private fun getLocations(locationType: LocationType = LocationType.All) {
         getLocationsJob?.cancel()
-        locationUseCases.getLocations(locationType)
+        getLocationsJob = locationUseCases.getLocations(locationType)
             .onEach { locations ->
                 _state.value = state.value.copy(
-                    locations = locations,
+                    locations = locations.shuffled(),
                     locationType = locationType
                 )
             }.launchIn(viewModelScope)
+
+
     }
 
 

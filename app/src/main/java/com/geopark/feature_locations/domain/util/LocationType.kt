@@ -6,7 +6,7 @@ sealed class LocationType{
     object Hotel : LocationType()
     object Restaurant : LocationType()
     object Active : LocationType()
-    object Place : LocationType()
+    object Explore : LocationType()
 
     override fun toString(): String {
         return when(this){
@@ -14,7 +14,7 @@ sealed class LocationType{
             is Hotel -> "Hotel"
             is Restaurant -> "Restaurant"
             is Active -> "Active"
-            is Place -> "Place"
+            is Explore -> "Explore"
         }
     }
 

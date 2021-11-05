@@ -32,7 +32,7 @@ class ListViewModel @Inject constructor(
             LocationType.Hotel.toString() -> LocationType.Hotel
             LocationType.Restaurant.toString() -> LocationType.Restaurant
             LocationType.Active.toString() -> LocationType.Active
-            LocationType.Place.toString() -> LocationType.Place
+            LocationType.Explore.toString() -> LocationType.Explore
             else -> LocationType.All
         }
 
@@ -57,9 +57,9 @@ class ListViewModel @Inject constructor(
 
     private fun getLocations(locationType: LocationType) {
         getLocationsJob?.cancel()
-        locationUseCases.getLocations(locationType).onEach { locations ->
+        getLocationsJob = locationUseCases.getLocations(locationType).onEach { locations ->
             _state.value = state.value.copy(
-                locations = locations,
+                locations = locations.shuffled(),
                 locationType = locationType
             )
         }.launchIn(viewModelScope)
