@@ -6,4 +6,5 @@ import com.geopark.feature_locations.presentation.menu.MenuLocationsEvent
 
 sealed class ListLocationsEvent{
     data class ChangeFavorite(val newValue : Boolean, val location : Location) :  ListLocationsEvent()
+    data class ChangeRecentlyWatched(val newValue : Boolean, val location : Location) :  ListLocationsEvent()
 }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ import java.lang.Exception
 class MainActivity : ComponentActivity() {
 
 
+    @ExperimentalFoundationApi
     @ExperimentalCoilApi
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,22 +46,22 @@ class MainActivity : ComponentActivity() {
                         startDestination = Screen.MenuScreen.route){
 
                         composable(route = Screen.MenuScreen.route) {
-                            MenuScreen(navController = navController)
+                          MenuScreen(navigateTo = navController::navigate)
                         }
                         composable(
                             route = Screen.ListScreen.route +"/{locationType}",
                             arguments = listOf(navArgument("locationType") {type = NavType.StringType})
                         ){
-                            ListScreen()
+                           ListScreen(navigateTo = navController::navigate, navigateUp = navController::navigateUp)
                         }
                         composable(
                             route = Screen.ContentScreen.route + "/{locationName}",
                             arguments = listOf(navArgument("locationName") {type = NavType.StringType})
                         ){
-                            ContentScreen()
+                            ContentScreen(navigateUp = navController::navigateUp)
                         }
-                    }
 
+                    }
 
                 }
 
@@ -67,6 +69,8 @@ class MainActivity : ComponentActivity() {
 
         }
     }
+
+
 }
 
 

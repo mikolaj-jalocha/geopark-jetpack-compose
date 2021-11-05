@@ -1,5 +1,6 @@
 package com.geopark.feature_locations.presentation.list.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,57 +16,65 @@ import com.geopark.feature_locations.presentation.components.TileTitleSortBy
 import com.geopark.feature_locations.presentation.list.ListLocationsEvent
 import com.geopark.feature_locations.presentation.list.ListViewModel
 import com.geopark.feature_locations.presentation.menu.composables.Tile
-import com.geopark.feature_locations.presentation.menu.composables.TileTitleSeeAll
+import com.geopark.feature_locations.presentation.util.Screen
 
 @ExperimentalCoilApi
 @ExperimentalMaterialApi
 @Composable
 fun ListScreen(
-    viewModel: ListViewModel = hiltViewModel()
+    viewModel: ListViewModel = hiltViewModel(),
+    navigateTo: (String) -> Unit,
+    navigateUp: () -> Unit
 ) {
 
     val state = viewModel.state.value
     val scope = rememberCoroutineScope()
 
     Scaffold(
-        topBar = { ListTopBar {
-
-        }}
+        topBar = { ListTopBar(navigateUp) }
     ) {
 
-       Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
 
 
-           LazyColumn{
-               item{
-                   TileTitleSortBy(state.locationType.toString()) {
-                       // TODO: implement sorting mechanism
-                   }
-               }
+            LazyColumn {
+                item {
+                    TileTitleSortBy(state.locationType.toString()) {
+                        // TODO: implement sorting mechanism
+                    }
+                }
 
-               itemsIndexed(state.locations){_, location ->
-                   Tile(
-                       photoPath = location.photo,
-                       name = location.name,
-                       isWide = true,
-                       isFavorite = location.isFavorite
-                   ) {
-                       viewModel.onEvent(
-                           ListLocationsEvent.ChangeFavorite(
-                               newValue = !location.isFavorite,
-                               location
-                           )
-                       )
-                   }
-               }
-           }
+                itemsIndexed(state.locations) { _, location ->
+                    Tile(
+                        modifier = Modifier.clickable {
+                            navigateTo(Screen.ContentScreen.route + "/${location.name}")
+                            viewModel.onEvent(
+                                ListLocationsEvent.ChangeRecentlyWatched(
+                                    true,
+                                    location
+                                )
+                            )
+                        },
+                        photoPath = location.photo,
+                        name = location.name,
+                        isWide = true,
+                        isFavorite = location.isFavorite
+                    ) {
+                        viewModel.onEvent(
+                            ListLocationsEvent.ChangeFavorite(
+                                newValue = !location.isFavorite,
+                                location
+                            )
+                        )
+                    }
+                }
+            }
 
 
-       }
-
-
-
+        }
     }
 
 }
+
+
 

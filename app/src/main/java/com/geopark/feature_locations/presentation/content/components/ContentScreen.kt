@@ -30,7 +30,8 @@ import com.google.accompanist.insets.navigationBarsPadding
 @ExperimentalCoilApi
 @Composable
 fun ContentScreen(
-    viewModel : ContentViewModel = hiltViewModel()
+    viewModel : ContentViewModel = hiltViewModel(),
+    navigateUp : () -> Unit
 ) {
 
     val state = viewModel.state.value
@@ -46,9 +47,7 @@ fun ContentScreen(
                         .fillMaxWidth()
                         .height(300.dp)
                 )
-                ContentTopBar {
-
-                }
+                ContentTopBar(navigateUp)
             }
 
             LazyColumn(

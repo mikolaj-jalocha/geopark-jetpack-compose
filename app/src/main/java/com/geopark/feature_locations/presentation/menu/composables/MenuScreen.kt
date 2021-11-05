@@ -30,8 +30,8 @@ import com.geopark.feature_locations.presentation.util.Screen
 @ExperimentalMaterialApi
 @Composable
 fun MenuScreen(
-    navController: NavController,
-    viewModel: MenuViewModel = hiltViewModel()
+    viewModel: MenuViewModel = hiltViewModel(),
+    navigateTo : (String) -> Unit
 ) {
     val state = viewModel.state.value
     val scope = rememberCoroutineScope()
@@ -47,8 +47,8 @@ fun MenuScreen(
                         viewModel.onEvent(MenuLocationsEvent.Type(newLocationType))
                     })
 
-                TileTitleSeeAll(title = "Popular places", seeAllClick = {
-                    navController.navigate(
+                TileTitleSeeAll(title = "Popular places", seeAllClick =  {
+                    navigateTo(
                         Screen.ListScreen.route + "/${state.locationType}"
                     )
                 })
@@ -58,7 +58,7 @@ fun MenuScreen(
                     itemsIndexed(state.locations) { _, location ->
                         Tile(
                             modifier = Modifier.clickable {
-                                navController.navigate(Screen.ContentScreen.route + "/${location.name}")
+                                navigateTo(Screen.ContentScreen.route + "/${location.name}")
                                 viewModel.onEvent(
                                     MenuLocationsEvent.ChangeRecentlyWatched(
                                         true,

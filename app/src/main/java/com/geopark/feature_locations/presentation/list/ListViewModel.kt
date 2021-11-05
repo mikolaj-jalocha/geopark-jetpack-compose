@@ -1,12 +1,10 @@
 package com.geopark.feature_locations.presentation.list
 
-import android.location.Location
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.geopark.feature_locations.domain.use_case.LocationUseCases
 import com.geopark.feature_locations.domain.util.LocationType
 import com.geopark.feature_locations.presentation.LocationsState
@@ -38,15 +36,20 @@ class ListViewModel @Inject constructor(
             else -> LocationType.All
         }
 
-            getLocations(locationType)
-        }
+        getLocations(locationType)
+    }
 
 
     fun onEvent(listEvent: ListLocationsEvent) {
         when (listEvent) {
-            is ListLocationsEvent.ChangeFavorite ->{
+            is ListLocationsEvent.ChangeFavorite -> {
                 viewModelScope.launch {
                     locationUseCases.changeLocationData(listEvent.location.copy(isFavorite = listEvent.newValue))
+                }
+            }
+            is ListLocationsEvent.ChangeRecentlyWatched -> {
+                viewModelScope.launch {
+                    locationUseCases.changeLocationData(listEvent.location.copy(wasRecentlyWatched = listEvent.newValue))
                 }
             }
         }
@@ -54,8 +57,7 @@ class ListViewModel @Inject constructor(
 
     private fun getLocations(locationType: LocationType) {
         getLocationsJob?.cancel()
-        locationUseCases.getLocations(locationType).onEach {
-            locations ->
+        locationUseCases.getLocations(locationType).onEach { locations ->
             _state.value = state.value.copy(
                 locations = locations,
                 locationType = locationType
