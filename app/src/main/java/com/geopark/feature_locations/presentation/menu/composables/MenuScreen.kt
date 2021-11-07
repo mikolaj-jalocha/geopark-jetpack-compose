@@ -40,10 +40,9 @@ fun MenuScreen(
     Scaffold(
         topBar = { MenuTopBar() }
     ) {
-        LazyColumn(
+        LazyColumn(modifier =
             Modifier
-                .padding(bottom = 24.dp)
-                .fillMaxSize()) {
+                .fillMaxSize(), contentPadding = PaddingValues(bottom = 24.dp)) {
             item {
                 CategoriesSection(
                     locationType = state.locationType,
@@ -108,6 +107,7 @@ fun MenuScreen(
                             name = location.name,
                             isFavorite = location.isFavorite,
                             onFavoriteClick = {
+                                navigateTo(Screen.ContentScreen.route + "/${location.name}")
                                 viewModel.onEvent(
                                     MenuLocationsEvent.ChangeFavorite(
                                         !location.isFavorite,
@@ -127,7 +127,7 @@ fun MenuScreen(
                     itemsIndexed(state.locations.filter { it.isFavorite }) { _, location ->
                         Tile(
                             modifier = Modifier.clickable {
-                                //TODO implement navigation
+                                navigateTo(Screen.ContentScreen.route + "/${location.name}")
                                 viewModel.onEvent(
                                     MenuLocationsEvent.ChangeRecentlyWatched(
                                         true,

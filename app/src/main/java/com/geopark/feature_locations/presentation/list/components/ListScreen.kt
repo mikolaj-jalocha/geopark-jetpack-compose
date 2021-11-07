@@ -1,8 +1,7 @@
 package com.geopark.feature_locations.presentation.list.components
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
@@ -10,6 +9,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
 import com.geopark.feature_locations.presentation.components.TileTitleSortBy
@@ -34,16 +34,12 @@ fun ListScreen(
         topBar = { ListTopBar(navigateUp) }
     ) {
 
-        Column(modifier = Modifier.fillMaxSize()) {
-
-
-            LazyColumn {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp),contentPadding = PaddingValues(bottom = 24.dp),) {
                 item {
-                    TileTitleSortBy(state.locationType.toString()) {
+                    TileTitleSortBy(modifier = Modifier.padding(start = 12.dp, end = 12.dp,top = 16.dp,),state.locationType.toString()) {
                         // TODO: implement sorting mechanism
                     }
                 }
-
                 itemsIndexed(state.locations) { _, location ->
                     Tile(
                         modifier = Modifier.clickable {
@@ -66,7 +62,6 @@ fun ListScreen(
                                 location
                             )
                         )
-                    }
                 }
             }
 

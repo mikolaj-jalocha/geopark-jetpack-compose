@@ -24,11 +24,11 @@ import com.geopark.ui.theme.BabyBlue
 
 // TODO: implement sorting mechanism
 @Composable
-fun TileTitleSortBy(title : String, onSortByClick : () -> Unit) {
+fun TileTitleSortBy(modifier : Modifier = Modifier, title : String, onSortByClick : () -> Unit) {
 
     Row(
-        horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier
-            .padding(start = 12.dp, end = 12.dp, bottom = 12.dp, top = 17.dp)
+        horizontalArrangement = Arrangement.SpaceBetween, modifier =  modifier
+            //.padding(start = 12.dp, end = 12.dp, bottom = 12.dp, top = 17.dp)
             .fillMaxWidth()
     ) {
         Text(
