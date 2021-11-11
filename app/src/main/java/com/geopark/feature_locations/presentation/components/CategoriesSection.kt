@@ -1,8 +1,12 @@
 package com.geopark.feature_locations.presentation.components
 
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -27,7 +31,7 @@ fun CategoriesSection(
             style = MaterialTheme.typography.h6
         )
 
-        Row {
+        Row(Modifier.horizontalScroll(rememberScrollState())){
             CategoriesTabItem(text = "All", iconId = R.drawable.ic_all, isSelected = locationType is LocationType.All, onSelect = { onLocationChange(LocationType.All) })
             CategoriesTabItem(text = "Hotels", iconId = R.drawable.ic_bed, isSelected = locationType is LocationType.Hotel, onSelect = { onLocationChange(LocationType.Hotel)})
             CategoriesTabItem(text = "Restaurants", iconId = R.drawable.ic_restaurant, isSelected = locationType is LocationType.Restaurant, onSelect = { onLocationChange(LocationType.Restaurant) })

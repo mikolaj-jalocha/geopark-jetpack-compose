@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,24 +37,25 @@ fun CategoriesTabItem(
         modifier = modifier
     ) {
 
-        Box(modifier = Modifier
-            .padding(start = 16.dp, bottom = 0.dp, top = 16.dp, end = 16.dp)
-            .clip(CircleShape)
-            .clickable {
-                onSelect()
-            }
-            .background(backgroundColor.value)
-            .size(39.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                painter = painterResource(id = iconId),
-                modifier = Modifier
-                    .size(22.dp),
-                contentDescription = text,
-                tint = if (isSelected) Color.White else Color.Black,
+            Box(modifier = Modifier
+                .padding(start = 16.dp, bottom = 0.dp, top = 16.dp, end = 16.dp)
+                .clip(CircleShape)
+                .clickable {
+                    onSelect()
+                }
+                .background(backgroundColor.value)
+                .size(39.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = painterResource(id = iconId),
+                    modifier = Modifier
+                        .size(22.dp),
+                    contentDescription = text,
+                    tint = if (isSelected) Color.White else Color.Black,
                 )
-        }
+
+            }
 
         Text(
             text = text,

@@ -6,7 +6,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.geopark.feature_locations.domain.use_case.LocationUseCases
+import com.geopark.feature_locations.domain.util.LocationOrder
 import com.geopark.feature_locations.domain.util.LocationType
+import com.geopark.feature_locations.domain.util.OrderType
 import com.geopark.feature_locations.presentation.LocationsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -36,7 +38,7 @@ class ListViewModel @Inject constructor(
             else -> LocationType.All
         }
 
-        getLocations(locationType)
+        getLocations(locationType, LocationOrder.Name(OrderType.Default))
     }
 
 
@@ -52,15 +54,23 @@ class ListViewModel @Inject constructor(
                     locationUseCases.changeLocationData(listEvent.location.copy(wasRecentlyWatched = listEvent.newValue))
                 }
             }
+            is ListLocationsEvent.Order -> {
+                if (state.value.locationOrder::class ==  listEvent.locationOrder::class &&
+                    state.value.locationOrder.orderType == listEvent.locationOrder.orderType) {
+                    return
+                }
+                getLocations(state.value.locationType, listEvent.locationOrder)
+            }
         }
     }
 
-    private fun getLocations(locationType: LocationType) {
+    private fun getLocations(locationType: LocationType, locationOrder: LocationOrder) {
         getLocationsJob?.cancel()
-        getLocationsJob = locationUseCases.getLocations(locationType).onEach { locations ->
+        getLocationsJob = locationUseCases.getLocations(locationType,locationOrder).onEach { locations ->
             _state.value = state.value.copy(
                 locations = locations,
-                locationType = locationType
+                locationType = locationType,
+                locationOrder = locationOrder
             )
         }.launchIn(viewModelScope)
     }
