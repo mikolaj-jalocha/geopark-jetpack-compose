@@ -9,6 +9,8 @@ class LocationRepositoryImpl(
     private val dao: LocationDao
 ) : LocationRepository {
 
+
+
     override suspend  fun updateLocation(location: Location) {
         // TODO: API data-logic here
 

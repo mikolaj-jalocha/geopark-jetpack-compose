@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
@@ -35,7 +36,7 @@ fun ListScreen(
     val scope = rememberCoroutineScope()
 
     Scaffold(
-        topBar = { ListTopBar(navigateUp) }
+        topBar = { ListTopBar(navigateUp,{viewModel.onEvent(ListLocationsEvent.ChangeSearchQuery(it))})}
     ) {
 
         LazyColumn(

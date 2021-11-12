@@ -5,8 +5,7 @@ import com.geopark.feature_locations.domain.repository.LocationRepository
 import com.geopark.feature_locations.domain.util.LocationOrder
 import com.geopark.feature_locations.domain.util.LocationType
 import com.geopark.feature_locations.domain.util.OrderType
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 
 class GetLocations(
     private val repository: LocationRepository
@@ -14,7 +13,7 @@ class GetLocations(
 
     operator fun invoke(
         locationType: LocationType = LocationType.All,
-        locationOrder: LocationOrder = LocationOrder.Name(OrderType.Default)
+        locationOrder: LocationOrder = LocationOrder.Name(OrderType.Default),
     ): Flow<List<Location>> {
 
         return repository.getLocations()

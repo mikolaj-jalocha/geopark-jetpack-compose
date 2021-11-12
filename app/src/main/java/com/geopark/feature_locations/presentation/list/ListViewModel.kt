@@ -2,6 +2,7 @@ package com.geopark.feature_locations.presentation.list
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -44,6 +45,10 @@ class ListViewModel @Inject constructor(
 
     fun onEvent(listEvent: ListLocationsEvent) {
         when (listEvent) {
+            is ListLocationsEvent.ChangeSearchQuery ->{
+                    getLocations(state.value.locationType,state.value.locationOrder,listEvent.newValue)
+            }
+
             is ListLocationsEvent.ChangeFavorite -> {
                 viewModelScope.launch {
                     locationUseCases.changeLocationData(listEvent.location.copy(isFavorite = listEvent.newValue))
@@ -64,11 +69,11 @@ class ListViewModel @Inject constructor(
         }
     }
 
-    private fun getLocations(locationType: LocationType, locationOrder: LocationOrder) {
+    private fun getLocations(locationType: LocationType, locationOrder: LocationOrder, name : String = "") {
         getLocationsJob?.cancel()
         getLocationsJob = locationUseCases.getLocations(locationType,locationOrder).onEach { locations ->
             _state.value = state.value.copy(
-                locations = locations,
+                locations = if(name.isNotBlank()) locations.filter { it.name.contains(name) } else locations,
                 locationType = locationType,
                 locationOrder = locationOrder
             )

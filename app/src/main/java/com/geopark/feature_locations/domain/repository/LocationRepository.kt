@@ -7,6 +7,7 @@ interface LocationRepository {
 
         fun getLocations() : Flow<List<Location>>
 
+
         suspend fun updateLocation(location: Location)
 
         suspend fun getLocationByName(name : String) : Location?
