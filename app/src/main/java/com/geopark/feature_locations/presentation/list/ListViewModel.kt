@@ -2,6 +2,7 @@ package com.geopark.feature_locations.presentation.list
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -73,7 +74,7 @@ class ListViewModel @Inject constructor(
         getLocationsJob?.cancel()
         getLocationsJob = locationUseCases.getLocations(locationType,locationOrder).onEach { locations ->
             _state.value = state.value.copy(
-                locations = if(name.isNotBlank()) locations.filter { it.name.contains(name) } else locations,
+                locations = if(name.isNotBlank()) locations.filter { it.name.toLowerCase(Locale.current).contains(name.toLowerCase(Locale.current))} else locations,
                 locationType = locationType,
                 locationOrder = locationOrder
             )
