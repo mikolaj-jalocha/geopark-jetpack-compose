@@ -28,6 +28,10 @@ class ListViewModel @Inject constructor(
     private val _state = mutableStateOf(LocationsState())
     val state: State<LocationsState> = _state
 
+    private val _searchQuery = mutableStateOf("")
+    val searchQuery: State<String> = _searchQuery
+
+
     private var getLocationsJob: Job? = null
 
 
@@ -43,11 +47,16 @@ class ListViewModel @Inject constructor(
         getLocations(locationType, LocationOrder.Name(OrderType.Default))
     }
 
-
     fun onEvent(listEvent: ListLocationsEvent) {
         when (listEvent) {
-            is ListLocationsEvent.ChangeSearchQuery ->{
-                    getLocations(state.value.locationType,state.value.locationOrder,listEvent.newValue)
+            is ListLocationsEvent.ChangeSearchQuery -> {
+                _searchQuery.value = listEvent.query
+
+                getLocations(
+                    state.value.locationType,
+                    state.value.locationOrder,
+                    listEvent.query
+                )
             }
 
             is ListLocationsEvent.ChangeFavorite -> {
@@ -61,8 +70,9 @@ class ListViewModel @Inject constructor(
                 }
             }
             is ListLocationsEvent.Order -> {
-                if (state.value.locationOrder::class ==  listEvent.locationOrder::class &&
-                    state.value.locationOrder.orderType == listEvent.locationOrder.orderType) {
+                if (state.value.locationOrder::class == listEvent.locationOrder::class &&
+                    state.value.locationOrder.orderType == listEvent.locationOrder.orderType
+                ) {
                     return
                 }
                 getLocations(state.value.locationType, listEvent.locationOrder)
@@ -70,15 +80,23 @@ class ListViewModel @Inject constructor(
         }
     }
 
-    private fun getLocations(locationType: LocationType, locationOrder: LocationOrder, name : String = "") {
+    private fun getLocations(
+        locationType: LocationType,
+        locationOrder: LocationOrder,
+        name: String = ""
+    ) {
         getLocationsJob?.cancel()
-        getLocationsJob = locationUseCases.getLocations(locationType,locationOrder).onEach { locations ->
-            _state.value = state.value.copy(
-                locations = if(name.isNotBlank()) locations.filter { it.name.toLowerCase(Locale.current).contains(name.toLowerCase(Locale.current))} else locations,
-                locationType = locationType,
-                locationOrder = locationOrder
-            )
-        }.launchIn(viewModelScope)
+        getLocationsJob =
+            locationUseCases.getLocations(locationType, locationOrder).onEach { locations ->
+                _state.value = state.value.copy(
+                    locations = if (name.isNotBlank()) locations.filter {
+                        it.name.toLowerCase(Locale.current)
+                            .contains(name.toLowerCase(Locale.current))
+                    } else locations,
+                    locationType = locationType,
+                    locationOrder = locationOrder
+                )
+            }.launchIn(viewModelScope)
     }
 
 }

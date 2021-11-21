@@ -1,6 +1,7 @@
 package com.geopark.feature_locations.presentation.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
