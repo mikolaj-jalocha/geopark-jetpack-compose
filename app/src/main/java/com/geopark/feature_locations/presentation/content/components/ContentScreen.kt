@@ -1,14 +1,15 @@
 package com.geopark.feature_locations.presentation.content.components
 
-import androidx.compose.foundation.*
+import android.annotation.SuppressLint
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.ui.Alignment.Companion.End
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
@@ -20,23 +21,34 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.geopark.R
+import com.geopark.feature_locations.presentation.content.ContentEvent
 import com.geopark.feature_locations.presentation.content.ContentViewModel
 import com.geopark.ui.theme.BabyBlue
-import com.google.accompanist.insets.navigationBarsPadding
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @ExperimentalCoilApi
 @Composable
 fun ContentScreen(
-    viewModel : ContentViewModel = hiltViewModel(),
-    navigateUp : () -> Unit
+    viewModel: ContentViewModel = hiltViewModel(),
+    onEvent: (event: ContentEvent) -> Unit,
+    navigateUp: () -> Unit
 ) {
 
-    val state = viewModel.state.value
+    val state = viewModel.locationsState.value
+    val composableScope = rememberCoroutineScope()
 
-    Scaffold{
+    composableScope.launch {
+        viewModel.eventFlow.collectLatest { event ->
+            onEvent(event)
+        }
+
+    }
+    Scaffold {
         Column {
             Box {
                 Image(
@@ -125,11 +137,15 @@ fun ContentScreen(
                         RoundedContactButton(
                             contentDescription = "E-mail",
                             iconId = R.drawable.ic_email
-                        ) {}
+                        ) {
+
+                        }
                         RoundedContactButton(
                             contentDescription = "Telephone",
                             iconId = R.drawable.ic_telephone
-                        ) {}
+                        ) {
+                            viewModel.onEvent(ContentEvent.Call(state.phoneNumber))
+                        }
                         RoundedContactButton(
                             contentDescription = "Website",
                             iconId = R.drawable.ic_computer
@@ -137,7 +153,9 @@ fun ContentScreen(
                         RoundedContactButton(
                             contentDescription = "Location",
                             iconId = R.drawable.ic_map
-                        ) {}
+                        ) {
+                            viewModel.onEvent(ContentEvent.ShowOnMap(state.location))
+                        }
                     }
                 }
             }
