@@ -1,4 +1,4 @@
-package com.geopark.feature_locations.data.data_source
+package com.geopark.feature_locations.data.local
 
 import androidx.room.*
 import com.geopark.feature_locations.domain.model.Location

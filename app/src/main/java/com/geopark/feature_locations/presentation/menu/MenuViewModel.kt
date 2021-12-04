@@ -57,7 +57,7 @@ class MenuViewModel @Inject constructor(
         getLocationsJob = locationUseCases.getLocations(locationType)
             .onEach { locations ->
                 _state.value = state.value.copy(
-                    locations = locations,
+                    locations = locations.data ?: emptyList(),
                     locationType = locationType
                 )
             }.launchIn(viewModelScope)

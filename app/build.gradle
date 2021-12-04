@@ -87,6 +87,12 @@ dependencies {
     implementation "com.google.firebase:firebase-firestore-ktx:$firestore_version"
 
 
+    //Retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.okhttp3:okhttp:$ok_http3_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$ok_http3_version"
+
 
     //Hilt
     implementation "com.google.dagger:hilt-android:$dagger_hilt_version"

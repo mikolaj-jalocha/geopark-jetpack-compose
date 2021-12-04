@@ -89,10 +89,11 @@ class ListViewModel @Inject constructor(
         getLocationsJob =
             locationUseCases.getLocations(locationType, locationOrder).onEach { locations ->
                 _state.value = state.value.copy(
-                    locations = if (name.isNotBlank()) locations.filter {
+
+                    locations = (if (name.isNotBlank()) locations.data?.filter {
                         it.name.toLowerCase(Locale.current)
                             .contains(name.toLowerCase(Locale.current))
-                    } else locations,
+                    } else locations.data) ?: emptyList(),
                     locationType = locationType,
                     locationOrder = locationOrder
                 )

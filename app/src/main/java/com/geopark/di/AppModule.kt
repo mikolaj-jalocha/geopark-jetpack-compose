@@ -2,8 +2,9 @@ package com.geopark.di
 
 import android.app.Application
 import androidx.room.Room
-import com.geopark.feature_locations.data.data_source.LocationDao
-import com.geopark.feature_locations.data.data_source.LocationDatabase
+import com.geopark.core.util.Constans
+import com.geopark.feature_locations.data.local.LocationDatabase
+import com.geopark.feature_locations.data.remote.GeoparkApi
 import com.geopark.feature_locations.data.repository.LocationRepositoryImpl
 import com.geopark.feature_locations.domain.repository.LocationRepository
 import com.geopark.feature_locations.domain.use_case.*
@@ -14,6 +15,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -24,15 +27,26 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideLocationDatabase(app: Application,
-    callback : LocationDatabase.Callback): LocationDatabase {
+    fun provideLocationDatabase(
+        app: Application,
+    ): LocationDatabase {
         return Room.databaseBuilder(
-            app,LocationDatabase::class.java,
-            LocationDatabase.DATABASE_NAME
+            app, LocationDatabase::class.java,
+            Constans.DATABASE_NAME
         )
             .fallbackToDestructiveMigration()
-            .addCallback(callback)
             .build()
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideGeoparkApi(): GeoparkApi {
+        return Retrofit.Builder()
+            .baseUrl(Constans.GEOPARK_API_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(GeoparkApi::class.java)
     }
 
     @ApplicationScope
@@ -48,11 +62,10 @@ object AppModule {
         .limit(500)
 
 
-
     @Provides
     @Singleton
-    fun provideLocationRepository(db : LocationDatabase)  : LocationRepository {
-            return LocationRepositoryImpl(db.locationDao)
+    fun provideLocationRepository(db: LocationDatabase, api : GeoparkApi): LocationRepository {
+        return LocationRepositoryImpl(db.locationDao,api)
     }
 
     @Provides
