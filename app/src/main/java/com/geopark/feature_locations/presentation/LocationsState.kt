@@ -10,5 +10,6 @@ import com.geopark.feature_locations.domain.util.OrderType
 data class LocationsState(
     var locations : List<Location> = emptyList(),
     val locationType : LocationType = LocationType.All,
-    val locationOrder : LocationOrder = LocationOrder.Name(OrderType.Default)
+    val locationOrder : LocationOrder = LocationOrder.Name(OrderType.Default),
+    val isLoading: Boolean = false
 )

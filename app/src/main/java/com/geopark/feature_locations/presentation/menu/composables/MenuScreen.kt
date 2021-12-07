@@ -9,10 +9,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.BottomNavigationDefaults
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -57,6 +59,7 @@ fun MenuScreen(
                 })
 
 
+
                 LazyRow {
 
                     itemsIndexed(state.locations) { _, location ->
@@ -85,6 +88,8 @@ fun MenuScreen(
                     }
                 }
             }
+
+
             item {
                 TileTitleSeeAll(
                     title = "Recently watched",
@@ -148,6 +153,11 @@ fun MenuScreen(
                                 )
                             })
                     }
+                }
+            }
+            item{
+                if (state.isLoading) {
+                    CircularProgressIndicator()
                 }
             }
         }

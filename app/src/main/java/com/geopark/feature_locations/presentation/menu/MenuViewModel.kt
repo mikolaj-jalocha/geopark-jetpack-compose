@@ -1,16 +1,15 @@
 package com.geopark.feature_locations.presentation.menu
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.geopark.core.util.Resource
 import com.geopark.feature_locations.domain.use_case.LocationUseCases
 import com.geopark.feature_locations.domain.util.LocationType
 import com.geopark.feature_locations.presentation.LocationsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -28,13 +27,13 @@ class MenuViewModel @Inject constructor(
 
 
     init {
-        getLocations()
+        getLocations(locationType = LocationType.All)
     }
 
     fun onEvent(menuEvent: MenuLocationsEvent) {
         when (menuEvent) {
             is MenuLocationsEvent.Type -> {
-                if(menuEvent.locationType == state.value.locationType)
+                if (menuEvent.locationType == state.value.locationType)
                     return
                 getLocations(menuEvent.locationType)
             }
@@ -52,14 +51,36 @@ class MenuViewModel @Inject constructor(
         }
     }
 
-    private fun getLocations(locationType: LocationType = LocationType.All) {
+    private fun getLocations(locationType: LocationType) {
         getLocationsJob?.cancel()
         getLocationsJob = locationUseCases.getLocations(locationType)
-            .onEach { locations ->
-                _state.value = state.value.copy(
-                    locations = locations.data ?: emptyList(),
-                    locationType = locationType
-                )
+            .onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        _state.value = state.value.copy(
+                            locations = result.data ?: emptyList(),
+                            locationType = locationType,
+                            isLoading = false
+                        )
+                    }
+                    is Resource.Loading -> {
+                        _state.value = state.value.copy(
+                            locations = result.data ?: emptyList(),
+                            locationType = locationType,
+                            isLoading = true
+                        )
+                    }
+                    is Resource.Error -> {
+                        _state.value = state.value.copy(
+                            locations = result.data ?: emptyList(),
+                            locationType = locationType,
+                            isLoading = false
+                        )
+                        //TODO emit snackbar event here
+                    }
+
+                }
+
             }.launchIn(viewModelScope)
 
 

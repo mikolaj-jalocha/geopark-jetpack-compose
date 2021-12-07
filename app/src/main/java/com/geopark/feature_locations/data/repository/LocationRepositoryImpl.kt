@@ -47,8 +47,6 @@ class LocationRepositoryImpl(
             preferences.edit {
                 putString("API_UPDATE_DATE", LocalDate.now().toString())
             }
-
-
             try {
                 val remoteLocations = api.getLocations()
                 dao.insertLocations(remoteLocations)
