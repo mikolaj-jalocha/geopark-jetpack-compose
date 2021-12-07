@@ -21,16 +21,16 @@ class GetLocations(
             .onEach { locations ->
                 when (locationType) {
                     is LocationType.All -> locations.data
-                    is LocationType.Hotel -> locations.data?.filter { it.type == "Hotel" }
-                    is LocationType.Explore -> locations.data?.filter { it.type == "Explore" }
-                    is LocationType.Active -> locations.data?.filter { it.type == "Active" }
-                    is LocationType.Restaurant -> locations.data?.filter { it.type == "Restaurant" }
+                    is LocationType.Hotel -> locations.data!!.filter { it.type == "Hotel" }
+                    is LocationType.Explore -> locations.data!!.filter { it.type == "Explore" }
+                    is LocationType.Active -> locations.data!!.filter { it.type == "Active" }
+                    is LocationType.Restaurant -> locations.data!!.filter { it.type == "Restaurant" }
                 }
             }
             .onEach { locations ->
                 when (locationOrder.orderType) {
-                    is OrderType.Ascending -> locations.data?.sortedBy { it.name.lowercase() }
-                    is OrderType.Descending -> locations.data?.sortedByDescending { it.name.lowercase() }
+                    is OrderType.Ascending -> locations.data!!.sortedBy { it.name.lowercase() }
+                    is OrderType.Descending -> locations.data!!.sortedByDescending { it.name.lowercase() }
                     // TODO: Add sorting by certificate
                     is OrderType.CertificatedFirst -> locations.data
                     is OrderType.Default -> locations.data

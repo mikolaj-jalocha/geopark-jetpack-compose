@@ -1,6 +1,8 @@
 package com.geopark.di
 
 import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
 import com.geopark.core.util.Constans
 import com.geopark.feature_locations.data.local.LocationDatabase
@@ -24,6 +26,14 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+
+    @Provides
+    @Singleton
+    fun provideSharedPreferences(app: Application): SharedPreferences {
+        return app.getSharedPreferences("GEOPARK_CACHE_SETTINGS", Context.MODE_PRIVATE)
+    }
+
 
     @Provides
     @Singleton
@@ -64,8 +74,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideLocationRepository(db: LocationDatabase, api : GeoparkApi): LocationRepository {
-        return LocationRepositoryImpl(db.locationDao,api)
+    fun provideLocationRepository(db: LocationDatabase, api: GeoparkApi,preferences : SharedPreferences): LocationRepository {
+        return LocationRepositoryImpl(db.locationDao, api,preferences)
     }
 
     @Provides
