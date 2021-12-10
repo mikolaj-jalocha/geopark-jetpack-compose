@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
+import java.lang.Exception
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -24,10 +25,13 @@ class LocationRepositoryImpl(
     private val preferences: SharedPreferences
 ) : LocationRepository {
 
+
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun getLocations(): Flow<Resource<List<Location>>> = flow {
 
-        emit(Resource.Loading())
+
+        emit(Resource.Loading(data = emptyList()))
 
         val a = preferences.getString(
             "API_UPDATE_DATE",
@@ -51,19 +55,19 @@ class LocationRepositoryImpl(
                 val remoteLocations = api.getLocations()
                 dao.insertLocations(remoteLocations)
             } catch (e: HttpException) {
-                emit(
-                    Resource.Error(
-                        e.localizedMessage ?: "An unexpected error occured",
-                        data = localLocations
-                    )
-                )
+                  emit(
+                      Resource.Error(
+                          e.localizedMessage ?: "An unexpected error occured",
+                          data = localLocations
+                      )
+                  )
             } catch (e: IOException) {
                 emit(Resource.Error("Couldn't reach server", data = localLocations))
             }
         }
         emit(Resource.Success(dao.getLocations()))
-    }
 
+    }
 
     override suspend fun updateLocation(location: Location) {
         dao.updateLocation(location)

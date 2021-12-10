@@ -1,5 +1,6 @@
 package com.geopark.feature_locations.presentation.menu
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -9,7 +10,10 @@ import com.geopark.feature_locations.domain.use_case.LocationUseCases
 import com.geopark.feature_locations.domain.util.LocationType
 import com.geopark.feature_locations.presentation.LocationsState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -27,15 +31,17 @@ class MenuViewModel @Inject constructor(
 
 
     init {
-        getLocations(locationType = LocationType.All)
-    }
+            getLocations(locationType = LocationType.All)
+        }
 
     fun onEvent(menuEvent: MenuLocationsEvent) {
         when (menuEvent) {
             is MenuLocationsEvent.Type -> {
                 if (menuEvent.locationType == state.value.locationType)
                     return
-                getLocations(menuEvent.locationType)
+
+                    getLocations(menuEvent.locationType)
+
             }
             is MenuLocationsEvent.ChangeFavorite -> {
                 viewModelScope.launch {
@@ -51,13 +57,16 @@ class MenuViewModel @Inject constructor(
         }
     }
 
+
     private fun getLocations(locationType: LocationType) {
-        viewModelScope.launch {
+
+
             getLocationsJob?.cancel()
             getLocationsJob = locationUseCases.getLocations(locationType)
                 .onEach { result ->
                     when (result) {
                         is Resource.Success -> {
+
                             _state.value = state.value.copy(
                                 locations = result.data ?: emptyList(),
                                 locationType = locationType,
@@ -65,20 +74,21 @@ class MenuViewModel @Inject constructor(
                             )
                         }
                         is Resource.Loading<*> -> {
+
                             _state.value = state.value.copy(
                                 locations = result.data ?: emptyList(),
                                 locationType = locationType,
                                 isLoading = true
                             )
                         }
-                        is Resource.Error<*> -> {
-                            _state.value = state.value.copy(
-                                locations = result.data ?: emptyList(),
-                                locationType = locationType,
-                                isLoading = false
-                            )
-                            //TODO emit snackbar event here
-                        }
+                         is Resource.Error<*> -> {
+                             _state.value = state.value.copy(
+                                 locations = result.data ?: emptyList(),
+                                 locationType = locationType,
+                                 isLoading = false
+                             )
+                             //TODO emit snackbar event here
+                         }
 
                     }
 
@@ -89,4 +99,4 @@ class MenuViewModel @Inject constructor(
 
 
     }
-}
+

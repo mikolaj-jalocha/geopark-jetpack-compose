@@ -1,24 +1,25 @@
 package com.geopark.feature_locations.domain.use_case
 
+import android.util.Log
 import com.geopark.core.util.Resource
+import com.geopark.di.AppModule
 import com.geopark.feature_locations.domain.repository.LocationRepository
 import com.geopark.feature_locations.domain.util.LocationOrder
 import com.geopark.feature_locations.domain.util.LocationType
 import com.geopark.feature_locations.domain.util.OrderType
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 
 class GetLocations(
-    private val repository: LocationRepository
+    private val repository: LocationRepository,
 ) {
-    suspend operator fun invoke(
+     operator fun invoke(
         locationType: LocationType,
         locationOrder: LocationOrder = LocationOrder.Name(OrderType.Default),
     ) = flow {
-
-
-        var res = repository.getLocations().collect { result ->
-            if (!result.data.isNullOrEmpty()) {
+        repository.getLocations().collect { result ->
+            if (result.data != null) {
                 when (locationType) {
                     is LocationType.All -> result.data
                     is LocationType.Hotel -> result.data.filter { it.type == "Hotel" }
@@ -35,18 +36,16 @@ class GetLocations(
                     }
                 }.also { res ->
                     when (result) {
-                        is Resource.Success ->
-                            emit(Resource.Success(data = res))
-                        is Resource.Loading ->
+                        is Resource.Success -> {
+                            emit(Resource.Success(data = res))   }
+                        is Resource.Loading -> {
                             emit(Resource.Loading(data = res))
+                        }
                         is Resource.Error ->
                             emit(Resource.Error(data = res, message = result.message ?: ""))
                     }
-
-
                 }
             }
-
         }
     }
 }
