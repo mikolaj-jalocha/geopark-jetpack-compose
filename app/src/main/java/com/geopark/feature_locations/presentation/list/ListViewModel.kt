@@ -85,19 +85,20 @@ class ListViewModel @Inject constructor(
         locationOrder: LocationOrder,
         name: String = ""
     ) {
-        getLocationsJob?.cancel()
-        getLocationsJob =
-            locationUseCases.getLocations(locationType, locationOrder).onEach { locations ->
-                _state.value = state.value.copy(
+        viewModelScope.launch {
+            getLocationsJob?.cancel()
+            getLocationsJob =
+                locationUseCases.getLocations(locationType, locationOrder).onEach { locations ->
+                    _state.value = state.value.copy(
 
-                    locations = (if (name.isNotBlank()) locations.data?.filter {
-                        it.name.toLowerCase(Locale.current)
-                            .contains(name.toLowerCase(Locale.current))
-                    } else locations.data) ?: emptyList(),
-                    locationType = locationType,
-                    locationOrder = locationOrder
-                )
-            }.launchIn(viewModelScope)
+                        locations = (if (name.isNotBlank()) locations.data?.filter {
+                            it.name.toLowerCase(Locale.current)
+                                .contains(name.toLowerCase(Locale.current))
+                        } else locations.data) ?: emptyList(),
+                        locationType = locationType,
+                        locationOrder = locationOrder
+                    )
+                }.launchIn(viewModelScope)
+        }
     }
-
 }

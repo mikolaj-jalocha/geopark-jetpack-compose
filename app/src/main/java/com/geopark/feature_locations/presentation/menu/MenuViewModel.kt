@@ -52,39 +52,41 @@ class MenuViewModel @Inject constructor(
     }
 
     private fun getLocations(locationType: LocationType) {
-        getLocationsJob?.cancel()
-        getLocationsJob = locationUseCases.getLocations(locationType)
-            .onEach { result ->
-                when (result) {
-                    is Resource.Success -> {
-                        _state.value = state.value.copy(
-                            locations = result.data ?: emptyList(),
-                            locationType = locationType,
-                            isLoading = false
-                        )
-                    }
-                    is Resource.Loading -> {
-                        _state.value = state.value.copy(
-                            locations = result.data ?: emptyList(),
-                            locationType = locationType,
-                            isLoading = true
-                        )
-                    }
-                    is Resource.Error -> {
-                        _state.value = state.value.copy(
-                            locations = result.data ?: emptyList(),
-                            locationType = locationType,
-                            isLoading = false
-                        )
-                        //TODO emit snackbar event here
+        viewModelScope.launch {
+            getLocationsJob?.cancel()
+            getLocationsJob = locationUseCases.getLocations(locationType)
+                .onEach { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            _state.value = state.value.copy(
+                                locations = result.data ?: emptyList(),
+                                locationType = locationType,
+                                isLoading = false
+                            )
+                        }
+                        is Resource.Loading<*> -> {
+                            _state.value = state.value.copy(
+                                locations = result.data ?: emptyList(),
+                                locationType = locationType,
+                                isLoading = true
+                            )
+                        }
+                        is Resource.Error<*> -> {
+                            _state.value = state.value.copy(
+                                locations = result.data ?: emptyList(),
+                                locationType = locationType,
+                                isLoading = false
+                            )
+                            //TODO emit snackbar event here
+                        }
+
                     }
 
-                }
+                }.launchIn(viewModelScope)
 
-            }.launchIn(viewModelScope)
+
+        }
 
 
     }
-
-
 }
