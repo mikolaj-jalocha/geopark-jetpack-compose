@@ -64,12 +64,6 @@ object AppModule {
     @Singleton
     fun provideApplicationScope() = CoroutineScope(SupervisorJob())
 
-    @LocationsQuery
-    @Provides
-    @Singleton
-    fun provideQueryLocations() = FirebaseFirestore.getInstance()
-        .collection("Locations")
-        .limit(500)
 
 
     @Provides

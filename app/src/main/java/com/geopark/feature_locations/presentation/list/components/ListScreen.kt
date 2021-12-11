@@ -2,16 +2,10 @@ package com.geopark.feature_locations.presentation.list.components
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.indication
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -20,11 +14,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
 import com.geopark.feature_locations.domain.util.LocationOrder
+import com.geopark.feature_locations.presentation.UiEvent
 import com.geopark.feature_locations.presentation.components.TileTitleSortBy
 import com.geopark.feature_locations.presentation.list.ListLocationsEvent
 import com.geopark.feature_locations.presentation.list.ListViewModel
 import com.geopark.feature_locations.presentation.menu.composables.Tile
 import com.geopark.feature_locations.presentation.util.Screen
+import kotlinx.coroutines.flow.collectLatest
 
 @ExperimentalAnimationApi
 @ExperimentalCoilApi
@@ -37,18 +33,32 @@ fun ListScreen(
 ) {
 
     val state = viewModel.state.value
+    val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
 
     var isSearchBarEnabled by rememberSaveable {
         mutableStateOf(false)
     }
 
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is UiEvent.ShowSnackbar -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.message
+                    )
+                }
+            }
+        }
+    }
+
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             ListTopBar(
                 text = viewModel.searchQuery.value,
                 isSearchEnabled = isSearchBarEnabled,
-                onSearchBarClick = { isSearchBarEnabled = it},
+                onSearchBarClick = { isSearchBarEnabled = it },
                 onValueChange = { viewModel.onEvent(ListLocationsEvent.ChangeSearchQuery(it)) },
                 onNavigateUp = navigateUp
             )
@@ -74,35 +84,44 @@ fun ListScreen(
                             ListLocationsEvent.Order(LocationOrder.Name(it)),
                         )
                     }
-                }
-                itemsIndexed(state.locations) { _, location ->
-                    Tile(
-                        modifier = Modifier.clickable {
-                            navigateTo(Screen.ContentScreen.route + "/${location.name}")
-                            viewModel.onEvent(
-                                ListLocationsEvent.ChangeRecentlyWatched(
-                                    true,
-                                    location
+                    if (state.isLoading && state.locations.isEmpty()) {
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                        }
+                    } else {
+                        this@LazyColumn.itemsIndexed(state.locations) { _, location ->
+                            Tile(
+                                modifier = Modifier.clickable {
+                                    navigateTo(Screen.ContentScreen.route + "/${location.name}")
+                                    viewModel.onEvent(
+                                        ListLocationsEvent.ChangeRecentlyWatched(
+                                            true,
+                                            location
+                                        )
+                                    )
+                                },
+                                photoPath = location.photo,
+                                name = location.name,
+                                isWide = true,
+                                isFavorite = location.isFavorite
+                            ) {
+                                viewModel.onEvent(
+                                    ListLocationsEvent.ChangeFavorite(
+                                        newValue = !location.isFavorite,
+                                        location
+                                    )
                                 )
-                            )
-                        },
-                        photoPath = location.photo,
-                        name = location.name,
-                        isWide = true,
-                        isFavorite = location.isFavorite
-                    ) {
-                        viewModel.onEvent(
-                            ListLocationsEvent.ChangeFavorite(
-                                newValue = !location.isFavorite,
-                                location
-                            )
-                        )
+                            }
+                        }
                     }
                 }
             }
         }
     }
 }
+
+
+
 
 
 

@@ -18,7 +18,7 @@ class GetLocations(
         locationType: LocationType,
         locationOrder: LocationOrder = LocationOrder.Name(OrderType.Default),
     ) = flow {
-        repository.getLocations().collect { result ->
+         repository.getLocations().collect { result ->
             if (result.data != null) {
                 when (locationType) {
                     is LocationType.All -> result.data
@@ -41,8 +41,9 @@ class GetLocations(
                         is Resource.Loading -> {
                             emit(Resource.Loading(data = res))
                         }
-                        is Resource.Error ->
+                        is Resource.Error -> {
                             emit(Resource.Error(data = res, message = result.message ?: ""))
+                        }
                     }
                 }
             }

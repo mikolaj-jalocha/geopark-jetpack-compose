@@ -65,7 +65,7 @@ class LocationRepositoryImpl(
                 emit(Resource.Error("Couldn't reach server", data = localLocations))
             }
         }
-        emit(Resource.Success(dao.getLocations()))
+            emit(Resource.Success(dao.getLocations()))
 
     }
 

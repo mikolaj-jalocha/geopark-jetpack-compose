@@ -6,10 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Scaffold
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -17,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
+import com.geopark.feature_locations.presentation.UiEvent
 import com.geopark.feature_locations.presentation.components.CategoriesSection
 import com.geopark.feature_locations.presentation.menu.MenuLocationsEvent
 import com.geopark.feature_locations.presentation.menu.MenuViewModel
@@ -24,6 +24,7 @@ import com.geopark.feature_locations.presentation.menu.composables.MenuTopBar
 import com.geopark.feature_locations.presentation.menu.composables.Tile
 import com.geopark.feature_locations.presentation.menu.composables.TileTitleSeeAll
 import com.geopark.feature_locations.presentation.util.Screen
+import kotlinx.coroutines.flow.collectLatest
 
 
 @ExperimentalCoilApi
@@ -35,7 +36,22 @@ fun MenuScreen(
 ) {
     val state = viewModel.state.value
     val scope = rememberCoroutineScope()
+    val scaffoldState = rememberScaffoldState()
+    LaunchedEffect(key1 = true){
+        viewModel.eventFlow.collectLatest {  event ->
+            when (event) {
+                is UiEvent.ShowSnackbar ->{
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.message
+                    )
+                }
+            }
+        }
+    }
+
+
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = { MenuTopBar() }
     ) {
 

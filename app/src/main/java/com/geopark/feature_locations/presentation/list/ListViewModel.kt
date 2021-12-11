@@ -7,13 +7,17 @@ import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.geopark.core.util.Resource
 import com.geopark.feature_locations.domain.use_case.LocationUseCases
 import com.geopark.feature_locations.domain.util.LocationOrder
 import com.geopark.feature_locations.domain.util.LocationType
 import com.geopark.feature_locations.domain.util.OrderType
 import com.geopark.feature_locations.presentation.LocationsState
+import com.geopark.feature_locations.presentation.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -30,6 +34,9 @@ class ListViewModel @Inject constructor(
 
     private val _searchQuery = mutableStateOf("")
     val searchQuery: State<String> = _searchQuery
+
+    private val _eventFlow = MutableSharedFlow<UiEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
 
     private var getLocationsJob: Job? = null
@@ -83,21 +90,62 @@ class ListViewModel @Inject constructor(
     private fun getLocations(
         locationType: LocationType,
         locationOrder: LocationOrder,
-        name: String = ""
+        searchQuery: String = ""
     ) {
         viewModelScope.launch {
             getLocationsJob?.cancel()
             getLocationsJob =
-                locationUseCases.getLocations(locationType, locationOrder).onEach { locations ->
-                    _state.value = state.value.copy(
+                locationUseCases.getLocations(locationType, locationOrder).onEach { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            _state.value = state.value.copy(
+                                locations = (if (searchQuery.isNotBlank()) {
+                                    // TODO: separate use case for this
+                                    result.data?.filter {
+                                        it.name.toLowerCase(Locale.current)
+                                            .contains(searchQuery.toLowerCase(Locale.current))
+                                    }
+                                } else result.data) ?: emptyList(),
+                                locationType = locationType,
+                                locationOrder = locationOrder,
+                                isLoading = false
+                            )
+                        }
+                        is Resource.Loading<*> -> {
+                            _state.value = state.value.copy(
+                                locations = (if (searchQuery.isNotBlank()) {
+                                    // TODO: separate use case for this
+                                    result.data?.filter {
+                                        it.name.toLowerCase(Locale.current)
+                                            .contains(searchQuery.toLowerCase(Locale.current))
+                                    }
+                                } else result.data) ?: emptyList(),
+                                locationType = locationType,
+                                locationOrder = locationOrder,
+                                isLoading = true
+                            )
+                        }
+                        is Resource.Error<*> -> {
+                            _state.value = state.value.copy(
+                                locations = (if (searchQuery.isNotBlank()) {
+                                    // TODO: separate use case for this
+                                    result.data?.filter {
+                                        it.name.toLowerCase(Locale.current)
+                                            .contains(searchQuery.toLowerCase(Locale.current))
+                                    }
+                                } else result.data) ?: emptyList(),
+                                locationType = locationType,
+                                locationOrder = locationOrder,
+                                isLoading = false
+                            )
+                            _eventFlow.emit(
+                                UiEvent.ShowSnackbar(
+                                    message = result.message ?: "Unknown error"
+                                )
+                            )
+                        }
+                    }
 
-                        locations = (if (name.isNotBlank()) locations.data?.filter {
-                            it.name.toLowerCase(Locale.current)
-                                .contains(name.toLowerCase(Locale.current))
-                        } else locations.data) ?: emptyList(),
-                        locationType = locationType,
-                        locationOrder = locationOrder
-                    )
                 }.launchIn(viewModelScope)
         }
     }
