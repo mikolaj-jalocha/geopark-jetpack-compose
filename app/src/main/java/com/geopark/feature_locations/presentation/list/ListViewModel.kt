@@ -95,17 +95,11 @@ class ListViewModel @Inject constructor(
         viewModelScope.launch {
             getLocationsJob?.cancel()
             getLocationsJob =
-                locationUseCases.getLocations(locationType, locationOrder).onEach { result ->
+                locationUseCases.getLocations(locationType, locationOrder,searchQuery).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
                             _state.value = state.value.copy(
-                                locations = (if (searchQuery.isNotBlank()) {
-                                    // TODO: separate use case for this
-                                    result.data?.filter {
-                                        it.name.toLowerCase(Locale.current)
-                                            .contains(searchQuery.toLowerCase(Locale.current))
-                                    }
-                                } else result.data) ?: emptyList(),
+                                locations = result.data ?: emptyList(),
                                 locationType = locationType,
                                 locationOrder = locationOrder,
                                 isLoading = false
@@ -113,13 +107,7 @@ class ListViewModel @Inject constructor(
                         }
                         is Resource.Loading<*> -> {
                             _state.value = state.value.copy(
-                                locations = (if (searchQuery.isNotBlank()) {
-                                    // TODO: separate use case for this
-                                    result.data?.filter {
-                                        it.name.toLowerCase(Locale.current)
-                                            .contains(searchQuery.toLowerCase(Locale.current))
-                                    }
-                                } else result.data) ?: emptyList(),
+                                locations = result.data ?: emptyList(),
                                 locationType = locationType,
                                 locationOrder = locationOrder,
                                 isLoading = true
@@ -127,13 +115,7 @@ class ListViewModel @Inject constructor(
                         }
                         is Resource.Error<*> -> {
                             _state.value = state.value.copy(
-                                locations = (if (searchQuery.isNotBlank()) {
-                                    // TODO: separate use case for this
-                                    result.data?.filter {
-                                        it.name.toLowerCase(Locale.current)
-                                            .contains(searchQuery.toLowerCase(Locale.current))
-                                    }
-                                } else result.data) ?: emptyList(),
+                                locations = result.data ?: emptyList(),
                                 locationType = locationType,
                                 locationOrder = locationOrder,
                                 isLoading = false

@@ -2,7 +2,6 @@ package com.geopark.feature_locations.data.repository
 
 import android.content.SharedPreferences
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.content.edit
 import com.geopark.core.util.Constans
@@ -15,7 +14,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
-import java.lang.Exception
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -24,7 +22,6 @@ class LocationRepositoryImpl(
     private val api: GeoparkApi,
     private val preferences: SharedPreferences
 ) : LocationRepository {
-
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -48,24 +45,29 @@ class LocationRepositoryImpl(
                 DateTimeFormatter.ISO_DATE
             ).dayOfYear > Constans.DAYS_FOR_API_UPDATE.toLong()
         ) {
-            preferences.edit {
-                putString("API_UPDATE_DATE", LocalDate.now().toString())
-            }
+
             try {
                 val remoteLocations = api.getLocations()
                 dao.insertLocations(remoteLocations)
+
+                // update  caching preferences only when connection was successful
+                if (remoteLocations.isNotEmpty()) {
+                    preferences.edit {
+                        putString("API_UPDATE_DATE", LocalDate.now().toString())
+                    }
+                }
             } catch (e: HttpException) {
-                  emit(
-                      Resource.Error(
-                          e.localizedMessage ?: "An unexpected error occured",
-                          data = localLocations
-                      )
-                  )
+                emit(
+                    Resource.Error(
+                        e.localizedMessage ?: "An unexpected error occured",
+                        data = localLocations
+                    )
+                )
             } catch (e: IOException) {
                 emit(Resource.Error("Couldn't reach server", data = localLocations))
             }
         }
-            emit(Resource.Success(dao.getLocations()))
+        emit(Resource.Success(dao.getLocations()))
 
     }
 
