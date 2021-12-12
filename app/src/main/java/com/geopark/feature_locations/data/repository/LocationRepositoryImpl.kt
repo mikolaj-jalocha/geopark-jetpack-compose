@@ -8,6 +8,7 @@ import com.geopark.core.util.Constans
 import com.geopark.core.util.Resource
 import com.geopark.feature_locations.data.local.LocationDao
 import com.geopark.feature_locations.data.remote.GeoparkApi
+import com.geopark.feature_locations.data.remote.NoInternetConnection
 import com.geopark.feature_locations.domain.model.Location
 import com.geopark.feature_locations.domain.repository.LocationRepository
 import kotlinx.coroutines.flow.Flow
@@ -51,6 +52,7 @@ class LocationRepositoryImpl(
                 dao.insertLocations(remoteLocations)
 
                 // update  caching preferences only when connection was successful
+
                 if (remoteLocations.isNotEmpty()) {
                     preferences.edit {
                         putString("API_UPDATE_DATE", LocalDate.now().toString())
@@ -59,10 +61,12 @@ class LocationRepositoryImpl(
             } catch (e: HttpException) {
                 emit(
                     Resource.Error(
-                        e.localizedMessage ?: "An unexpected error occured",
+                        e.localizedMessage ?: "An unexpected error occurred",
                         data = localLocations
                     )
                 )
+            } catch (e: NoInternetConnection) {
+                emit(Resource.Error(e.message, data = localLocations))
             } catch (e: IOException) {
                 emit(Resource.Error("Couldn't reach server", data = localLocations))
             }
