@@ -94,97 +94,15 @@ fun MenuScreen(
                                     isWide = false,
                                     photoPath = location.photo,
                                     name = location.name,
-                                    isFavorite = location.isFavorite,
+                                    isFavorite = false,
                                     onFavoriteClick = {
-                                        viewModel.onEvent(
-                                            MenuLocationsEvent.ChangeFavorite(
-                                                !location.isFavorite,
-                                                location
-                                            )
-                                        )
+
                                     })
                             }
                         }
                     }
                 }
 
-                item {
-                    TileTitleSeeAll(
-                        title = "Recently watched",
-                        seeAllClick = { /* TODO: implement list of all screens for recently watched */ })
-
-                    if (state.isLoading && state.locations.isEmpty()) {
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            CircularProgressIndicator(modifier = Modifier.align(CenterHorizontally))
-                        }
-                    } else {
-                        LazyRow {
-                            itemsIndexed(state.locations.filter { it.wasRecentlyWatched }) { _, location ->
-                                Tile(
-                                    modifier = Modifier.clickable {
-                                        //TODO :implement navigation
-                                        viewModel.onEvent(
-                                            MenuLocationsEvent.ChangeRecentlyWatched(
-                                                true,
-                                                location
-                                            )
-                                        )
-                                    },
-                                    photoPath = location.photo,
-                                    isWide = false,
-                                    name = location.name,
-                                    isFavorite = location.isFavorite,
-                                    onFavoriteClick = {
-                                        navigateTo(Screen.ContentScreen.route + "/${location.name}")
-                                        viewModel.onEvent(
-                                            MenuLocationsEvent.ChangeFavorite(
-                                                !location.isFavorite,
-                                                location
-                                            )
-                                        )
-                                    })
-                            }
-                        }
-                    }
-                }
-                item {
-                    TileTitleSeeAll(
-                        title = "Favorites",
-                        seeAllClick = { /* TODO: implement list of all screens for favorites */ })
-
-                    if (state.isLoading && state.locations.isEmpty()) {
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            CircularProgressIndicator(modifier = Modifier.align(CenterHorizontally))
-                        }
-                    } else {
-                        LazyRow {
-                            itemsIndexed(state.locations.filter { it.isFavorite }) { _, location ->
-                                Tile(
-                                    modifier = Modifier.clickable {
-                                        navigateTo(Screen.ContentScreen.route + "/${location.name}")
-                                        viewModel.onEvent(
-                                            MenuLocationsEvent.ChangeRecentlyWatched(
-                                                true,
-                                                location
-                                            )
-                                        )
-                                    },
-                                    photoPath = location.photo,
-                                    isWide = false,
-                                    name = location.name,
-                                    isFavorite = location.isFavorite,
-                                    onFavoriteClick = {
-                                        viewModel.onEvent(
-                                            MenuLocationsEvent.ChangeFavorite(
-                                                !location.isFavorite,
-                                                location
-                                            )
-                                        )
-                                    })
-                            }
-                        }
-                    }
-                }
             }
 
     }

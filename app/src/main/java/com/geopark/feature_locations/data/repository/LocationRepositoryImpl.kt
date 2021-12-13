@@ -28,7 +28,6 @@ class LocationRepositoryImpl(
     @RequiresApi(Build.VERSION_CODES.O)
     override fun getLocations(): Flow<Resource<List<Location>>> = flow {
 
-
         emit(Resource.Loading(data = emptyList()))
 
         val a = preferences.getString(

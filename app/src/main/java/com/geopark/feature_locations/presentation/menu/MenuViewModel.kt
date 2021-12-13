@@ -47,17 +47,6 @@ class MenuViewModel @Inject constructor(
                 getLocations(menuEvent.locationType)
 
             }
-            is MenuLocationsEvent.ChangeFavorite -> {
-                viewModelScope.launch {
-                    locationUseCases.changeLocationData(menuEvent.location.copy(isFavorite = menuEvent.newValue))
-                }
-            }
-            is MenuLocationsEvent.ChangeRecentlyWatched -> {
-                viewModelScope.launch {
-                    locationUseCases.changeLocationData(menuEvent.location.copy(wasRecentlyWatched = menuEvent.newValue))
-                }
-
-            }
         }
     }
 

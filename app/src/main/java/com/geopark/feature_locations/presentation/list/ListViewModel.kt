@@ -66,16 +66,6 @@ class ListViewModel @Inject constructor(
                 )
             }
 
-            is ListLocationsEvent.ChangeFavorite -> {
-                viewModelScope.launch {
-                    locationUseCases.changeLocationData(listEvent.location.copy(isFavorite = listEvent.newValue))
-                }
-            }
-            is ListLocationsEvent.ChangeRecentlyWatched -> {
-                viewModelScope.launch {
-                    locationUseCases.changeLocationData(listEvent.location.copy(wasRecentlyWatched = listEvent.newValue))
-                }
-            }
             is ListLocationsEvent.Order -> {
                 if (state.value.locationOrder::class == listEvent.locationOrder::class &&
                     state.value.locationOrder.orderType == listEvent.locationOrder.orderType

@@ -14,10 +14,6 @@ data class Location(
     val website: String = "",
     val photo : String = "",
 
-    @Exclude
-    val isFavorite : Boolean = false,
-    @Exclude
-    val wasRecentlyWatched : Boolean = false
 )
 
 

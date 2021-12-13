@@ -103,14 +103,9 @@ fun ListScreen(
                                 photoPath = location.photo,
                                 name = location.name,
                                 isWide = true,
-                                isFavorite = location.isFavorite
+                                isFavorite = false
                             ) {
-                                viewModel.onEvent(
-                                    ListLocationsEvent.ChangeFavorite(
-                                        newValue = !location.isFavorite,
-                                        location
-                                    )
-                                )
+
                             }
                         }
                     }

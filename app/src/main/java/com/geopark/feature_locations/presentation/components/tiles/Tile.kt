@@ -57,6 +57,7 @@ fun Tile(
                 animateColorAsState(if (isRed.value) CinnabarRed else Color.Black)
 
             IconButton(onClick = {
+                isRed.value = !isRed.value
                 onFavoriteClick()
             },
                 modifier = Modifier
