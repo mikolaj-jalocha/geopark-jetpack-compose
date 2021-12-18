@@ -1,4 +1,4 @@
-package com.geopark.feature_locations.presentation
+package com.geopark
 
 import android.content.Intent
 import android.net.Uri
@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import coil.annotation.ExperimentalCoilApi
+import com.geopark.feature_events.presentation.list.components.EventListScreen
 import com.geopark.feature_locations.presentation.content.ContentEvent
 import com.geopark.feature_locations.presentation.content.components.ContentScreen
 import com.geopark.feature_locations.presentation.list.components.ListScreen

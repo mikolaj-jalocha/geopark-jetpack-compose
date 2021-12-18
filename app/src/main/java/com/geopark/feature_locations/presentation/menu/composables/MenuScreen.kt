@@ -90,7 +90,7 @@ fun MenuScreen(
                                                 location
                                             )
                                         )
-                                    },
+                                    }.padding(start = 16.dp),
                                     isWide = false,
                                     photoPath = location.photo,
                                     name = location.name,

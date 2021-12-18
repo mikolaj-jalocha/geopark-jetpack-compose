@@ -29,7 +29,6 @@ fun TileTitleSortBy(modifier : Modifier = Modifier, title : String , onSortClick
     var expanded by remember { mutableStateOf(false) }
     Row(
         horizontalArrangement = Arrangement.SpaceBetween, modifier = modifier
-            //.padding(start = 12.dp, end = 12.dp, bottom = 12.dp, top = 17.dp)
             .fillMaxWidth()
     ) {
         Text(

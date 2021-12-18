@@ -11,7 +11,7 @@ android {
     compileSdkVersion 31
     defaultConfig {
         applicationId "com.geoparkcompose"
-        minSdk 25
+        minSdk 26
         targetSdk 30
         versionCode 1
         versionName "1.0"
