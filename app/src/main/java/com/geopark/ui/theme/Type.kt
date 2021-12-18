@@ -103,6 +103,6 @@ val GeoparkTypography = Typography(
         fontFamily = Poppins,
         fontWeight = FontWeight.Normal,
         fontSize = 10.sp,
-        letterSpacing = 1.5.sp
+        letterSpacing = 0.2.sp
     )
 )
