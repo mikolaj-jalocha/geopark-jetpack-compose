@@ -19,7 +19,7 @@ import com.geopark.feature_locations.presentation.components.TileTitleSortBy
 import com.geopark.feature_locations.presentation.list.ListLocationsEvent
 import com.geopark.feature_locations.presentation.list.ListViewModel
 import com.geopark.feature_locations.presentation.menu.composables.Tile
-import com.geopark.feature_locations.presentation.util.Screen
+import com.geopark.core.presentation.util.Screen
 import kotlinx.coroutines.flow.collectLatest
 
 @ExperimentalAnimationApi

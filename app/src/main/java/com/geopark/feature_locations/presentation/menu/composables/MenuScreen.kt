@@ -1,6 +1,5 @@
 package com.geoparkcompose.ui.menu
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,7 +9,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -23,7 +21,7 @@ import com.geopark.feature_locations.presentation.menu.MenuViewModel
 import com.geopark.feature_locations.presentation.menu.composables.MenuTopBar
 import com.geopark.feature_locations.presentation.menu.composables.Tile
 import com.geopark.feature_locations.presentation.menu.composables.TileTitleSeeAll
-import com.geopark.feature_locations.presentation.util.Screen
+import com.geopark.core.presentation.util.Screen
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -49,10 +47,8 @@ fun MenuScreen(
         }
     }
 
-
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { MenuTopBar() }
     ) {
 
             LazyColumn(

@@ -105,8 +105,15 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
+
+    //Accompanist insets
     implementation "com.google.accompanist:accompanist-insets-ui:$accompanist_insets_version"
 
+    //Accompanist pager
+
+    implementation "com.google.accompanist:accompanist-pager:$accompanist_pager_version"
+    // If using indicators, also depend on
+    implementation "com.google.accompanist:accompanist-pager-indicators:$accompanist_pager_version"
 
 
     testImplementation 'junit:junit:4.+'

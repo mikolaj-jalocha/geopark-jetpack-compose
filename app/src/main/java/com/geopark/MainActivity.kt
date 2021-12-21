@@ -15,20 +15,22 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import coil.annotation.ExperimentalCoilApi
-import com.geopark.feature_events.presentation.list.components.EventListScreen
+import com.geopark.core.presentation.ContainerScreen
 import com.geopark.feature_locations.presentation.content.ContentEvent
 import com.geopark.feature_locations.presentation.content.components.ContentScreen
 import com.geopark.feature_locations.presentation.list.components.ListScreen
-import com.geopark.feature_locations.presentation.util.Screen
+import com.geopark.core.presentation.util.Screen
 import com.geopark.ui.theme.GeoparkTheme
 import com.geoparkcompose.ui.menu.MenuScreen
 import com.google.accompanist.insets.ProvideWindowInsets
+import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
 
+    @ExperimentalPagerApi
     @ExperimentalAnimationApi
     @ExperimentalFoundationApi
     @ExperimentalCoilApi
@@ -45,9 +47,12 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
-                        startDestination = Screen.MenuScreen.route
+                        startDestination = Screen.ContainerScreen.route
                     ) {
 
+                        composable(route = Screen.ContainerScreen.route) {
+                            ContainerScreen(navigateTo = navController::navigate)
+                        }
                         composable(route = Screen.MenuScreen.route) {
                             MenuScreen(navigateTo = navController::navigate)
                         }
