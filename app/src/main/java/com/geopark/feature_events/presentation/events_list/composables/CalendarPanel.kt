@@ -1,6 +1,5 @@
 package com.geopark.feature_events.presentation.events_list.composables
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,22 +17,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.geopark.core.util.getShortName
 import com.geopark.feature_events.presentation.events_list.CalendarPanelState
+
 import com.geopark.ui.theme.DirtyWhite
 import com.geopark.ui.theme.NavyBlue
-import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.Month
-import java.time.YearMonth
-import java.time.format.TextStyle
-import java.util.*
+
 
 
 @Composable
 fun CalendarPanel(
     data: CalendarPanelState,
-    onDayChange: () -> Unit,
-    onMonthChange: () -> Unit,
+    onDayChange: (Int) -> Unit,
+    onMonthChange: (Int) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -46,15 +43,17 @@ fun CalendarPanel(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(Icons.Filled.ArrowBack, "Previous month")
-            }
+                IconButton(onClick = {
+                    onMonthChange(-1)
+                }) {
+                    Icon(Icons.Filled.ArrowBack, "Previous month")
+                }
 
-            val selectedMonthName = data.month.getName()
-            val selectedYear = data.year
 
-            Text("$selectedMonthName, $selectedYear", style = MaterialTheme.typography.h6)
-            IconButton(onClick = { }) {
+            Text("${data.month.name}, ${data.year}", style = MaterialTheme.typography.h6)
+            IconButton(onClick = {
+                onMonthChange(1)
+            }) {
                 Icon(Icons.Filled.ArrowForward, "Next month")
             }
         }
@@ -63,28 +62,18 @@ fun CalendarPanel(
             horizontalArrangement = Arrangement.SpaceAround
         ) {
 
-            val currentDay = LocalDate.now().dayOfMonth
-            val numberOfDays  = data.daysInMonth - currentDay + 1
-
-            items(numberOfDays) { i ->
+            items(data.numberOfDays) { i ->
                 CalendarDayItem(
-                    dayName = (data.day + i.toLong()).getName(),
-                    dayNumber = currentDay + i,
-                    isSelected = i + currentDay == currentDay
+                    dayName = LocalDate.of(data.year, data.month, data.currentDay + i).dayOfWeek.getShortName(), //or get name here
+                    dayNumber = data.currentDay + i,
+                    isSelected = data.selectedDayOfMonth == i + data.currentDay
                 ) {
-                    // TODO: Handle click here
+                    onDayChange(data.currentDay + i)
                 }
             }
         }
     }
 }
-
-private fun DayOfWeek.getName() =
-    this.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-
-
-private fun Month.getName() =
-    this.getDisplayName(TextStyle.FULL, Locale.getDefault())
 
 
 @Composable

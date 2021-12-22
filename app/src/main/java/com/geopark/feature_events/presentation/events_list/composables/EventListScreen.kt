@@ -6,6 +6,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
+import com.geopark.feature_events.presentation.events_list.CalendarPanelEvent
 import com.geopark.feature_events.presentation.events_list.EventScreenViewModel
 
 const val TILE_HEIGHT = 180
@@ -25,7 +26,10 @@ fun EventListScreen(
 
     Scaffold {
         Column {
-            CalendarPanel(state,onDayChange = {}, onMonthChange = {})
+            CalendarPanel(
+                state,
+                onDayChange = { viewModel.onCalendarEvent(CalendarPanelEvent.ChangeDay(it)) },
+                onMonthChange = {viewModel.onCalendarEvent(CalendarPanelEvent.ChangeMonth(it))})
 
 
         }

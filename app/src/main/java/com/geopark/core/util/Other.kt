@@ -1,8 +1,11 @@
 package com.geopark.core.util
 
+import java.time.DayOfWeek
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
+import java.util.*
 
 
 // TODO: Add description and potential utility
@@ -30,3 +33,6 @@ fun String.getDate() : String{
     return "$days$day $hours$hour $minutes$minute"
 
 }
+
+fun DayOfWeek.getShortName(): String =
+    this.getDisplayName(TextStyle.SHORT, Locale.getDefault())
