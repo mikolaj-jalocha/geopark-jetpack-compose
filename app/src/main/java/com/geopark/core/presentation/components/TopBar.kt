@@ -1,6 +1,5 @@
-package com.geopark.feature_locations.presentation.menu.composables
+package com.geopark.feature_locations_events.presentation.menu.composables
 
-import android.util.Log
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.spring
@@ -52,8 +51,8 @@ fun TabBar(
     pagerState: PagerState,
     titles: List<String> = listOf(
         "Odkrywaj",
-        "Paszport Odkrywcy",
         "Wydarzenia",
+        "Paszport Odkrywcy",
         "Informacje",
         "Kontakt"
     ),

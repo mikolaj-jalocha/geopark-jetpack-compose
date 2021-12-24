@@ -5,12 +5,16 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
 import com.geopark.core.util.Constans
-import com.geopark.feature_locations.data.local.LocationDatabase
-import com.geopark.feature_locations.data.remote.ConnectivityInterceptor
-import com.geopark.feature_locations.data.remote.GeoparkApi
-import com.geopark.feature_locations.data.repository.LocationRepositoryImpl
-import com.geopark.feature_locations.domain.repository.LocationRepository
-import com.geopark.feature_locations.domain.use_case.*
+import com.geopark.feature_locations_events.data.local.LocationDatabase
+import com.geopark.feature_locations_events.data.remote.ConnectivityInterceptor
+import com.geopark.feature_locations_events.data.remote.GeoparkApi
+import com.geopark.feature_locations_events.data.repository.EventRepositoryImpl
+import com.geopark.feature_locations_events.data.repository.LocationRepositoryImpl
+import com.geopark.feature_locations_events.domain.repository.EventRepository
+import com.geopark.feature_locations_events.domain.repository.LocationRepository
+import com.geopark.feature_locations_events.domain.use_case.events.EventsUseCase
+import com.geopark.feature_locations_events.domain.use_case.events.GetEvents
+import com.geopark.feature_locations_events.domain.use_case.locations.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -95,6 +99,18 @@ object AppModule {
             insertLocations = InsertLocations(repository),
             changeLocationData = ChangeLocationData(repository)
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideEventRepository(api: GeoparkApi)  :  EventRepository {
+        return EventRepositoryImpl(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideEventsUseCases(repository: EventRepository): EventsUseCase {
+        return EventsUseCase(getEvents = GetEvents(repository))
     }
 
 

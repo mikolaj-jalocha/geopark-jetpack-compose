@@ -1,4 +1,4 @@
-package com.geopark.feature_locations.data.remote
+package com.geopark.feature_locations_events.data.remote
 
 import android.content.Context
 import okhttp3.Interceptor
