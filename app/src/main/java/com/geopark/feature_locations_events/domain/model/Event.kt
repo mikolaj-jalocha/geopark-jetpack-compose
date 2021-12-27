@@ -1,5 +1,9 @@
 package com.geopark.feature_locations_events.domain.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "events", primaryKeys = ["title","date","startHour"])
 data class Event(
     val date : String,
     val startHour : String,

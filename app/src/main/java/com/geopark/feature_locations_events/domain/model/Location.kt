@@ -3,7 +3,7 @@ package com.geopark.feature_locations_events.domain.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(tableName = "locations")
 data class Location(
     @PrimaryKey
     val name: String = "",

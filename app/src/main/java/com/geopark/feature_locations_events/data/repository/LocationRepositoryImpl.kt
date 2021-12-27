@@ -30,7 +30,7 @@ class LocationRepositoryImpl(
 
         emit(Resource.Loading(data = emptyList()))
 
-        val a = preferences.getString(
+        val lastUpdateDate = preferences.getString(
             "API_UPDATE_DATE",
             LocalDate.now().minusDays((Constans.DAYS_FOR_API_UPDATE + 1).toLong()).toString()
         )
@@ -39,9 +39,9 @@ class LocationRepositoryImpl(
         emit(Resource.Loading(localLocations))
 
 
-        if (!a.isNullOrEmpty() &&
+        if (!lastUpdateDate.isNullOrEmpty() &&
             LocalDate.now().dayOfYear - LocalDate.parse(
-                a,
+                lastUpdateDate,
                 DateTimeFormatter.ISO_DATE
             ).dayOfYear > Constans.DAYS_FOR_API_UPDATE.toLong()
         ) {
@@ -51,7 +51,6 @@ class LocationRepositoryImpl(
                 dao.insertLocations(remoteLocations)
 
                 // update  caching preferences only when connection was successful
-
                 if (remoteLocations.isNotEmpty()) {
                     preferences.edit {
                         putString("API_UPDATE_DATE", LocalDate.now().toString())
@@ -66,28 +65,19 @@ class LocationRepositoryImpl(
                 )
             } catch (e: NoInternetConnection) {
                 emit(Resource.Error(e.message, data = localLocations))
-            } catch (e: IOException) {
-                emit(Resource.Error("Couldn't reach server", data = localLocations))
+            } catch (e: Exception) {
+                emit(Resource.Error("Unknown error occurred", data = localLocations))
             }
         }
         emit(Resource.Success(dao.getLocations()))
 
     }
 
-    override suspend fun updateLocation(location: Location) {
-        dao.updateLocation(location)
-    }
-
     override suspend fun getLocationByName(name: String): Location? {
-        return dao.getLocationByName(name)
+           return dao.getLocationByName(name)
     }
 
-    override suspend fun insertLocation(location: Location) {
-        dao.insertLocation(location)
-    }
 
-    override suspend fun deleteLocation(location: Location) {
-        dao.deleteLocation(location)
-    }
+
 
 }

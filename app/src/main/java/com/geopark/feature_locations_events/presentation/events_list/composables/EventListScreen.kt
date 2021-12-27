@@ -36,7 +36,7 @@ fun EventListScreen(
     navigateTo: (String) -> Unit
 ) {
 
-    val calendarPanelState = viewModel.calendarPanelState.value
+    val calendarPanelState = viewModel.calendarState.value
     val eventsState = viewModel.eventsState.value
     val scaffoldState = rememberScaffoldState()
     LaunchedEffect(key1 = true) {

@@ -14,7 +14,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.time.LocalDate
 import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,8 +24,8 @@ class EventScreenViewModel @Inject constructor(
     private val eventsUseCase: EventsUseCase
 ) : ViewModel() {
 
-    private val _calendarPanelState = mutableStateOf(CalendarPanelState())
-    val calendarPanelState: State<CalendarPanelState> = _calendarPanelState
+    private val _calendarState = mutableStateOf(CalendarPanelState())
+    val calendarState: State<CalendarPanelState> = _calendarState
 
     private val _eventsState = mutableStateOf(EventsState())
     val eventsState: State<EventsState> = _eventsState
@@ -41,7 +43,8 @@ class EventScreenViewModel @Inject constructor(
 
     private fun getEvents() {
         getEventsJob?.cancel()
-        getEventsJob = eventsUseCase.getEvents().onEach { result ->
+        val selectedDate = LocalDate.of(calendarState.value.year, calendarState.value.month,calendarState.value.selectedDayOfMonth ?: LocalDate.now().dayOfMonth)
+        getEventsJob = eventsUseCase.getEvents(selectedDate).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     _eventsState.value = _eventsState.value.copy(
@@ -75,19 +78,19 @@ class EventScreenViewModel @Inject constructor(
     fun onCalendarEvent(calendarEvent: CalendarPanelEvent) {
         when (calendarEvent) {
             is CalendarPanelEvent.ChangeDay -> {
-                _calendarPanelState.value = _calendarPanelState.value.copy(
+                _calendarState.value = _calendarState.value.copy(
                     selectedDayOfMonth = calendarEvent.newDayNumber
                 )
             }
             is CalendarPanelEvent.ChangeMonth -> {
                 val newYear =
-                    YearMonth.of(calendarPanelState.value.year, calendarPanelState.value.month)
+                    YearMonth.of(calendarState.value.year, calendarState.value.month)
                         .plusMonths(calendarEvent.monthsToAdd.toLong())
                 val newMonth = newYear.month
-                _calendarPanelState.value = CalendarPanelState(newYear.year, newMonth)
-
+                _calendarState.value = CalendarPanelState(newYear.year, newMonth)
             }
         }
+        getEvents()
     }
 
 }

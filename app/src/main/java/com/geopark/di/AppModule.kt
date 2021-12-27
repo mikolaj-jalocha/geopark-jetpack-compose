@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
 import com.geopark.core.util.Constans
+import com.geopark.feature_locations_events.data.local.EventDao
 import com.geopark.feature_locations_events.data.local.LocationDatabase
 import com.geopark.feature_locations_events.data.remote.ConnectivityInterceptor
 import com.geopark.feature_locations_events.data.remote.GeoparkApi
@@ -36,6 +37,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideSharedPreferences(app: Application): SharedPreferences {
+        // TODO: 27.12.2021 Rename variable name
         return app.getSharedPreferences("GEOPARK_CACHE_SETTINGS", Context.MODE_PRIVATE)
     }
 
@@ -79,7 +81,6 @@ object AppModule {
     @Singleton
     fun provideApplicationScope() = CoroutineScope(SupervisorJob())
 
-
     @Provides
     @Singleton
     fun provideLocationRepository(
@@ -95,16 +96,14 @@ object AppModule {
     fun provideLocationUseCases(repository: LocationRepository): LocationUseCases {
         return LocationUseCases(
             getLocations = GetLocations(repository),
-            getLocationByName = GetLocationByName(repository),
-            insertLocations = InsertLocations(repository),
-            changeLocationData = ChangeLocationData(repository)
+            getLocationByName = GetLocationByName(repository)
         )
     }
 
     @Provides
     @Singleton
-    fun provideEventRepository(api: GeoparkApi)  :  EventRepository {
-        return EventRepositoryImpl(api)
+    fun provideEventRepository(api: GeoparkApi,db: LocationDatabase)  :  EventRepository {
+        return EventRepositoryImpl(api,db.eventDao)
     }
 
     @Provides
