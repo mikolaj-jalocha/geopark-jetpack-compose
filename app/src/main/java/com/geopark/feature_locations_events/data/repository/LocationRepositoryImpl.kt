@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.content.edit
-import com.geopark.core.util.Constans
+import com.geopark.core.util.Constants
 import com.geopark.core.util.Resource
 import com.geopark.feature_locations_events.data.local.LocationDao
 import com.geopark.feature_locations_events.data.remote.GeoparkApi
@@ -14,7 +14,6 @@ import com.geopark.feature_locations_events.domain.repository.LocationRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
-import java.io.IOException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -30,22 +29,19 @@ class LocationRepositoryImpl(
 
         emit(Resource.Loading(data = emptyList()))
 
-        val lastUpdateDate = preferences.getString(
-            "API_UPDATE_DATE",
-            LocalDate.now().minusDays((Constans.DAYS_FOR_API_UPDATE + 1).toLong()).toString()
-        )
+        val lastUpdateDate = preferences.getString(Constants.LOCATIONS_UPDATE_DATE, "")
+
+
+        val daysFromLastUpdate =   if(!lastUpdateDate.isNullOrEmpty())
+            LocalDate.now().dayOfYear - LocalDate.parse(lastUpdateDate, DateTimeFormatter.ISO_DATE).dayOfYear else -1
+
 
         val localLocations = dao.getLocations()
         emit(Resource.Loading(localLocations))
 
 
-        if (!lastUpdateDate.isNullOrEmpty() &&
-            LocalDate.now().dayOfYear - LocalDate.parse(
-                lastUpdateDate,
-                DateTimeFormatter.ISO_DATE
-            ).dayOfYear > Constans.DAYS_FOR_API_UPDATE.toLong()
-        ) {
 
+        if (lastUpdateDate != null && (lastUpdateDate.isEmpty() || daysFromLastUpdate > Constants.DAYS_FOR_LOCATIONS_API_UPDATE)){
             try {
                 val remoteLocations = api.getLocations()
                 dao.insertLocations(remoteLocations)
@@ -53,7 +49,7 @@ class LocationRepositoryImpl(
                 // update  caching preferences only when connection was successful
                 if (remoteLocations.isNotEmpty()) {
                     preferences.edit {
-                        putString("API_UPDATE_DATE", LocalDate.now().toString())
+                        putString(Constants.LOCATIONS_UPDATE_DATE, LocalDate.now().toString())
                     }
                 }
             } catch (e: HttpException) {

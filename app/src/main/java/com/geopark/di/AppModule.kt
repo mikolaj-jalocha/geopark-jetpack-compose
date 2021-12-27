@@ -4,8 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
-import com.geopark.core.util.Constans
-import com.geopark.feature_locations_events.data.local.EventDao
+import com.geopark.core.util.Constants
 import com.geopark.feature_locations_events.data.local.LocationDatabase
 import com.geopark.feature_locations_events.data.remote.ConnectivityInterceptor
 import com.geopark.feature_locations_events.data.remote.GeoparkApi
@@ -37,7 +36,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideSharedPreferences(app: Application): SharedPreferences {
-        // TODO: 27.12.2021 Rename variable name
+        // TODO: Rename variable name
         return app.getSharedPreferences("GEOPARK_CACHE_SETTINGS", Context.MODE_PRIVATE)
     }
 
@@ -49,7 +48,7 @@ object AppModule {
     ): LocationDatabase {
         return Room.databaseBuilder(
             app, LocationDatabase::class.java,
-            Constans.DATABASE_NAME
+            Constants.DATABASE_NAME
         )
             .fallbackToDestructiveMigration()
             .build()
@@ -69,7 +68,7 @@ object AppModule {
     @Singleton
     fun provideGeoparkApi(@ConnectivityClient connectivityClient: OkHttpClient): GeoparkApi {
         return Retrofit.Builder()
-            .baseUrl(Constans.GEOPARK_API_URL)
+            .baseUrl(Constants.GEOPARK_API_URL)
             .client(connectivityClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -102,8 +101,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideEventRepository(api: GeoparkApi,db: LocationDatabase)  :  EventRepository {
-        return EventRepositoryImpl(api,db.eventDao)
+    fun provideEventRepository(api: GeoparkApi,db: LocationDatabase,preferences: SharedPreferences)  :  EventRepository {
+        return EventRepositoryImpl(api,db.eventDao,preferences)
     }
 
     @Provides
