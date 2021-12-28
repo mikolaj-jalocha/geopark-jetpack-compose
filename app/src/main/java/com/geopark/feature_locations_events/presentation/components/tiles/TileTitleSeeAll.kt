@@ -24,6 +24,7 @@ fun TileTitleSeeAll(title: String, seeAllClick: (String) -> Unit) {
     ) {
         Text(
             text = title,
+            color = MaterialTheme.colors.onPrimary,
             style = MaterialTheme.typography.h6,
         )
         Text(

@@ -62,7 +62,7 @@ fun TabBar(
     val scope = rememberCoroutineScope()
 
     ScrollableTabRow(
-        backgroundColor = MaterialTheme.colors.onPrimary,
+        backgroundColor = MaterialTheme.colors.background,
         edgePadding = 4.dp,
         selectedTabIndex = pagerState.currentPage,
         indicator = { tabPositions ->

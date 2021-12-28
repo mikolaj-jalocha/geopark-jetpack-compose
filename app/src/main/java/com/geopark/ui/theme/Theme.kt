@@ -11,10 +11,16 @@ import androidx.compose.runtime.Composable
 fun GeoparkTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     MaterialTheme(
         content = content,
-        colors = if (darkTheme) darkColors() else LightColors,
+        colors = if (darkTheme) DarkColors else LightColors,
         typography = GeoparkTypography
     )
 }
+
+private val DarkColors = darkColors(
+    primary = CinnabarRed,
+    primaryVariant = MaximumRed,
+    secondary = EmpireBlue // or BabyBlue
+)
 
 private val LightColors = lightColors(
     primary = CinnabarRed,

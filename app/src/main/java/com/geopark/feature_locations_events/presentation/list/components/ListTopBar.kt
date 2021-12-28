@@ -4,6 +4,7 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
@@ -59,7 +61,8 @@ fun  ListTopBar(
                         onSearchBarClick(!isSearchEnabled)
                     },
                 ) {
-                    Icon(Icons.Default.Search, "search")
+                    Icon(Icons.Default.Search, "search",
+                    tint = if (isSystemInDarkTheme()) Color.Gray else MaterialTheme.colors.onSurface)
                 }
 
                 AnimatedVisibility(
@@ -104,7 +107,7 @@ fun  ListTopBar(
                             }) {
                                 Icon(
                                     Icons.Outlined.Clear,
-                                    tint = MaterialTheme.colors.onSurface,
+                                    tint = if(isSystemInDarkTheme()) Color.Gray else MaterialTheme.colors.onSurface,
                                     contentDescription = "Clear search field"
                                 )
                             }
