@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,7 +23,7 @@ fun RoundedIcon(
     modifier: Modifier = Modifier,
     @DrawableRes iconId: Int,
     iconSize: Dp = 20.dp,
-    iconTint : Color = Color.Black,
+    iconTint : Color = MaterialTheme.colors.onSurface,
     onClick: () -> Unit
 ) {
 

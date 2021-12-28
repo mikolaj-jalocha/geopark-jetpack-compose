@@ -26,7 +26,7 @@ import com.geopark.feature_locations_events.presentation.content.ContentViewMode
 import com.geopark.ui.theme.BabyBlue
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-
+import androidx.compose.material.MaterialTheme.colors
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @ExperimentalFoundationApi
@@ -67,7 +67,7 @@ fun ContentScreen(
                     .offset(y = (-50).dp)
                     .clip(RoundedCornerShape(30.dp))
                     .fillMaxWidth()
-                    .background(Color.White),
+                    .background(colors.surface),
             ) {
 
                 item {

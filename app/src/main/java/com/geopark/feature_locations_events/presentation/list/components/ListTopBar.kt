@@ -27,7 +27,7 @@ import com.google.accompanist.insets.systemBarsPadding
 @ExperimentalCoilApi
 @ExperimentalMaterialApi
 @Composable
-fun ListTopBar(
+fun  ListTopBar(
     text: String,
     isSearchEnabled: Boolean,
     onNavigateUp: () -> Unit = {},

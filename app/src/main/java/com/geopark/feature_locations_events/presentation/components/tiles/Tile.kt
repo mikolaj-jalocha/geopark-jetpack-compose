@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.geopark.R
+import androidx.compose.material.MaterialTheme.colors
 import com.geopark.ui.theme.CinnabarRed
 
 @ExperimentalCoilApi
@@ -53,7 +54,7 @@ fun Tile(
             val isRed = remember { mutableStateOf(value = isFavorite) }
 
             val animatedColor =
-                animateColorAsState(if (isRed.value) CinnabarRed else Color.Black)
+                animateColorAsState(if (isRed.value) colors.primary else colors.onSurface)
 
             IconButton(onClick = {
                 isRed.value = !isRed.value
@@ -64,7 +65,7 @@ fun Tile(
                     .padding(14.dp)
                     .size(35.dp)
                     .clip(CircleShape)
-                    .background(Color.White)) {
+                    .background(colors.surface)) {
                 Icon(
                     painter = painterResource(if (isRed.value) R.drawable.ic_bookmark_filled else R.drawable.ic_bookmark_outline),
                     tint = animatedColor.value,
@@ -97,7 +98,7 @@ fun Tile(
             ) {
                 Text(
                     text = name,
-                    color = Color.White,
+                    color = colors.surface,
                     fontSize = if (isWide) 25.sp else 21.sp,
                     style = MaterialTheme.typography.h6,
                     fontWeight = FontWeight.SemiBold

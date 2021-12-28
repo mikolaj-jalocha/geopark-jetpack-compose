@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.geopark.R
+import com.geopark.ui.theme.AmericanoGray
 import com.geopark.ui.theme.CinnabarRed
 import com.google.accompanist.insets.systemBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -61,7 +62,7 @@ fun TabBar(
     val scope = rememberCoroutineScope()
 
     ScrollableTabRow(
-        backgroundColor = Color.White,
+        backgroundColor = MaterialTheme.colors.onPrimary,
         edgePadding = 4.dp,
         selectedTabIndex = pagerState.currentPage,
         indicator = { tabPositions ->
@@ -109,7 +110,7 @@ fun TitleTabItem(
                 text = title,
                 style = MaterialTheme.typography.subtitle1,
                 fontWeight = FontWeight.Medium,
-                color = if (selected) CinnabarRed else Color.Gray,
+                color = if (selected) MaterialTheme.colors.primary else Color.Gray,
                 maxLines = 1,
                 modifier = Modifier
                     .padding(4.dp)

@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.geopark.core.util.getShortName
@@ -32,59 +33,59 @@ fun CalendarPanel(
     onDayChange: (Int) -> Unit,
     onMonthChange: (Int) -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(150.dp)
-            .background(DirtyWhite)
-    ) {
-
-        val dayRowState = rememberLazyListState(data.currentDay)
-        val coroutineScope = rememberCoroutineScope()
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
+    Surface(elevation = 1.dp) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(150.dp)
         ) {
-            IconButton(onClick = {
-                onMonthChange(-1)
-                coroutineScope.launch {
-                    dayRowState.animateScrollToItem(if (data.month.minus(1) == LocalDate.now().month) LocalDate.now().dayOfMonth else 0)
-                }
-            }) {
-                Icon(Icons.Filled.ArrowBack, "Previous month")
+            val dayRowState = rememberLazyListState(data.currentDay)
+            val coroutineScope = rememberCoroutineScope()
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = {
+                    onMonthChange(-1)
+                    coroutineScope.launch {
+                        dayRowState.animateScrollToItem(if (data.month.minus(1) == LocalDate.now().month) LocalDate.now().dayOfMonth else 0)
+                    }
+                }) {
+                    Icon(Icons.Filled.ArrowBack, "Previous month")
 
+                }
+
+                Text("${data.month.name}, ${data.year}", style = MaterialTheme.typography.h6)
+                IconButton(onClick = {
+                    onMonthChange(1)
+                    coroutineScope.launch {
+                        dayRowState.animateScrollToItem(if (data.month.plus(1) == LocalDate.now().month) LocalDate.now().dayOfMonth else 0)
+                    }
+                }) {
+                    Icon(Icons.Filled.ArrowForward, "Next month")
+                }
             }
 
-            Text("${data.month.name}, ${data.year}", style = MaterialTheme.typography.h6)
-            IconButton(onClick = {
-                onMonthChange(1)
-                coroutineScope.launch {
-                    dayRowState.animateScrollToItem(if (data.month.plus(1) == LocalDate.now().month) LocalDate.now().dayOfMonth else 0)
-                }
-            }) {
-                Icon(Icons.Filled.ArrowForward, "Next month")
-            }
-        }
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(horizontal = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                state = dayRowState
+            ) {
 
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            state = dayRowState
-        ) {
-
-            items(data.daysInMonth) { i ->
-                CalendarDayItem(
-                    dayName = LocalDate.of(
-                        data.year,
-                        data.month,
-                        i + 1
-                    ).dayOfWeek.getShortName(), //or get name here
-                    dayNumber = i + 1,
-                    isSelected = data.selectedDayOfMonth == i + 1
-                ) {
-                    onDayChange(i + 1)
+                items(data.daysInMonth) { i ->
+                    CalendarDayItem(
+                        dayName = LocalDate.of(
+                            data.year,
+                            data.month,
+                            i + 1
+                        ).dayOfWeek.getShortName(), //or get name here
+                        dayNumber = i + 1,
+                        isSelected = data.selectedDayOfMonth == i + 1
+                    ) {
+                        onDayChange(i + 1)
+                    }
                 }
             }
         }
@@ -101,19 +102,19 @@ fun CalendarDayItem(dayName: String, dayNumber: Int, isSelected: Boolean, onSele
             .clickable {
                 onSelect()
             }
-            .background(if (isSelected) Color.Black else Color.Transparent),
+            .background(if (isSelected) MaterialTheme.colors.primary else Color.Transparent),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceAround
     ) {
         Surface(
             modifier = Modifier.size(32.dp),
             elevation = 8.dp,
-            color = Color.White,
+            color = MaterialTheme.colors.surface,
             shape = CircleShape
         ) {
             Text(
                 dayNumber.toString(),
-                color = Color.Black,
+                color = MaterialTheme.colors.onSurface,
                 style = MaterialTheme.typography.body1,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 4.dp)
@@ -121,8 +122,8 @@ fun CalendarDayItem(dayName: String, dayNumber: Int, isSelected: Boolean, onSele
         }
         Text(
             dayName,
-            color = if (isSelected) Color.White else NavyBlue,
-            style = MaterialTheme.typography.overline,
+            color = if (isSelected) MaterialTheme.colors.surface else MaterialTheme.colors.onSurface,
+            style = MaterialTheme.typography.overline.copy(fontWeight = FontWeight.Medium),
             modifier = Modifier.padding(bottom = 8.dp)
         )
     }

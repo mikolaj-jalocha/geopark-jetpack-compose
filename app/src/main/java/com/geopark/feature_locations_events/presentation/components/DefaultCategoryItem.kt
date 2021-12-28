@@ -16,6 +16,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material.MaterialTheme.colors
+import com.geopark.ui.theme.AmericanoGray
 import com.geopark.ui.theme.CinnabarRed
 
 
@@ -28,7 +30,7 @@ fun CategoriesTabItem(
     modifier: Modifier = Modifier
 ) {
 
-    val backgroundColor = animateColorAsState(if (isSelected) CinnabarRed else Color.White)
+    val backgroundColor = animateColorAsState(if (isSelected) colors.primary else colors.surface)
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -51,7 +53,7 @@ fun CategoriesTabItem(
                     modifier = Modifier
                         .size(22.dp),
                     contentDescription = text,
-                    tint = if (isSelected) Color.White else Color.Black,
+                    tint = if (isSelected) colors.onPrimary else colors.onSurface,
                 )
 
             }
@@ -63,7 +65,7 @@ fun CategoriesTabItem(
             modifier = Modifier
                 .padding(start = 16.dp, top = 4.dp, bottom = 0.dp, end = 16.dp)
                 .align(Alignment.CenterHorizontally),
-            color = Color.Gray,
+            color = AmericanoGray,
         )
     }
 }

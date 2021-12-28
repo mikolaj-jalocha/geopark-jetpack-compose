@@ -21,7 +21,7 @@ fun ContentTopBar(onNavigationClick: () -> Unit) {
             .padding(start = 20.dp, end = 20.dp)
             .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        RoundedIcon(iconId = R.drawable.ic_arrow_back, iconSize = 22.dp, iconTint = Color.DarkGray, onClick = { onNavigationClick() })
-        RoundedIcon(iconId = R.drawable.ic_bookmark_outline, iconSize = 22.dp, iconTint = Color.DarkGray, onClick = {})
+        RoundedIcon(iconId = R.drawable.ic_arrow_back, iconSize = 22.dp, onClick = { onNavigationClick() })
+        RoundedIcon(iconId = R.drawable.ic_bookmark_outline, iconSize = 22.dp, onClick = {})
     }
 }
