@@ -70,6 +70,7 @@ fun ListScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 contentPadding = PaddingValues(bottom = 24.dp),
+                modifier = Modifier.fillMaxWidth()
             ) {
                 item {
                     TileTitleSortBy(
