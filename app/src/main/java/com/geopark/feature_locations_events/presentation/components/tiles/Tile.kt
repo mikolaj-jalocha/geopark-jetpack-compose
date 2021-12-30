@@ -38,7 +38,6 @@ fun Tile(
     onFavoriteClick: () -> Unit
 ) {
     Card(
-        // TODO: 14.12.2021 Delete padding modifier here
         shape = RoundedCornerShape(26.dp), modifier = modifier
             .width(if (isWide) 360.dp else 180.dp)
             .height(200.dp)
