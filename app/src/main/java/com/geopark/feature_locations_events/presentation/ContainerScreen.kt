@@ -31,7 +31,7 @@ fun ContainerScreen(navigateTo: (String) -> Unit) {
                 0 -> MenuScreen(navigateTo = navigateTo)
                 1 -> {
                     Log.d("HORIZONTAL_PAGER", "Event screen's been loaded ")
-                    EventListScreen(navigateTo = {})
+                    EventListScreen(navigateTo = navigateTo)
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.geopark.feature_locations_events.presentation.list
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -48,7 +49,6 @@ class ListViewModel @Inject constructor(
             LocationType.Explore.toString() -> LocationType.Explore
             else -> LocationType.All
         }
-
         getLocations(locationType, LocationOrder.Name(OrderType.Default))
     }
 
@@ -80,6 +80,9 @@ class ListViewModel @Inject constructor(
         locationOrder: LocationOrder,
         searchQuery: String = ""
     ) {
+    val TAG = "GET_LOCATIONS"
+
+        Log.d(TAG, "getLocations called ")
 
             getLocationsJob?.cancel()
             getLocationsJob =
