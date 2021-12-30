@@ -37,9 +37,29 @@ import kotlinx.coroutines.launch
 @ExperimentalCoilApi
 @ExperimentalMaterialApi
 @Composable
-fun MenuTopBar(pagerState: PagerState, title: String = "Geopark App") {
+fun MenuTopBar(pagerState: PagerState) {
     Column(Modifier.systemBarsPadding(bottom = false)) {
-        TitleBar(title)
+        Row(
+            modifier = Modifier
+                .padding(top = 5.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "GeoparkApp",
+                style = MaterialTheme.typography.h4,
+                fontSize = 25.sp,
+                color = MaterialTheme.colors.onSurface,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+
+            Image(
+                painter = rememberImagePainter(data = R.mipmap.ic_geopark_logo),
+                contentDescription = "Logo",
+                modifier = Modifier.size(60.dp)
+            )
+        }
         Spacer(modifier = Modifier.size(5.dp))
         TabBar(pagerState)
     }
@@ -53,17 +73,16 @@ fun TabBar(
     titles: List<String> = listOf(
         "Odkrywaj",
         "Wydarzenia",
-        "Paszport Odkrywcy",
+       /* "Paszport Odkrywcy",
         "Informacje",
-        "Kontakt"
+        "Kontakt"*/
     ),
 ) {
 
     val scope = rememberCoroutineScope()
 
-    ScrollableTabRow(
+    TabRow(
         backgroundColor = MaterialTheme.colors.background,
-        edgePadding = 4.dp,
         selectedTabIndex = pagerState.currentPage,
         indicator = { tabPositions ->
             TabRowDefaults.Indicator(
@@ -73,7 +92,6 @@ fun TabBar(
         }
 
     ) {
-        val TAG = "TOPBAR"
         titles.forEachIndexed { index, item ->
             TitleTabItem(
                 item,
@@ -125,27 +143,7 @@ fun TitleTabItem(
 @ExperimentalCoilApi
 @Composable
 fun TitleBar(title: String = "Geopark App") {
-    Row(
-        modifier = Modifier
-            .padding(top = 5.dp)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.h4,
-            fontSize = 25.sp,
-            color = MaterialTheme.colors.onSurface,
-            modifier = Modifier.padding(start = 16.dp)
-        )
 
-        Image(
-            painter = rememberImagePainter(data = R.mipmap.ic_geopark_logo),
-            contentDescription = "Logo",
-            modifier = Modifier.size(60.dp)
-        )
-    }
 
 }
 
