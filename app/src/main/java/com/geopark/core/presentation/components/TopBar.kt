@@ -62,10 +62,10 @@ fun TabBar(
     initialSelectedItemIndex: Int = 0,
     titles: List<String> = listOf(
         "Odkrywaj",
-        "Paszport Odkrywcy",
+        //"Paszport Odkrywcy",
         "Wydarzenia",
-        "Informacje",
-        "Kontakt"
+        //"Informacje",
+        //"Kontakt"
     ),
     onTabChange: (Int) -> Unit
 ) {
@@ -78,9 +78,9 @@ fun TabBar(
         AnimatedTabRowIndicator(tabPositions, selectedItemIndex)
     }
 
-    ScrollableTabRow(
-        backgroundColor = Color.White,
-        edgePadding = 4.dp,
+    TabRow(
+        backgroundColor = MaterialTheme.colors.background,
+        modifier = Modifier.fillMaxWidth(),
         indicator = indicator,
         selectedTabIndex = selectedItemIndex,
 
