@@ -1,5 +1,6 @@
 package com.geopark.feature_locations_events.presentation.events_list.composables
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,14 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
+import com.geopark.core.presentation.util.Screen
 import com.geopark.feature_locations_events.presentation.UiEvent
 import com.geopark.feature_locations_events.presentation.events_list.CalendarPanelEvent
 import com.geopark.feature_locations_events.presentation.events_list.EventScreenViewModel
 import com.geopark.feature_locations_events.presentation.menu.composables.Tile
 import kotlinx.coroutines.flow.collectLatest
-
-const val TILE_HEIGHT = 180
-const val TILE_WIDTH = 360
 
 
 @ExperimentalCoilApi
@@ -74,6 +73,8 @@ fun EventListScreen(
                     Tile(
                         photoPath = event.photoPath,
                         name = event.title,
+                       //navigation here
+                        modifier = Modifier.clickable { navigateTo(Screen.ContentScreen.route + "/${event.title}") },
                         isWide = true,
                         isFavorite = false
                     ) {

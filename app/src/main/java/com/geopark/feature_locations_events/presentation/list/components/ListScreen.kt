@@ -13,13 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
+import com.geopark.core.presentation.util.Screen
 import com.geopark.feature_locations_events.domain.util.LocationOrder
 import com.geopark.feature_locations_events.presentation.UiEvent
 import com.geopark.feature_locations_events.presentation.components.TileTitleSortBy
 import com.geopark.feature_locations_events.presentation.list.ListLocationsEvent
 import com.geopark.feature_locations_events.presentation.list.ListViewModel
 import com.geopark.feature_locations_events.presentation.menu.composables.Tile
-import com.geopark.core.presentation.util.Screen
 import kotlinx.coroutines.flow.collectLatest
 
 @ExperimentalAnimationApi
@@ -84,9 +84,12 @@ fun ListScreen(
                             ListLocationsEvent.Order(LocationOrder.Name(it)),
                         )
                     }
+                }
                     if (state.isLoading && state.locations.isEmpty()) {
-                        Column(modifier = Modifier.fillMaxSize()) {
-                            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                        item {
+                            Column(modifier = Modifier.fillMaxSize()) {
+                                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                            }
                         }
                     } else {
                         this@LazyColumn.itemsIndexed(state.locations) { _, location ->
@@ -113,7 +116,7 @@ fun ListScreen(
             }
         }
     }
-}
+
 
 
 
