@@ -107,6 +107,8 @@ dependencies {
 
     //Accompanist insets
     implementation "com.google.accompanist:accompanist-insets-ui:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
+
 
     //Accompanist pager
 
