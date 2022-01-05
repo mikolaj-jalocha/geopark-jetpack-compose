@@ -9,27 +9,21 @@ import kotlinx.coroutines.flow.flow
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class GetEvents(
+class GetEventsForDate(
     private val repository: EventRepository
 ) {
     operator fun invoke(
-        date: LocalDate? = null
+        date: LocalDate
     ) = flow {
         repository.getEvents().collect { result ->
-
 
             // TODO: Export to another file as constant
             val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
-
-
-            val res: List<Event> = if (date != null) {
+            val res: List<Event> =
                 result.data.filter {
-                    Log.d("GET_EVENTS_USE_CASE", "${LocalDate.parse(it.date, formatter).isEqual(date)}")
                     LocalDate.parse(it.date, formatter).isEqual(date)
                 }
-            } else
-                result.data
 
             when (result) {
                 is Resource.Success -> {

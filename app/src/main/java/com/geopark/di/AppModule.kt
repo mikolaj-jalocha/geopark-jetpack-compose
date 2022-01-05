@@ -13,8 +13,12 @@ import com.geopark.feature_locations_events.data.repository.LocationRepositoryIm
 import com.geopark.feature_locations_events.domain.repository.EventRepository
 import com.geopark.feature_locations_events.domain.repository.LocationRepository
 import com.geopark.feature_locations_events.domain.use_case.events.EventsUseCase
-import com.geopark.feature_locations_events.domain.use_case.events.GetEvents
-import com.geopark.feature_locations_events.domain.use_case.locations.*
+import com.geopark.feature_locations_events.domain.use_case.events.GetAllEvents
+import com.geopark.feature_locations_events.domain.use_case.events.GetAllEventsDistinct
+import com.geopark.feature_locations_events.domain.use_case.events.GetEventsForDate
+import com.geopark.feature_locations_events.domain.use_case.locations.GetLocationByName
+import com.geopark.feature_locations_events.domain.use_case.locations.GetLocations
+import com.geopark.feature_locations_events.domain.use_case.locations.LocationUseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -101,14 +105,22 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideEventRepository(api: GeoparkApi,db: LocationDatabase,preferences: SharedPreferences)  :  EventRepository {
-        return EventRepositoryImpl(api,db.eventDao,preferences)
+    fun provideEventRepository(
+        api: GeoparkApi,
+        db: LocationDatabase,
+        preferences: SharedPreferences
+    ): EventRepository {
+        return EventRepositoryImpl(api, db.eventDao, preferences)
     }
 
     @Provides
     @Singleton
     fun provideEventsUseCases(repository: EventRepository): EventsUseCase {
-        return EventsUseCase(getEvents = GetEvents(repository))
+        return EventsUseCase(
+            getEventsForDate = GetEventsForDate(repository = repository),
+            getAllEvents = GetAllEvents(repository = repository),
+            getAllEventsDistinct = GetAllEventsDistinct(repository = repository)
+        )
     }
 
 

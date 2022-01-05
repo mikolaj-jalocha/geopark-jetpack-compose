@@ -1,6 +1,5 @@
-package com.geopark.feature_locations_events.presentation.events_list
+package com.geopark.feature_locations_events.presentation.events_menu
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -16,11 +15,10 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.time.LocalDate
 import java.time.YearMonth
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
-class EventScreenViewModel @Inject constructor(
+class EventsMenuViewModel @Inject constructor(
     private val eventsUseCase: EventsUseCase
 ) : ViewModel() {
 
@@ -36,15 +34,48 @@ class EventScreenViewModel @Inject constructor(
     private var getEventsJob: Job? = null
 
     init {
-        Log.d("EVENTS_VM", "get event's  been called")
-        getEvents()
+        getEventsDistinct()
     }
 
 
-    private fun getEvents() {
+    private fun getEventsDistinct() {
+        getEventsJob?.cancel()
+
+        getEventsJob = eventsUseCase.getAllEventsDistinct().onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    _eventsState.value = _eventsState.value.copy(
+                        events = result.data,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _eventsState.value = _eventsState.value.copy(
+                        events = result.data,
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _eventsState.value = _eventsState.value.copy(
+                        events = result.data,
+                        isLoading = false
+                    )
+                    _eventFlow.emit(
+                        UiEvent.ShowSnackbar(
+                            message = result.message
+                        )
+                    )
+                }
+            }
+        }.launchIn(viewModelScope)
+
+    }
+
+
+    private fun getEventsForDate() {
         getEventsJob?.cancel()
         val selectedDate = LocalDate.of(calendarState.value.year, calendarState.value.month,calendarState.value.selectedDayOfMonth ?: LocalDate.now().dayOfMonth)
-        getEventsJob = eventsUseCase.getEvents(selectedDate).onEach { result ->
+        getEventsJob = eventsUseCase.getEventsForDate(selectedDate).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     _eventsState.value = _eventsState.value.copy(
@@ -90,7 +121,7 @@ class EventScreenViewModel @Inject constructor(
                 _calendarState.value = CalendarPanelState(newYear.year, newMonth)
             }
         }
-        getEvents()
+        getEventsForDate()
     }
 
 }

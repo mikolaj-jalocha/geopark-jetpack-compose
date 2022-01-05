@@ -24,6 +24,8 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.geopark.R
 import androidx.compose.material.MaterialTheme.colors
+import com.geopark.core.util.Constants.SMALL_TILE_SIZE
+import com.geopark.core.util.Constants.WIDE_TILE_SIZE
 import com.geopark.ui.theme.CinnabarRed
 
 @ExperimentalCoilApi
@@ -39,7 +41,7 @@ fun Tile(
 ) {
     Card(
         shape = RoundedCornerShape(26.dp), modifier = modifier
-            .width(if (isWide) 360.dp else 180.dp)
+            .width(if (isWide) WIDE_TILE_SIZE.dp else SMALL_TILE_SIZE.dp)
             .height(200.dp)
     ) {
         Box {

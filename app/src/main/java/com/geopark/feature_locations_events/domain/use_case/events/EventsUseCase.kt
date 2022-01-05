@@ -1,7 +1,7 @@
 package com.geopark.feature_locations_events.domain.use_case.events
 
-import javax.inject.Inject
-
 data class EventsUseCase(
-    val getEvents: GetEvents
+    val getEventsForDate: GetEventsForDate,
+    val getAllEvents: GetAllEvents,
+    val getAllEventsDistinct: GetAllEventsDistinct
 )

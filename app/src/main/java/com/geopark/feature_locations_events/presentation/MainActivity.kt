@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.OptIn
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
@@ -25,16 +26,17 @@ import com.geoparkcompose.ui.menu.MenuScreen
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.migration.OptionalInject
 
 @AndroidEntryPoint
+@ExperimentalPagerApi
+@ExperimentalAnimationApi
+@ExperimentalFoundationApi
+@ExperimentalCoilApi
+@ExperimentalMaterialApi
 class MainActivity : ComponentActivity() {
 
 
-    @ExperimentalPagerApi
-    @ExperimentalAnimationApi
-    @ExperimentalFoundationApi
-    @ExperimentalCoilApi
-    @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

@@ -21,9 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.geopark.core.util.getShortName
-import com.geopark.feature_locations_events.presentation.events_list.CalendarPanelState
-import com.geopark.ui.theme.DirtyWhite
-import com.geopark.ui.theme.NavyBlue
+import com.geopark.feature_locations_events.presentation.events_menu.CalendarPanelState
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -39,7 +37,7 @@ fun CalendarPanel(
                 .fillMaxWidth()
                 .height(150.dp)
         ) {
-            val dayRowState = rememberLazyListState(data.currentDay)
+            val dayRowState = rememberLazyListState(data.currentDay-1)
             val coroutineScope = rememberCoroutineScope()
             Row(
                 modifier = Modifier.fillMaxWidth(),
