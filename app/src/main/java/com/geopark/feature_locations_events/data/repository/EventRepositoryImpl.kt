@@ -1,6 +1,7 @@
 package com.geopark.feature_locations_events.data.repository
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.core.content.edit
 import com.geopark.core.util.Constants
 import com.geopark.core.util.Resource
@@ -40,6 +41,7 @@ class EventRepositoryImpl(
                 val remoteEvents = api.getEvents()
                 dao.insertEvents(remoteEvents)
 
+                //Log.d("EVENT_REPOSITORY", "${remoteEvents[0].category.size}")
                 // update  caching preferences only when connection was successful
                 if (remoteEvents.isNotEmpty()) {
                     preferences.edit {
@@ -56,6 +58,7 @@ class EventRepositoryImpl(
             } catch (e: NoInternetConnection) {
                 emit(Resource.Error(e.message, data = emptyList()))
             } catch (e: Exception) {
+                Log.d("EVENT_REPOSITORY", "${e.message}")
                 emit(Resource.Error(e.message ?: "Unknown error occurred", data = emptyList()))
             }
         }

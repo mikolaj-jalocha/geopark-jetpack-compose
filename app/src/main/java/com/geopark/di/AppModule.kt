@@ -5,11 +5,13 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
 import com.geopark.core.util.Constants
+import com.geopark.feature_locations_events.data.local.Converters
 import com.geopark.feature_locations_events.data.local.LocationDatabase
 import com.geopark.feature_locations_events.data.remote.ConnectivityInterceptor
 import com.geopark.feature_locations_events.data.remote.GeoparkApi
 import com.geopark.feature_locations_events.data.repository.EventRepositoryImpl
 import com.geopark.feature_locations_events.data.repository.LocationRepositoryImpl
+import com.geopark.feature_locations_events.data.util.GsonParser
 import com.geopark.feature_locations_events.domain.repository.EventRepository
 import com.geopark.feature_locations_events.domain.repository.LocationRepository
 import com.geopark.feature_locations_events.domain.use_case.events.EventsUseCase
@@ -19,6 +21,7 @@ import com.geopark.feature_locations_events.domain.use_case.events.GetEventsForD
 import com.geopark.feature_locations_events.domain.use_case.locations.GetLocationByName
 import com.geopark.feature_locations_events.domain.use_case.locations.GetLocations
 import com.geopark.feature_locations_events.domain.use_case.locations.LocationUseCases
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -55,6 +58,7 @@ object AppModule {
             Constants.DATABASE_NAME
         )
             .fallbackToDestructiveMigration()
+            .addTypeConverter(Converters(GsonParser(Gson())))
             .build()
     }
 

@@ -37,10 +37,8 @@ class EventsMenuViewModel @Inject constructor(
         getEventsDistinct()
     }
 
-
     private fun getEventsDistinct() {
         getEventsJob?.cancel()
-
         getEventsJob = eventsUseCase.getAllEventsDistinct().onEach { result ->
             when (result) {
                 is Resource.Success -> {
@@ -70,7 +68,6 @@ class EventsMenuViewModel @Inject constructor(
         }.launchIn(viewModelScope)
 
     }
-
 
     private fun getEventsForDate() {
         getEventsJob?.cancel()
