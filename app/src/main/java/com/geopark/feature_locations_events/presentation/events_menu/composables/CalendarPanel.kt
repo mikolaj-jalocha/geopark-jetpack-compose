@@ -27,7 +27,7 @@ import java.time.LocalDate
 
 @Composable
 fun CalendarPanel(
-    data: CalendarPanelState,
+    state: CalendarPanelState,
     onDayChange: (Int) -> Unit,
     onMonthChange: (Int) -> Unit,
 ) {
@@ -37,7 +37,7 @@ fun CalendarPanel(
                 .fillMaxWidth()
                 .height(150.dp)
         ) {
-            val dayRowState = rememberLazyListState(data.currentDay-1)
+            val dayRowState = rememberLazyListState(state.currentDay-1)
             val coroutineScope = rememberCoroutineScope()
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -47,18 +47,18 @@ fun CalendarPanel(
                 IconButton(onClick = {
                     onMonthChange(-1)
                     coroutineScope.launch {
-                        dayRowState.animateScrollToItem(if (data.month.minus(1) == LocalDate.now().month) LocalDate.now().dayOfMonth else 0)
+                        dayRowState.animateScrollToItem(if (state.month.minus(1) == LocalDate.now().month) LocalDate.now().dayOfMonth else 0)
                     }
                 }) {
                     Icon(Icons.Filled.ArrowBack, "Previous month")
 
                 }
 
-                Text("${data.month.name}, ${data.year}", style = MaterialTheme.typography.h6)
+                Text("${state.month.name}, ${state.year}", style = MaterialTheme.typography.h6)
                 IconButton(onClick = {
                     onMonthChange(1)
                     coroutineScope.launch {
-                        dayRowState.animateScrollToItem(if (data.month.plus(1) == LocalDate.now().month) LocalDate.now().dayOfMonth else 0)
+                        dayRowState.animateScrollToItem(if (state.month.plus(1) == LocalDate.now().month) LocalDate.now().dayOfMonth else 0)
                     }
                 }) {
                     Icon(Icons.Filled.ArrowForward, "Next month")
@@ -72,15 +72,15 @@ fun CalendarPanel(
                 state = dayRowState
             ) {
 
-                items(data.daysInMonth) { i ->
+                items(state.daysInMonth) { i ->
                     CalendarDayItem(
                         dayName = LocalDate.of(
-                            data.year,
-                            data.month,
+                            state.year,
+                            state.month,
                             i + 1
                         ).dayOfWeek.getShortName(), //or get name here
                         dayNumber = i + 1,
-                        isSelected = data.selectedDayOfMonth == i + 1
+                        isSelected = state.selectedDayOfMonth == i + 1
                     ) {
                         onDayChange(i + 1)
                     }

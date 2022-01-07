@@ -1,6 +1,7 @@
-package com.geopark.feature_locations_events.presentation.events_menu
+package com.geopark.feature_locations_events.domain.util
 
 enum class EventCategory(val categoryName: String){
+    ALL("All"),
     ADULTS("For adults"),
     FAMILIES("For families"),
     GEOLOGY("Geology and minerals"),

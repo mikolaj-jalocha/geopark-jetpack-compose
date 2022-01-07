@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.geopark.core.util.Resource
 import com.geopark.feature_locations_events.domain.use_case.events.EventsUseCase
+import com.geopark.feature_locations_events.domain.util.EventCategory
 import com.geopark.feature_locations_events.presentation.UiEvent
 import com.geopark.feature_locations_events.presentation.events_menu.calendar.CalendarPanelEvent
 import com.geopark.feature_locations_events.presentation.events_menu.calendar.CalendarPanelState
@@ -36,14 +37,12 @@ class EventsMenuViewModel @Inject constructor(
     private var getEventsJob: Job? = null
 
     init {
-        getEventsDistinct()
+        getEventsDistinct(EventCategory.ALL)
     }
 
-
-
-    private fun getEventsDistinct() {
+    private fun getEventsDistinct(category: EventCategory) {
         getEventsJob?.cancel()
-        getEventsJob = eventsUseCase.getAllEventsDistinct().onEach { result ->
+        getEventsJob = eventsUseCase.getAllEventsDistinct(category).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     _eventsState.value = _eventsState.value.copy(
@@ -75,7 +74,11 @@ class EventsMenuViewModel @Inject constructor(
 
     private fun getEventsForDate() {
         getEventsJob?.cancel()
-        val selectedDate = LocalDate.of(calendarState.value.year, calendarState.value.month,calendarState.value.selectedDayOfMonth ?: LocalDate.now().dayOfMonth)
+        val selectedDate = LocalDate.of(
+            calendarState.value.year,
+            calendarState.value.month,
+            calendarState.value.selectedDayOfMonth ?: LocalDate.now().dayOfMonth
+        )
         getEventsJob = eventsUseCase.getEventsForDate(selectedDate).onEach { result ->
             when (result) {
                 is Resource.Success -> {
@@ -106,6 +109,13 @@ class EventsMenuViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    fun onEvent(event: EventsMenuEvent) {
+        when (event) {
+            is EventsMenuEvent.ChangeCategory -> {
+                getEventsDistinct(event.category)
+            }
+        }
+    }
 
     fun onCalendarEvent(calendarEvent: CalendarPanelEvent) {
         when (calendarEvent) {

@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,9 +20,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
+import com.geopark.feature_locations_events.domain.util.EventCategory
 import com.geopark.feature_locations_events.presentation.UiEvent
-import com.geopark.feature_locations_events.presentation.events_menu.EventsMenuViewModel
 import com.geopark.feature_locations_events.presentation.events_list.composables.CalendarPanel
+import com.geopark.feature_locations_events.presentation.events_menu.EventsMenuEvent
+import com.geopark.feature_locations_events.presentation.events_menu.EventsMenuViewModel
 import com.geopark.feature_locations_events.presentation.menu.composables.Tile
 import com.google.accompanist.flowlayout.FlowMainAxisAlignment
 import com.google.accompanist.flowlayout.FlowRow
@@ -56,7 +59,7 @@ fun EventMenu(viewModel: EventsMenuViewModel = hiltViewModel()) {
     val selectedChipIndex = remember {
         mutableStateOf(-1)
     }
-
+    val selectedCategoryIndex = rememberSaveable { mutableStateOf(0) }
     Scaffold(scaffoldState = scaffoldState) {
         LazyColumn(
             modifier = Modifier
@@ -67,43 +70,56 @@ fun EventMenu(viewModel: EventsMenuViewModel = hiltViewModel()) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
 
-            // TODO: Change int to enum
+            // TODO: Change int to enum in selected chip index
             item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceAround
-                    ) {
-                        Chip(text = "Category", isSelected = selectedChipIndex.value == 0) {
-                            if (selectedChipIndex.value == 0) selectedChipIndex.value =
-                                -1 else selectedChipIndex.value = 0
-                        }
-                        Chip(text = "Location", isSelected = selectedChipIndex.value == 1) {
-                            if (selectedChipIndex.value == 1) selectedChipIndex.value =
-                                -1 else selectedChipIndex.value = 1
-                        }
-                        Chip(text = "Date", isSelected = selectedChipIndex.value == 2) {
-                            if (selectedChipIndex.value == 2) {
-                                selectedChipIndex.value =
-                                    -1
-                            } else selectedChipIndex.value = 2
-                        }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    Chip(text = "Category", isSelected = selectedChipIndex.value == 0) {
+                        if (selectedChipIndex.value == 0) selectedChipIndex.value =
+                            -1 else selectedChipIndex.value = 0
+                    }
+                    Chip(text = "Location", isSelected = selectedChipIndex.value == 1) {
+                        if (selectedChipIndex.value == 1) selectedChipIndex.value =
+                            -1 else selectedChipIndex.value = 1
+                    }
+                    Chip(text = "Date", isSelected = selectedChipIndex.value == 2) {
+                        if (selectedChipIndex.value == 2) {
+                            selectedChipIndex.value =
+                                -1
+                        } else selectedChipIndex.value = 2
+                    }
 
                 }
             }
+
             item {
                 AnimatedContent(targetState = selectedChipIndex.value) { targetState ->
                     when (targetState) {
-                        -1 -> {}
-                        0 -> TypeSelectionPanel(){
+                        -1 -> {
+                        }
+                        0 -> {
 
+                            TypeSelectionPanel(
+                                EventCategory.values().map { it.categoryName },
+                                selectedCategoryIndex.value
+                            ) { categoryName, newIndex ->
+                                selectedCategoryIndex.value = newIndex
+                                viewModel.onEvent(
+                                    EventsMenuEvent.ChangeCategory(
+                                        EventCategory.values()
+                                            .first { it.categoryName == categoryName }
+                                    )
+                                )
+                            }
                         }
                         1 -> {
-                            var expanded by remember { mutableStateOf(true) }
                             LocationSelectionPanel()
                         }
                         2 -> {
                             CalendarPanel(
-                                data = viewModel.calendarState.value,
+                                state = viewModel.calendarState.value,
                                 onDayChange = {
 
                                 },
@@ -119,19 +135,18 @@ fun EventMenu(viewModel: EventsMenuViewModel = hiltViewModel()) {
             // content depending on selected state
             item {
 
-                    FlowRow(
-                        mainAxisAlignment = FlowMainAxisAlignment.SpaceEvenly,
-                        mainAxisSpacing = 8.dp,
-                        crossAxisSpacing = 8.dp
-                    ) {
-                        eventsState.events.distinctBy { it.title }.forEach { event ->
-                            Tile(
-                                photoPath = event.photoPath,
-                                name = event.title,
-                                isWide = false,
-                                isFavorite = false
-                            ) {
-
+                FlowRow(
+                    mainAxisAlignment = FlowMainAxisAlignment.SpaceEvenly,
+                    mainAxisSpacing = 8.dp,
+                    crossAxisSpacing = 8.dp
+                ) {
+                    eventsState.events.distinctBy { it.title }.forEach { event ->
+                        Tile(
+                            photoPath = event.photoPath,
+                            name = event.title,
+                            isWide = false,
+                            isFavorite = false
+                        ) {
 
                         }
                     }
@@ -153,54 +168,54 @@ fun LocationSelectionPanel(
     var selectedLocationText by remember { mutableStateOf(locations[0]) }
 
 
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .padding(bottom = 10.dp)
-                .fillMaxWidth()
-        ) {
-            var expanded by remember { mutableStateOf(false) }
-            ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = {
-                expanded = !expanded
-            }) {
-                OutlinedTextField(
-                    readOnly = true,
-                    value = selectedLocationText,
-                    shape = RoundedCornerShape(8.dp),
-                    onValueChange = { selectedLocationText = it },
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(
-                            expanded = expanded
-                        )
-                    },
-                    label = { Text("Location") },
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        backgroundColor = colors.background,
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .padding(bottom = 10.dp)
+            .fillMaxWidth()
+    ) {
+        var expanded by remember { mutableStateOf(false) }
+        ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = {
+            expanded = !expanded
+        }) {
+            OutlinedTextField(
+                readOnly = true,
+                value = selectedLocationText,
+                shape = RoundedCornerShape(8.dp),
+                onValueChange = { selectedLocationText = it },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(
+                        expanded = expanded
                     )
+                },
+                label = { Text("Location") },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    backgroundColor = colors.background,
                 )
+            )
 
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = {
-                        expanded = false
-                    }
-                ) {
-                    locations.forEachIndexed { index, selectionLocation ->
-                        DropdownMenuItem(
-                            onClick = {
-                                selectedLocationText = selectionLocation
-                                expanded = false
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = {
+                    expanded = false
+                }
+            ) {
+                locations.forEachIndexed { index, selectionLocation ->
+                    DropdownMenuItem(
+                        onClick = {
+                            selectedLocationText = selectionLocation
+                            expanded = false
 
 
-                            }
-                        ) {
-                            Text(
-                                text = selectionLocation,
-                                color = if (selectedLocationText == selectionLocation) colors.primary else Color.Unspecified
-                            )
                         }
+                    ) {
+                        Text(
+                            text = selectionLocation,
+                            color = if (selectedLocationText == selectionLocation) colors.primary else Color.Unspecified
+                        )
                     }
                 }
+            }
 
 
         }
@@ -211,35 +226,19 @@ fun LocationSelectionPanel(
 @ExperimentalMaterialApi
 @Composable
 fun TypeSelectionPanel(
-    list: List<String> = listOf(
-        "Wszystko",
-        "Dla rodzin",
-        "Dla dorosłych",
-        "Historia",
-        "Geologia i Minerały",
-        "Kulinaria",
-        "Paszport Odkrywcy",
-        "Przyrodnicze",
-        "Pod Dachem",
-        "Rzemiosło i sztuka"
-    ),
-    onClick: (String) -> Unit
+    list: List<String>,
+    selected: Int,
+    onClick: (String, Int) -> Unit
 ) {
-
-    val selected = remember {
-        mutableStateOf(0)
-    }
-
-        FlowRow(
-            mainAxisAlignment = FlowMainAxisAlignment.SpaceAround,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            list.forEachIndexed { index, text ->
-                Chip(text = text, isSelected = index == selected.value) {
-                    selected.value = index
-                    onClick(it)
-                }
+    FlowRow(
+        mainAxisAlignment = FlowMainAxisAlignment.SpaceAround,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        list.forEachIndexed { index, text ->
+            Chip(text = text, isSelected = index == selected) {
+                onClick(it, index)
             }
+        }
 
     }
 }
@@ -254,9 +253,9 @@ fun Chip(
 ) {
 
     val colorState =
-        animateColorAsState(if (isSelected) MaterialTheme.colors.background else MaterialTheme.colors.primary)
+        animateColorAsState(if (isSelected) colors.background else colors.primary)
     Surface(
-        onClick = {onClick(text)},
+        onClick = { onClick(text) },
         shape = shape,
         color = colorState.value,
         elevation = 2.dp,
