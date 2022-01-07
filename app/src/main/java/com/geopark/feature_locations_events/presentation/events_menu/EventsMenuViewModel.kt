@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.geopark.core.util.Resource
 import com.geopark.feature_locations_events.domain.use_case.events.EventsUseCase
 import com.geopark.feature_locations_events.presentation.UiEvent
+import com.geopark.feature_locations_events.presentation.events_menu.calendar.CalendarPanelEvent
+import com.geopark.feature_locations_events.presentation.events_menu.calendar.CalendarPanelState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -36,6 +38,8 @@ class EventsMenuViewModel @Inject constructor(
     init {
         getEventsDistinct()
     }
+
+
 
     private fun getEventsDistinct() {
         getEventsJob?.cancel()

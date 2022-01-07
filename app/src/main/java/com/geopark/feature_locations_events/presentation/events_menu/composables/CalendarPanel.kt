@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.geopark.core.util.getShortName
-import com.geopark.feature_locations_events.presentation.events_menu.CalendarPanelState
+import com.geopark.feature_locations_events.presentation.events_menu.calendar.CalendarPanelState
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 

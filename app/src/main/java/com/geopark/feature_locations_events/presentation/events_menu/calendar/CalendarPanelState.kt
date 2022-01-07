@@ -1,4 +1,4 @@
-package com.geopark.feature_locations_events.presentation.events_menu
+package com.geopark.feature_locations_events.presentation.events_menu.calendar
 
 import java.time.DayOfWeek
 import java.time.LocalDate

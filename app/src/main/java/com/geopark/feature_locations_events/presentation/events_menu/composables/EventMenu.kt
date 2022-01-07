@@ -94,7 +94,9 @@ fun EventMenu(viewModel: EventsMenuViewModel = hiltViewModel()) {
                 AnimatedContent(targetState = selectedChipIndex.value) { targetState ->
                     when (targetState) {
                         -1 -> {}
-                        0 -> TypeSelectionPanel()
+                        0 -> TypeSelectionPanel(){
+
+                        }
                         1 -> {
                             var expanded by remember { mutableStateOf(true) }
                             LocationSelectionPanel()
@@ -220,7 +222,8 @@ fun TypeSelectionPanel(
         "Przyrodnicze",
         "Pod Dachem",
         "Rzemiosło i sztuka"
-    )
+    ),
+    onClick: (String) -> Unit
 ) {
 
     val selected = remember {
@@ -234,6 +237,7 @@ fun TypeSelectionPanel(
             list.forEachIndexed { index, text ->
                 Chip(text = text, isSelected = index == selected.value) {
                     selected.value = index
+                    onClick(it)
                 }
             }
 
@@ -246,13 +250,13 @@ fun Chip(
     text: String,
     isSelected: Boolean,
     shape: Shape = RoundedCornerShape(8.dp),
-    onClick: () -> Unit
+    onClick: (String) -> Unit
 ) {
 
     val colorState =
         animateColorAsState(if (isSelected) MaterialTheme.colors.background else MaterialTheme.colors.primary)
     Surface(
-        onClick = onClick,
+        onClick = {onClick(text)},
         shape = shape,
         color = colorState.value,
         elevation = 2.dp,
