@@ -115,7 +115,11 @@ fun EventMenu(viewModel: EventsMenuViewModel = hiltViewModel()) {
                             }
                         }
                         1 -> {
-                            LocationSelectionPanel()
+                            LocationSelectionPanel(eventsState.eventsLocations) {
+                                viewModel.onEvent(
+                                    EventsMenuEvent.ChangeLocation(it)
+                                )
+                            }
                         }
                         2 -> {
                             CalendarPanel(
@@ -159,15 +163,11 @@ fun EventMenu(viewModel: EventsMenuViewModel = hiltViewModel()) {
 @ExperimentalMaterialApi
 @Composable
 fun LocationSelectionPanel(
-    locations: List<String> = listOf(
-        "All locations",
-        "Sudecka Zagroda Edukacyjna",
-        "Galeria Pod Aniołem"
-    )
+    locations: List<String>,
+    onClick: (String) -> Unit
 ) {
-    var selectedLocationText by remember { mutableStateOf(locations[0]) }
 
-
+    var selectedLocationText by remember { mutableStateOf("") }
     Row(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier
@@ -192,21 +192,13 @@ fun LocationSelectionPanel(
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     backgroundColor = colors.background,
                 )
-            )
-
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = {
-                    expanded = false
-                }
             ) {
                 locations.forEachIndexed { index, selectionLocation ->
                     DropdownMenuItem(
                         onClick = {
                             selectedLocationText = selectionLocation
+                            onClick(selectionLocation)
                             expanded = false
-
-
                         }
                     ) {
                         Text(
@@ -221,7 +213,6 @@ fun LocationSelectionPanel(
         }
     }
 }
-
 
 @ExperimentalMaterialApi
 @Composable

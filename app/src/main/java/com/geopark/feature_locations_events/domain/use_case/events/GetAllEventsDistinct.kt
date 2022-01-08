@@ -11,16 +11,18 @@ class GetAllEventsDistinct(
     private val repository: EventRepository
 ) {
     operator fun invoke(
-        category: EventCategory
+        category: EventCategory,
+        location : String = ".*"
     ) = flow {
 
         repository.getEvents().collect { result ->
 
+
             val filteredResult =
                 if (category == EventCategory.ALL)
-                    result.data.distinctBy { it.title }
+                    result.data.distinctBy { it.title }.filter { it.promoterName.matches(Regex(location)) }
                 else
-                    result.data.distinctBy { it.title }.filter { it.category.contains(category) }
+                    result.data.distinctBy { it.title }.filter { it.category.contains(category) && it.promoterName.matches(Regex(location)) }
 
             when (result) {
                 is Resource.Success -> {

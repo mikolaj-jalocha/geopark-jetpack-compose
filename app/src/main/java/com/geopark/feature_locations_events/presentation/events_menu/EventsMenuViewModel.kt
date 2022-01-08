@@ -1,5 +1,6 @@
 package com.geopark.feature_locations_events.presentation.events_menu
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -40,25 +41,34 @@ class EventsMenuViewModel @Inject constructor(
         getEventsDistinct(EventCategory.ALL)
     }
 
-    private fun getEventsDistinct(category: EventCategory) {
+    private fun getEventsDistinct(category: EventCategory, locationName : String = ".*") {
         getEventsJob?.cancel()
-        getEventsJob = eventsUseCase.getAllEventsDistinct(category).onEach { result ->
+        getEventsJob = eventsUseCase.getAllEventsDistinct(category,locationName).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     _eventsState.value = _eventsState.value.copy(
                         events = result.data,
+                        category = category,
+                        eventsLocations = result.data.distinctBy { it.promoterName }
+                            .map { it.promoterName },
                         isLoading = false
                     )
                 }
                 is Resource.Loading -> {
                     _eventsState.value = _eventsState.value.copy(
                         events = result.data,
+                        category = category,
+                        eventsLocations = result.data.distinctBy { it.promoterName }
+                            .map { it.promoterName },
                         isLoading = true
                     )
                 }
                 is Resource.Error -> {
                     _eventsState.value = _eventsState.value.copy(
                         events = result.data,
+                        category = category,
+                        eventsLocations = result.data.distinctBy { it.promoterName }
+                            .map { it.promoterName },
                         isLoading = false
                     )
                     _eventFlow.emit(
@@ -113,6 +123,9 @@ class EventsMenuViewModel @Inject constructor(
         when (event) {
             is EventsMenuEvent.ChangeCategory -> {
                 getEventsDistinct(event.category)
+            }
+            is EventsMenuEvent.ChangeLocation ->{
+                getEventsDistinct(category = _eventsState.value.category, locationName = event.location )
             }
         }
     }
