@@ -8,4 +8,5 @@ interface EventRepository {
 
     fun getEvents() : Flow<Resource<List<Event>>>
 
+    fun getEventsLocations() : Flow<List<String>>
 }

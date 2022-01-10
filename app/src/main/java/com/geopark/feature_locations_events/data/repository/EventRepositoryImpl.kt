@@ -13,23 +13,29 @@ import com.geopark.feature_locations_events.domain.repository.EventRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
-import java.lang.Exception
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class EventRepositoryImpl(
-    private val api : GeoparkApi,
+    private val api: GeoparkApi,
     private val dao: EventDao,
     private val preferences: SharedPreferences
 ) : EventRepository {
+
+    override fun getEventsLocations(): Flow<List<String>> {
+        return dao.getEventsLocations()
+    }
 
     override fun getEvents(): Flow<Resource<List<Event>>> = flow {
 
         emit(Resource.Loading(data = emptyList()))
 
         val lastUpdateDate = preferences.getString(Constants.EVENTS_UPDATE_DATE, "")
-        val daysFromLastUpdate =   if(!lastUpdateDate.isNullOrEmpty())
-            LocalDate.now().dayOfYear - LocalDate.parse(lastUpdateDate, DateTimeFormatter.ISO_DATE).dayOfYear else -1
+        val daysFromLastUpdate = if (!lastUpdateDate.isNullOrEmpty())
+            LocalDate.now().dayOfYear - LocalDate.parse(
+                lastUpdateDate,
+                DateTimeFormatter.ISO_DATE
+            ).dayOfYear else -1
 
 
         val localEvents = dao.getEvents()

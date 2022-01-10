@@ -1,6 +1,5 @@
 package com.geopark.feature_locations_events.presentation.events_menu
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -32,54 +31,104 @@ class EventsMenuViewModel @Inject constructor(
     private val _eventsState = mutableStateOf(EventsState())
     val eventsState: State<EventsState> = _eventsState
 
+    private val _eventsLocationsState = mutableStateOf(emptyList<String>())
+    val eventsLocationsState = mutableStateOf(_eventsLocationsState)
+
+
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
     private var getEventsJob: Job? = null
+    private var getEventsLocationsJob: Job? = null
+
+
+    private var currentLocation = ".*"
 
     init {
         getEventsDistinct(EventCategory.ALL)
+        getEventsLocations()
     }
 
-    private fun getEventsDistinct(category: EventCategory, locationName : String = ".*") {
-        getEventsJob?.cancel()
-        getEventsJob = eventsUseCase.getAllEventsDistinct(category,locationName).onEach { result ->
-            when (result) {
-                is Resource.Success -> {
-                    _eventsState.value = _eventsState.value.copy(
-                        events = result.data,
-                        category = category,
-                        eventsLocations = result.data.distinctBy { it.promoterName }
-                            .map { it.promoterName },
-                        isLoading = false
-                    )
-                }
-                is Resource.Loading -> {
-                    _eventsState.value = _eventsState.value.copy(
-                        events = result.data,
-                        category = category,
-                        eventsLocations = result.data.distinctBy { it.promoterName }
-                            .map { it.promoterName },
-                        isLoading = true
-                    )
-                }
-                is Resource.Error -> {
-                    _eventsState.value = _eventsState.value.copy(
-                        events = result.data,
-                        category = category,
-                        eventsLocations = result.data.distinctBy { it.promoterName }
-                            .map { it.promoterName },
-                        isLoading = false
-                    )
-                    _eventFlow.emit(
-                        UiEvent.ShowSnackbar(
-                            message = result.message
-                        )
-                    )
-                }
-            }
+    private fun getEventsLocations() {
+        getEventsLocationsJob?.cancel()
+        getEventsLocationsJob = eventsUseCase.getEventsLocations().onEach {
+            _eventsLocationsState.value = it
         }.launchIn(viewModelScope)
+    }
 
+    private fun getEventsDistinct(category: EventCategory) {
+
+        getEventsJob?.cancel()
+        getEventsJob =
+            eventsUseCase.getAllEventsDistinct(category, currentLocation).onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        _eventsState.value = _eventsState.value.copy(
+                            events = result.data,
+                            category = category,
+                            eventsLocations = result.data.distinctBy { it.promoterName }
+                                .map { it.promoterName },
+                            isLoading = false
+                        )
+                    }
+                    is Resource.Loading -> {
+                        _eventsState.value = _eventsState.value.copy(
+                            events = result.data,
+                            category = category,
+                            eventsLocations = result.data.distinctBy { it.promoterName }
+                                .map { it.promoterName },
+                            isLoading = true
+                        )
+                    }
+                    is Resource.Error -> {
+                        _eventsState.value = _eventsState.value.copy(
+                            events = result.data,
+                            category = category,
+                            eventsLocations = result.data.distinctBy { it.promoterName }
+                                .map { it.promoterName },
+                            isLoading = false
+                        )
+                        _eventFlow.emit(
+                            UiEvent.ShowSnackbar(
+                                message = result.message
+                            )
+                        )
+                    }
+                }
+            }.launchIn(viewModelScope)
+    }
+
+    fun onEvent(event: EventsMenuEvent) {
+        when (event) {
+            is EventsMenuEvent.ChangeCategory -> {
+                getEventsDistinct(event.category)
+            }
+            is EventsMenuEvent.ChangeLocation -> {
+                currentLocation = event.location
+                getEventsDistinct(
+                    category = _eventsState.value.category,
+                )
+
+            }
+        }
+    }
+
+    fun onCalendarEvent(calendarEvent: CalendarPanelEvent) {
+        when (calendarEvent) {
+            is CalendarPanelEvent.ChangeDay -> {
+                _calendarState.value = _calendarState.value.copy(
+                    selectedDayOfMonth = calendarEvent.newDayNumber
+                )
+            }
+            is CalendarPanelEvent.ChangeMonth -> {
+                val newYear =
+                    YearMonth.of(calendarState.value.year, calendarState.value.month)
+                        .plusMonths(calendarEvent.monthsToAdd.toLong())
+                val newMonth = newYear.month
+                _calendarState.value = CalendarPanelState(newYear.year, newMonth)
+            }
+        }
+        getEventsForDate()
     }
 
     private fun getEventsForDate() {
@@ -118,36 +167,6 @@ class EventsMenuViewModel @Inject constructor(
 
         }.launchIn(viewModelScope)
     }
-
-    fun onEvent(event: EventsMenuEvent) {
-        when (event) {
-            is EventsMenuEvent.ChangeCategory -> {
-                getEventsDistinct(event.category)
-            }
-            is EventsMenuEvent.ChangeLocation ->{
-                getEventsDistinct(category = _eventsState.value.category, locationName = event.location )
-            }
-        }
-    }
-
-    fun onCalendarEvent(calendarEvent: CalendarPanelEvent) {
-        when (calendarEvent) {
-            is CalendarPanelEvent.ChangeDay -> {
-                _calendarState.value = _calendarState.value.copy(
-                    selectedDayOfMonth = calendarEvent.newDayNumber
-                )
-            }
-            is CalendarPanelEvent.ChangeMonth -> {
-                val newYear =
-                    YearMonth.of(calendarState.value.year, calendarState.value.month)
-                        .plusMonths(calendarEvent.monthsToAdd.toLong())
-                val newMonth = newYear.month
-                _calendarState.value = CalendarPanelState(newYear.year, newMonth)
-            }
-        }
-        getEventsForDate()
-    }
-
 }
 
 

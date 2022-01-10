@@ -41,6 +41,8 @@ fun EventMenu(viewModel: EventsMenuViewModel = hiltViewModel()) {
 
 
     val eventsState = viewModel.eventsState.value
+    val eventsLocationsState = viewModel.eventsLocationsState.value
+
     val scaffoldState = rememberScaffoldState()
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -53,7 +55,6 @@ fun EventMenu(viewModel: EventsMenuViewModel = hiltViewModel()) {
             }
         }
     }
-
 
     // TODO: Change int to enum
     val selectedChipIndex = remember {
@@ -115,7 +116,7 @@ fun EventMenu(viewModel: EventsMenuViewModel = hiltViewModel()) {
                             }
                         }
                         1 -> {
-                            LocationSelectionPanel(eventsState.eventsLocations) {
+                            LocationSelectionPanel(eventsLocationsState.value) {
                                 viewModel.onEvent(
                                     EventsMenuEvent.ChangeLocation(it)
                                 )
@@ -138,7 +139,6 @@ fun EventMenu(viewModel: EventsMenuViewModel = hiltViewModel()) {
 
             // content depending on selected state
             item {
-
                 FlowRow(
                     mainAxisAlignment = FlowMainAxisAlignment.SpaceEvenly,
                     mainAxisSpacing = 8.dp,
@@ -167,7 +167,9 @@ fun LocationSelectionPanel(
     onClick: (String) -> Unit
 ) {
 
-    var selectedLocationText by remember { mutableStateOf("") }
+    val selectAllLocationsLabel = "All"
+    var selectedLocationText by remember { mutableStateOf(selectAllLocationsLabel) }
+
     Row(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier
@@ -192,7 +194,29 @@ fun LocationSelectionPanel(
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     backgroundColor = colors.background,
                 )
+            )
+
+
+
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = {
+                    expanded = false
+                }
             ) {
+                DropdownMenuItem(
+                    onClick = {
+                        selectedLocationText = selectAllLocationsLabel
+                        onClick(".*")
+                        expanded = false
+                    }
+                ) {
+                    Text(
+                        text = selectAllLocationsLabel,
+                        color = if (selectedLocationText == selectAllLocationsLabel) colors.primary else Color.Unspecified
+                    )
+                }
+
                 locations.forEachIndexed { index, selectionLocation ->
                     DropdownMenuItem(
                         onClick = {
