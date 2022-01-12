@@ -5,7 +5,7 @@ import com.geopark.feature_locations_events.domain.util.EventCategory
 sealed class EventsMenuEvent {
 
     data class ChangeCategory(val category : EventCategory) : EventsMenuEvent()
-    data class ChangeLocation(val location : String) : EventsMenuEvent()
+
 
 
 }

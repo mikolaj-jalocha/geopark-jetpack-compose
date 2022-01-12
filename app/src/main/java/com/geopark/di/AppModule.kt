@@ -118,10 +118,8 @@ object AppModule {
     @Singleton
     fun provideEventsUseCases(repository: EventRepository): EventsUseCase {
         return EventsUseCase(
-            getEventsForDate = GetEventsForDate(repository = repository),
             getAllEvents = GetAllEvents(repository = repository),
             getAllEventsDistinct = GetAllEventsDistinct(repository = repository),
-            getEventsLocations = GetEventsLocations(repository = repository)
         )
     }
 

@@ -15,11 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
+import com.geopark.R
 import com.geopark.feature_locations_events.domain.util.EventCategory
 import com.geopark.feature_locations_events.presentation.UiEvent
 import com.geopark.feature_locations_events.presentation.events_list.composables.CalendarPanel
@@ -37,11 +39,9 @@ import kotlinx.coroutines.flow.collectLatest
 @ExperimentalMaterialApi
 @Composable
 @Preview
-fun EventMenu(viewModel: EventsMenuViewModel = hiltViewModel()) {
-
+fun EventMenuScreen(viewModel: EventsMenuViewModel = hiltViewModel()) {
 
     val eventsState = viewModel.eventsState.value
-    val eventsLocationsState = viewModel.eventsLocationsState.value
 
     val scaffoldState = rememberScaffoldState()
     LaunchedEffect(key1 = true) {
@@ -71,37 +71,30 @@ fun EventMenu(viewModel: EventsMenuViewModel = hiltViewModel()) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
 
-            // TODO: Change int to enum in selected chip index
             item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    Chip(text = "Category", isSelected = selectedChipIndex.value == 0) {
-                        if (selectedChipIndex.value == 0) selectedChipIndex.value =
-                            -1 else selectedChipIndex.value = 0
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceAround
+                    ) {
+                        Chip(text = "Category", isSelected = selectedChipIndex.value == 0) {
+                            if (selectedChipIndex.value == 0) selectedChipIndex.value =
+                                -1 else selectedChipIndex.value = 0
+                        }
+                        Chip(text = "Calendar", isSelected = selectedChipIndex.value == 1) {
+                            if (selectedChipIndex.value == 1) selectedChipIndex.value =
+                                -1 else selectedChipIndex.value = 1
+                        }
+                        IconButton(onClick = { /*TODO*/ }) {
+                            Icon(painter = painterResource(id = R.drawable.ic_filter), contentDescription = "Filter",tint = colors.onBackground)
+                        }
                     }
-                    Chip(text = "Location", isSelected = selectedChipIndex.value == 1) {
-                        if (selectedChipIndex.value == 1) selectedChipIndex.value =
-                            -1 else selectedChipIndex.value = 1
-                    }
-                    Chip(text = "Date", isSelected = selectedChipIndex.value == 2) {
-                        if (selectedChipIndex.value == 2) {
-                            selectedChipIndex.value =
-                                -1
-                        } else selectedChipIndex.value = 2
-                    }
-
-                }
             }
-
             item {
                 AnimatedContent(targetState = selectedChipIndex.value) { targetState ->
                     when (targetState) {
                         -1 -> {
                         }
                         0 -> {
-
                             TypeSelectionPanel(
                                 EventCategory.values().map { it.categoryName },
                                 selectedCategoryIndex.value
@@ -116,28 +109,16 @@ fun EventMenu(viewModel: EventsMenuViewModel = hiltViewModel()) {
                             }
                         }
                         1 -> {
-                            LocationSelectionPanel(eventsLocationsState.value) {
-                                viewModel.onEvent(
-                                    EventsMenuEvent.ChangeLocation(it)
-                                )
-                            }
-                        }
-                        2 -> {
                             CalendarPanel(
                                 state = viewModel.calendarState.value,
-                                onDayChange = {
-
-                                },
-                                onMonthChange = {
-
-                                }
+                                onDayChange = {},
+                                onMonthChange = {}
                             )
                         }
                     }
                 }
             }
 
-            // content depending on selected state
             item {
                 FlowRow(
                     mainAxisAlignment = FlowMainAxisAlignment.SpaceEvenly,
@@ -162,84 +143,6 @@ fun EventMenu(viewModel: EventsMenuViewModel = hiltViewModel()) {
 
 @ExperimentalMaterialApi
 @Composable
-fun LocationSelectionPanel(
-    locations: List<String>,
-    onClick: (String) -> Unit
-) {
-
-    val selectAllLocationsLabel = "All"
-    var selectedLocationText by remember { mutableStateOf(selectAllLocationsLabel) }
-
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .padding(bottom = 10.dp)
-            .fillMaxWidth()
-    ) {
-        var expanded by remember { mutableStateOf(false) }
-        ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = {
-            expanded = !expanded
-        }) {
-            OutlinedTextField(
-                readOnly = true,
-                value = selectedLocationText,
-                shape = RoundedCornerShape(8.dp),
-                onValueChange = { selectedLocationText = it },
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(
-                        expanded = expanded
-                    )
-                },
-                label = { Text("Location") },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    backgroundColor = colors.background,
-                )
-            )
-
-
-
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = {
-                    expanded = false
-                }
-            ) {
-                DropdownMenuItem(
-                    onClick = {
-                        selectedLocationText = selectAllLocationsLabel
-                        onClick(".*")
-                        expanded = false
-                    }
-                ) {
-                    Text(
-                        text = selectAllLocationsLabel,
-                        color = if (selectedLocationText == selectAllLocationsLabel) colors.primary else Color.Unspecified
-                    )
-                }
-
-                locations.forEachIndexed { index, selectionLocation ->
-                    DropdownMenuItem(
-                        onClick = {
-                            selectedLocationText = selectionLocation
-                            onClick(selectionLocation)
-                            expanded = false
-                        }
-                    ) {
-                        Text(
-                            text = selectionLocation,
-                            color = if (selectedLocationText == selectionLocation) colors.primary else Color.Unspecified
-                        )
-                    }
-                }
-            }
-
-
-        }
-    }
-}
-
-@ExperimentalMaterialApi
-@Composable
 fun TypeSelectionPanel(
     list: List<String>,
     selected: Int,
@@ -257,7 +160,6 @@ fun TypeSelectionPanel(
 
     }
 }
-
 @ExperimentalMaterialApi
 @Composable
 fun Chip(
@@ -266,7 +168,6 @@ fun Chip(
     shape: Shape = RoundedCornerShape(8.dp),
     onClick: (String) -> Unit
 ) {
-
     val colorState =
         animateColorAsState(if (isSelected) colors.background else colors.primary)
     Surface(

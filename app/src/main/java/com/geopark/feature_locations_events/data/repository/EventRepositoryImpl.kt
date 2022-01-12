@@ -22,10 +22,6 @@ class EventRepositoryImpl(
     private val preferences: SharedPreferences
 ) : EventRepository {
 
-    override fun getEventsLocations(): Flow<List<String>> {
-        return dao.getEventsLocations()
-    }
-
     override fun getEvents(): Flow<Resource<List<Event>>> = flow {
 
         emit(Resource.Loading(data = emptyList()))
