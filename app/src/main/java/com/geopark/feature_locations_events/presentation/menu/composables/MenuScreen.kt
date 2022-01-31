@@ -91,7 +91,7 @@ fun MenuScreen(
                             Tile(
                                 modifier = Modifier
                                     .clickable {
-                                        navigateTo(Screen.ContentScreen.route + "/${location.name}")
+                                        navigateTo(Screen.ContentScreen.route + "/${location.location.locationId}")
                                         viewModel.onEvent(
                                             MenuLocationsEvent.ChangeRecentlyWatched(
                                                 true,
@@ -101,8 +101,8 @@ fun MenuScreen(
                                     }
                                     .padding(start = 16.dp),
                                 isWide = false,
-                                photoPath = location.photo,
-                                name = location.name,
+                                photoPath = "",
+                                name = location.location.name,
                                 isFavorite = false,
                                 onFavoriteClick = {
 

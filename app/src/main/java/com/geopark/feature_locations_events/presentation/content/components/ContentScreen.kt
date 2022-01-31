@@ -52,7 +52,7 @@ fun ContentScreen(
         Column {
             Box {
                 Image(
-                    painter = rememberImagePainter(data = state.photo),
+                    painter = rememberImagePainter(""),
                     contentDescription = "Main photography",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -72,13 +72,13 @@ fun ContentScreen(
 
                 item {
                     Text(
-                        text = state.name,
+                        text = state.location.name,
                         style = MaterialTheme.typography.h4,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(start = 20.dp, top = 16.dp)
                     )
                     Text(
-                        text = state.location,
+                        text = state.location.address,
                         style = MaterialTheme.typography.body2,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
@@ -106,7 +106,7 @@ fun ContentScreen(
                     }
 
                     Text(
-                        text = state.name,
+                        text = state.location.name,
                         style = MaterialTheme.typography.h6,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(start = 20.dp, top = 16.dp)
@@ -114,7 +114,7 @@ fun ContentScreen(
 
                     // TODO: 19.09.2021 Adjust better color for text
                     Text(
-                        text = state.description,
+                        text = state.location.description,
                         style = MaterialTheme.typography.body1,
                         color = Color.Gray,
                         modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 4.dp)
@@ -144,7 +144,7 @@ fun ContentScreen(
                             contentDescription = "Telephone",
                             iconId = R.drawable.ic_telephone
                         ) {
-                            viewModel.onEvent(ContentEvent.Call(state.phoneNumber))
+                            viewModel.onEvent(ContentEvent.Call("add telephone"))
                         }
                         RoundedContactButton(
                             contentDescription = "Website",
@@ -154,7 +154,7 @@ fun ContentScreen(
                             contentDescription = "Location",
                             iconId = R.drawable.ic_map
                         ) {
-                            viewModel.onEvent(ContentEvent.ShowOnMap(state.location))
+                            viewModel.onEvent(ContentEvent.ShowOnMap(state.location.address))
                         }
                     }
                 }

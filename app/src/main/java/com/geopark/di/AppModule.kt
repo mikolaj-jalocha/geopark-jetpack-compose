@@ -5,20 +5,19 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
 import com.geopark.core.util.Constants
-import com.geopark.feature_locations_events.data.local.Converters
-import com.geopark.feature_locations_events.data.local.LocationDatabase
+import com.geopark.feature_locations_events.data.local.GeoparkDatabase
 import com.geopark.feature_locations_events.data.remote.ConnectivityInterceptor
 import com.geopark.feature_locations_events.data.remote.GeoparkApi
 import com.geopark.feature_locations_events.data.repository.EventRepositoryImpl
 import com.geopark.feature_locations_events.data.repository.LocationRepositoryImpl
-import com.geopark.feature_locations_events.data.util.GsonParser
 import com.geopark.feature_locations_events.domain.repository.EventRepository
 import com.geopark.feature_locations_events.domain.repository.LocationRepository
-import com.geopark.feature_locations_events.domain.use_case.events.*
-import com.geopark.feature_locations_events.domain.use_case.locations.GetLocationByName
+import com.geopark.feature_locations_events.domain.use_case.events.EventsUseCase
+import com.geopark.feature_locations_events.domain.use_case.events.GetAllEvents
+import com.geopark.feature_locations_events.domain.use_case.events.GetAllEventsDistinct
+import com.geopark.feature_locations_events.domain.use_case.locations.GetLocationById
 import com.geopark.feature_locations_events.domain.use_case.locations.GetLocations
 import com.geopark.feature_locations_events.domain.use_case.locations.LocationUseCases
-import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -45,17 +44,18 @@ object AppModule {
     }
 
 
+
+
     @Provides
     @Singleton
-    fun provideLocationDatabase(
-        app: Application,
-    ): LocationDatabase {
+    fun provideGeoparkDatabase(
+        app: Application
+    ): GeoparkDatabase {
         return Room.databaseBuilder(
-            app, LocationDatabase::class.java,
-            Constants.DATABASE_NAME
+            app, GeoparkDatabase::class.java,
+            "test_database"
         )
             .fallbackToDestructiveMigration()
-            .addTypeConverter(Converters(GsonParser(Gson())))
             .build()
     }
 
@@ -88,7 +88,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideLocationRepository(
-        db: LocationDatabase,
+        db: GeoparkDatabase,
         api: GeoparkApi,
         preferences: SharedPreferences
     ): LocationRepository {
@@ -100,7 +100,7 @@ object AppModule {
     fun provideLocationUseCases(repository: LocationRepository): LocationUseCases {
         return LocationUseCases(
             getLocations = GetLocations(repository),
-            getLocationByName = GetLocationByName(repository)
+            getLocationById = GetLocationById(repository)
         )
     }
 
@@ -108,10 +108,10 @@ object AppModule {
     @Singleton
     fun provideEventRepository(
         api: GeoparkApi,
-        db: LocationDatabase,
+        db: GeoparkDatabase,
         preferences: SharedPreferences
     ): EventRepository {
-        return EventRepositoryImpl(api, db.eventDao, preferences)
+        return EventRepositoryImpl(api, db.eventDao, db.organizerDao, preferences)
     }
 
     @Provides

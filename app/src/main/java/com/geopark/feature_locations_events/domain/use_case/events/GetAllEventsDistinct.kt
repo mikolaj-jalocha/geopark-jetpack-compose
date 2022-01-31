@@ -16,9 +16,9 @@ class GetAllEventsDistinct(
         repository.getEvents().collect { result ->
             val filteredResult =
                 if (category == EventCategory.ALL)
-                    result.data.distinctBy { it.title }
+                    result.data.distinctBy { it.event.eventTitle }
                 else
-                    result.data.distinctBy { it.title }.filter { it.category.contains(category)  }
+                    result.data.distinctBy {it.event.eventTitle }
 
             when (result) {
                 is Resource.Success -> {

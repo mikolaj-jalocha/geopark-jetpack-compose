@@ -5,5 +5,5 @@ package com.geopark.feature_locations_events.domain.use_case.locations
 
 data class LocationUseCases(
     val getLocations: GetLocations,
-    val getLocationByName : GetLocationByName,
+    val getLocationById: GetLocationById,
 )

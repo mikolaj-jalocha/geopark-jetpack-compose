@@ -5,7 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.geopark.feature_locations_events.domain.model.Location
+import com.geopark.feature_locations_events.data.local.entity.LocationEntity
+import com.geopark.feature_locations_events.data.local.model.Location
 import com.geopark.feature_locations_events.domain.use_case.locations.LocationUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -51,7 +52,7 @@ class ContentViewModel @Inject constructor(
         val locationName = savedStateHandle.get<String>("locationName") ?: ""
         if (locationName.isNotBlank()) {
                 viewModelScope.launch {
-                   _locationsState.value = locationsUseCases.getLocationByName(locationName)
+                   _locationsState.value = locationsUseCases.getLocationById(locationName)
                 }
         }
 

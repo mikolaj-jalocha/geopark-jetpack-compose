@@ -96,7 +96,7 @@ fun ListScreen(
                         this@LazyColumn.itemsIndexed(state.locations) { _, location ->
                             Tile(
                                 modifier = Modifier.clickable {
-                                    navigateTo(Screen.ContentScreen.route + "/${location.name}")
+                                    navigateTo(Screen.ContentScreen.route + "/${location.location.name}")
                                     viewModel.onEvent(
                                         ListLocationsEvent.ChangeRecentlyWatched(
                                             true,
@@ -104,8 +104,8 @@ fun ListScreen(
                                         )
                                     )
                                 },
-                                photoPath = location.photo,
-                                name = location.name,
+                                photoPath = "",
+                                name = location.location.name,
                                 isWide = true,
                                 isFavorite = false
                             ) {

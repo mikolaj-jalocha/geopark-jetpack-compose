@@ -1,6 +1,7 @@
 package com.geopark.feature_locations_events.presentation.menu
 
-import com.geopark.feature_locations_events.domain.model.Location
+import com.geopark.feature_locations_events.data.local.entity.LocationEntity
+import com.geopark.feature_locations_events.data.local.model.Location
 import com.geopark.feature_locations_events.domain.util.LocationType
 
 sealed class MenuLocationsEvent{

@@ -125,10 +125,10 @@ fun EventMenuScreen(viewModel: EventsMenuViewModel = hiltViewModel()) {
                     mainAxisSpacing = 8.dp,
                     crossAxisSpacing = 8.dp
                 ) {
-                    eventsState.events.distinctBy { it.title }.forEach { event ->
+                    eventsState.events.distinctBy { it.event.eventTitle }.forEach { event ->
                         Tile(
-                            photoPath = event.photoPath,
-                            name = event.title,
+                            photoPath = "",
+                            name = event.event.eventTitle,
                             isWide = false,
                             isFavorite = false
                         ) {

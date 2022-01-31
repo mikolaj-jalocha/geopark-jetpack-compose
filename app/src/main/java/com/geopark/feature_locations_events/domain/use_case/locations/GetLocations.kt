@@ -21,22 +21,22 @@ class GetLocations(
         repository.getLocations().collect { result ->
             when (locationType) {
                 is LocationType.All -> result.data
-                is LocationType.Hotel -> result.data.filter { it.type == "Hotel" }
-                is LocationType.Explore -> result.data.filter { it.type == "Explore" }
-                is LocationType.Active -> result.data.filter { it.type == "Active" }
-                is LocationType.Restaurant -> result.data.filter { it.type == "Restaurant" }
+                is LocationType.Hotel -> result.data.filter { true }
+                is LocationType.Explore -> result.data.filter { true }
+                is LocationType.Active -> result.data.filter { true }
+                is LocationType.Restaurant -> result.data.filter { true }
             }.let { list ->
                 if (nameQuery.isNotBlank())
                     list.filter {
-                        it.name.toLowerCase(Locale.current)
+                        it.location.name.toLowerCase(Locale.current)
                             .contains(nameQuery.toLowerCase(Locale.current))
                     }
                 else
                     list
             }.let { list ->
                 when (locationOrder.orderType) {
-                    is OrderType.Ascending -> list.sortedBy { it.name.lowercase() }
-                    is OrderType.Descending -> list.sortedByDescending { it.name.lowercase() }
+                    is OrderType.Ascending -> list.sortedBy { it.location.name.lowercase() }
+                    is OrderType.Descending -> list.sortedByDescending { it.location.name.lowercase() }
                     // TODO: Add sorting by certificate
                     is OrderType.CertificatedFirst -> list
                     is OrderType.Default -> list

@@ -1,6 +1,6 @@
 package com.geopark.feature_locations_events.presentation.events_menu
 
-import com.geopark.feature_locations_events.domain.model.Event
+import com.geopark.feature_locations_events.data.local.model.Event
 import com.geopark.feature_locations_events.domain.util.EventCategory
 
 data class EventsState(
