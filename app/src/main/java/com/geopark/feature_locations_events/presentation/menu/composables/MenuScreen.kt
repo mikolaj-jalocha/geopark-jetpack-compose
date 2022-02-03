@@ -101,7 +101,7 @@ fun MenuScreen(
                                     }
                                     .padding(start = 16.dp),
                                 isWide = false,
-                                photoPath = "",
+                                photoPath = location.photos[0].url,
                                 name = location.location.name,
                                 isFavorite = false,
                                 onFavoriteClick = {

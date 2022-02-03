@@ -12,4 +12,8 @@ interface OrganizerDao : BaseDao<OrganizerEntity> {
     @Query("SELECT * FROM OrganizerEntity WHERE organizerId=:organizerId")
     suspend fun getOrganizerById(organizerId: String): OrganizerEntity?
 
+    @Query("DELETE FROM OrganizerEntity")
+    suspend fun delete()
+
+
 }

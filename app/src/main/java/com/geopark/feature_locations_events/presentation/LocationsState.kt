@@ -1,5 +1,6 @@
 package com.geopark.feature_locations_events.presentation
 
+import com.geopark.feature_locations_events.data.local.entity.CategoryEntity
 import com.geopark.feature_locations_events.data.local.entity.LocationEntity
 import com.geopark.feature_locations_events.data.local.model.Location
 import com.geopark.feature_locations_events.domain.util.LocationOrder
@@ -10,7 +11,7 @@ import com.geopark.feature_locations_events.domain.util.OrderType
 
 data class LocationsState(
     var locations : List<Location> = emptyList(),
-    val locationType : LocationType = LocationType.All,
+    val locationType: LocationType = LocationType.All,
     val locationOrder : LocationOrder = LocationOrder.Name(OrderType.Default),
     val isLoading: Boolean = false
 )

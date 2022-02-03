@@ -5,11 +5,14 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
 import com.geopark.core.util.Constants
+import com.geopark.feature_locations_events.data.local.Converters
 import com.geopark.feature_locations_events.data.local.GeoparkDatabase
 import com.geopark.feature_locations_events.data.remote.ConnectivityInterceptor
 import com.geopark.feature_locations_events.data.remote.GeoparkApi
+import com.geopark.feature_locations_events.data.repository.CachingRepository
 import com.geopark.feature_locations_events.data.repository.EventRepositoryImpl
 import com.geopark.feature_locations_events.data.repository.LocationRepositoryImpl
+import com.geopark.feature_locations_events.data.util.GsonParser
 import com.geopark.feature_locations_events.domain.repository.EventRepository
 import com.geopark.feature_locations_events.domain.repository.LocationRepository
 import com.geopark.feature_locations_events.domain.use_case.events.EventsUseCase
@@ -18,6 +21,7 @@ import com.geopark.feature_locations_events.domain.use_case.events.GetAllEventsD
 import com.geopark.feature_locations_events.domain.use_case.locations.GetLocationById
 import com.geopark.feature_locations_events.domain.use_case.locations.GetLocations
 import com.geopark.feature_locations_events.domain.use_case.locations.LocationUseCases
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,8 +48,6 @@ object AppModule {
     }
 
 
-
-
     @Provides
     @Singleton
     fun provideGeoparkDatabase(
@@ -54,7 +56,7 @@ object AppModule {
         return Room.databaseBuilder(
             app, GeoparkDatabase::class.java,
             "test_database"
-        )
+        ).addTypeConverter(Converters(GsonParser(Gson())))
             .fallbackToDestructiveMigration()
             .build()
     }
@@ -89,10 +91,10 @@ object AppModule {
     @Singleton
     fun provideLocationRepository(
         db: GeoparkDatabase,
-        api: GeoparkApi,
-        preferences: SharedPreferences
+        preferences: SharedPreferences,
+        cachingRepository: CachingRepository
     ): LocationRepository {
-        return LocationRepositoryImpl(db.locationDao, api, preferences)
+        return LocationRepositoryImpl(db.locationDao, preferences, cachingRepository)
     }
 
     @Provides
@@ -107,11 +109,32 @@ object AppModule {
     @Provides
     @Singleton
     fun provideEventRepository(
-        api: GeoparkApi,
         db: GeoparkDatabase,
-        preferences: SharedPreferences
+        preferences: SharedPreferences,
+        cachingRepository: CachingRepository
     ): EventRepository {
-        return EventRepositoryImpl(api, db.eventDao, db.organizerDao, preferences)
+        return EventRepositoryImpl(db.eventDao, preferences, cachingRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCachingRepository(
+        api: GeoparkApi,
+        db: GeoparkDatabase
+    ): CachingRepository {
+        return CachingRepository(
+            api,
+            db.organizerDao,
+            db.tagDao,
+            db.labelDao,
+            db.photoDao,
+            db.categoryDao,
+            db.eventDao,
+            db.locationDao,
+            provideApplicationScope()
+        ){
+            db.clearAllTables()
+        }
     }
 
     @Provides

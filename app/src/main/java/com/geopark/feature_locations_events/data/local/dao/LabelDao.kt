@@ -14,4 +14,7 @@ interface LabelDao : BaseDao<LabelEntity> {
     @Query("SELECT * FROM LabelEntity WHERE labelId=:labelId")
     suspend fun getLabelById(labelId: String): LabelEntity
 
+    @Query("DELETE FROM LabelEntity")
+    suspend fun delete()
+
 }

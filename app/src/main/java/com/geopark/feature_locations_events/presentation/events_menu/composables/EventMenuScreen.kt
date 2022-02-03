@@ -127,7 +127,7 @@ fun EventMenuScreen(viewModel: EventsMenuViewModel = hiltViewModel()) {
                 ) {
                     eventsState.events.distinctBy { it.event.eventTitle }.forEach { event ->
                         Tile(
-                            photoPath = "",
+                            photoPath = event.photos[0].url,
                             name = event.event.eventTitle,
                             isWide = false,
                             isFavorite = false

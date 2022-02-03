@@ -104,7 +104,7 @@ fun ListScreen(
                                         )
                                     )
                                 },
-                                photoPath = "",
+                                photoPath = location.photos[0].url,
                                 name = location.location.name,
                                 isWide = true,
                                 isFavorite = false

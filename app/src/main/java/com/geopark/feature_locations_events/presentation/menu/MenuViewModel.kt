@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.geopark.core.util.Resource
+import com.geopark.feature_locations_events.data.local.entity.CategoryEntity
 import com.geopark.feature_locations_events.domain.use_case.locations.LocationUseCases
 import com.geopark.feature_locations_events.domain.util.LocationType
 import com.geopark.feature_locations_events.presentation.LocationsState

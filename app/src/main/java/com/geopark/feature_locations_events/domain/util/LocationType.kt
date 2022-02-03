@@ -11,9 +11,9 @@ sealed class LocationType{
     override fun toString(): String {
         return when(this){
             is All -> "All"
-            is Hotel -> "Hotel"
-            is Restaurant -> "Restaurant"
-            is Active -> "Active"
+            is Hotel -> "noclegi"
+            is Restaurant -> "gastronomia"
+            is Active -> "sport"
             is Explore -> "Explore"
         }
     }

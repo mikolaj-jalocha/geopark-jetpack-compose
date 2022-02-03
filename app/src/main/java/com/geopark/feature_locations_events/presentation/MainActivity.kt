@@ -5,7 +5,6 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.annotation.OptIn
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
@@ -17,16 +16,15 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import coil.annotation.ExperimentalCoilApi
 import com.geopark.core.presentation.ContainerScreen
+import com.geopark.core.presentation.util.Screen
 import com.geopark.feature_locations_events.presentation.content.ContentEvent
 import com.geopark.feature_locations_events.presentation.content.components.ContentScreen
 import com.geopark.feature_locations_events.presentation.list.components.ListScreen
-import com.geopark.core.presentation.util.Screen
 import com.geopark.ui.theme.GeoparkTheme
 import com.geoparkcompose.ui.menu.MenuScreen
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.migration.OptionalInject
 
 @AndroidEntryPoint
 @ExperimentalPagerApi
@@ -39,7 +37,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {

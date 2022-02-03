@@ -1,9 +1,6 @@
 package com.geopark.feature_locations_events.data.remote
 
-import com.geopark.feature_locations_events.data.local.entity.CategoryEntity
-import com.geopark.feature_locations_events.data.local.entity.LabelEntity
-import com.geopark.feature_locations_events.data.local.entity.LocationEntity
-import com.geopark.feature_locations_events.data.local.entity.OrganizerEntity
+import com.geopark.feature_locations_events.data.local.entity.*
 import com.geopark.feature_locations_events.data.local.model.Event
 import com.geopark.feature_locations_events.data.remote.dto.EventDto
 import com.geopark.feature_locations_events.data.remote.dto.LocationDto
@@ -25,6 +22,12 @@ interface GeoparkApi {
 
     @GET("Labels")
     suspend fun getLabels() : List<LabelEntity>
+
+    @GET("Tags")
+    suspend fun getTags() : List<TagEntity>
+
+    @GET("Photos")
+    suspend fun getPhotos() : List<PhotoEntity>
 
 
 }

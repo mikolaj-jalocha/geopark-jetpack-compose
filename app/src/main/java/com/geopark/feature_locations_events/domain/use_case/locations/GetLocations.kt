@@ -21,10 +21,20 @@ class GetLocations(
         repository.getLocations().collect { result ->
             when (locationType) {
                 is LocationType.All -> result.data
-                is LocationType.Hotel -> result.data.filter { true }
+                is LocationType.Hotel -> result.data.filter { location ->
+                    location.categories.map { it.categoryId }
+                        .contains(LocationType.Hotel.toString())
+                }
+                is LocationType.Restaurant -> result.data.filter { location ->
+                    location.categories.map { it.categoryId }
+                        .contains(LocationType.Restaurant.toString())
+                }
                 is LocationType.Explore -> result.data.filter { true }
-                is LocationType.Active -> result.data.filter { true }
-                is LocationType.Restaurant -> result.data.filter { true }
+                is LocationType.Active -> result.data.filter { location ->
+                    location.categories.map { it.categoryId }
+                        .contains(LocationType.Active.toString())
+                }
+
             }.let { list ->
                 if (nameQuery.isNotBlank())
                     list.filter {
@@ -38,7 +48,9 @@ class GetLocations(
                     is OrderType.Ascending -> list.sortedBy { it.location.name.lowercase() }
                     is OrderType.Descending -> list.sortedByDescending { it.location.name.lowercase() }
                     // TODO: Add sorting by certificate
-                    is OrderType.CertificatedFirst -> list
+                    is OrderType.CertificatedFirst -> list.filter { location ->
+                        location.labels.map { it.labelId }.contains("certyfikat")
+                    }
                     is OrderType.Default -> list
                 }
             }.also { res ->

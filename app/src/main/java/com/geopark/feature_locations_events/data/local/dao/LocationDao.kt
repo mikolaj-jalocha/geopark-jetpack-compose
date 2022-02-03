@@ -37,31 +37,33 @@ interface LocationDao : BaseDao<LocationEntity> {
     suspend fun insertLocationTag(locationTag: LocationTagCrossRef)
 
     @Transaction
-    suspend fun addLocation(locationDto: LocationDto) {
-        locationDto.apply {
-            insertLocationEntity(
-                LocationEntity(
-                    locationId,
-                    name,
-                    address,
-                    description,
-                    website,
-                    telephone,
-                    latitude,
-                    longitude
+    suspend fun addLocations(locationDto: List<LocationDto>) {
+        locationDto.forEach {
+            it.apply {
+                insertLocationEntity(
+                    LocationEntity(
+                        locationId,
+                        name,
+                        address,
+                        description,
+                        website,
+                        telephone,
+                        latitude,
+                        longitude
+                    )
                 )
-            )
-            labelsIds.forEach {
-                insertLocationLabel(LocationLabelCrossRef(locationId, it))
-            }
-            categoriesIds.forEach {
-                insertLocationCategory(LocationCategoryCrossRef(locationId, it))
-            }
-            photosIds.forEach {
-                insertLocationPhoto(LocationPhotoCrossRef(locationId, it))
-            }
-            tagsIds.forEach {
-                insertLocationTag(LocationTagCrossRef(locationId, it))
+                labelsIds.forEach { id ->
+                    insertLocationLabel(LocationLabelCrossRef(locationId, id))
+                }
+                categoriesIds.forEach { id ->
+                    insertLocationCategory(LocationCategoryCrossRef(locationId, id))
+                }
+                photosIds.forEach { id ->
+                    insertLocationPhoto(LocationPhotoCrossRef(locationId, id))
+                }
+                tagsIds.forEach { id ->
+                    insertLocationTag(LocationTagCrossRef(locationId, id))
+                }
             }
         }
     }

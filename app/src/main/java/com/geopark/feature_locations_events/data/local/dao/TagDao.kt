@@ -14,4 +14,6 @@ interface TagDao : BaseDao<TagEntity> {
     @Query("SELECT * FROM TagEntity WHERE tagId=:tagId")
     suspend fun getTagById(tagId: String): TagEntity?
 
+    @Query("DELETE FROM TagEntity")
+    suspend fun delete()
 }

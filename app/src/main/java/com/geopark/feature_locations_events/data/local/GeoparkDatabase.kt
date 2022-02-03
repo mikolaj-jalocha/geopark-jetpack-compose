@@ -2,6 +2,7 @@ package com.geopark.feature_locations_events.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.geopark.feature_locations_events.data.local.bridge.event_bridge.*
 import com.geopark.feature_locations_events.data.local.bridge.location_bridge.LocationCategoryCrossRef
 import com.geopark.feature_locations_events.data.local.bridge.location_bridge.LocationLabelCrossRef
@@ -16,6 +17,7 @@ import com.geopark.feature_locations_events.data.local.entity.*
         LocationLabelCrossRef::class, LocationTagCrossRef::class, LocationPhotoCrossRef::class, LocationCategoryCrossRef::class],
     version = 1
 )
+@TypeConverters(Converters::class)
 abstract class GeoparkDatabase : RoomDatabase() {
 
     abstract val eventDao: EventDao
@@ -24,5 +26,6 @@ abstract class GeoparkDatabase : RoomDatabase() {
     abstract val organizerDao: OrganizerDao
     abstract val tagDao: TagDao
     abstract val photoDao: PhotoDao
+    abstract val categoryDao : CategoryDao
 
 }

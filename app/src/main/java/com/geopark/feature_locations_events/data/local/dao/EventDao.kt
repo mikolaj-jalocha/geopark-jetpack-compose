@@ -1,5 +1,6 @@
 package com.geopark.feature_locations_events.data.local.dao
 
+import android.util.Log
 import androidx.room.*
 import com.geopark.feature_locations_events.data.local.bridge.event_bridge.*
 import com.geopark.feature_locations_events.data.local.entity.EventEntity
@@ -31,31 +32,40 @@ interface EventDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEventEntity(eventEntity: EventEntity)
 
+
     @Transaction
-    suspend fun addEvent(
-        eventDto: EventDto
+    suspend fun addEvents(
+        eventDto: List<EventDto>
     ) {
 
-        eventDto.apply {
+        eventDto.forEach {
+            it.apply {
+                insertEventEntity(
+                    EventEntity(
+                        eventId,
+                        eventTitle,
+                        eventDescription,
+                        eventOrganizerId,
+                        eventDate
+                    )
+                )
+                locationsIds.forEach { id ->
+                    insertEventLocation(EventLocationCrossRef(eventId, id))
+                }
+                labelsIds.forEach { id ->
+                    insertEventLabel(EventLabelCrossRef(eventId, id))
+                }
+                categoriesIds.forEach { id ->
+                    insertEventCategory(EventCategoryCrossRef(eventId, id))
+                }
+                tagsIds.forEach { id ->
+                    insertEventTag(EventTagCrossRef(eventId, id))
+                }
+                photosIds.forEach { id ->
+                    insertEventPhoto(EventPhotoCrossRef(eventId, id))
+                }
 
-            insertEventEntity(EventEntity(eventId, eventTitle,eventDescription, eventDate,eventOrganizerId))
-            locationsIds.forEach {
-                insertEventLocation(EventLocationCrossRef(eventId, it))
             }
-            labelsIds.forEach {
-                insertEventLabel(EventLabelCrossRef(eventId, it))
-            }
-            categoriesIds.forEach {
-                insertEventCategory(EventCategoryCrossRef(eventId, it))
-            }
-            tagsIds.forEach {
-                insertEventTag(EventTagCrossRef(eventId, it))
-            }
-            photosIds.forEach {
-                insertEventPhoto(EventPhotoCrossRef(eventId, it))
-            }
-
-
         }
     }
 

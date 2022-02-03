@@ -13,4 +13,7 @@ interface PhotoDao : BaseDao<PhotoEntity> {
     @Query("SELECT * FROM photoentity WHERE photoId=:photoId")
     suspend fun getPhotoById(photoId : String) : PhotoEntity?
 
+
+    @Query("DELETE FROM PhotoEntity")
+    suspend fun delete()
 }

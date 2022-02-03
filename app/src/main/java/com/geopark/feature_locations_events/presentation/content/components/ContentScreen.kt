@@ -52,7 +52,7 @@ fun ContentScreen(
         Column {
             Box {
                 Image(
-                    painter = rememberImagePainter(""),
+                    painter = rememberImagePainter(state.photos[0].url),
                     contentDescription = "Main photography",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
