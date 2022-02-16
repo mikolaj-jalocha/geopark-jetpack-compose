@@ -6,6 +6,7 @@ import com.geopark.feature_locations_events.data.local.bridge.event_bridge.*
 import com.geopark.feature_locations_events.data.local.entity.EventEntity
 import com.geopark.feature_locations_events.data.local.model.Event
 import com.geopark.feature_locations_events.data.remote.dto.EventDto
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface EventDao {
@@ -13,6 +14,10 @@ interface EventDao {
     @Transaction
     @Query("SELECT * FROM EventEntity")
     suspend fun getEvents(): List<Event>
+
+    @Transaction
+    @Query("SELECT * FROM EventEntity")
+    fun getEventsFlow() : Flow<List<Event>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEventCategory(eventCategory: EventCategoryCrossRef)

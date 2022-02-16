@@ -18,6 +18,7 @@ import com.geopark.feature_locations_events.domain.repository.LocationRepository
 import com.geopark.feature_locations_events.domain.use_case.events.EventsUseCase
 import com.geopark.feature_locations_events.domain.use_case.events.GetAllEvents
 import com.geopark.feature_locations_events.domain.use_case.events.GetAllEventsDistinct
+import com.geopark.feature_locations_events.domain.use_case.events.GetAllEventsFlowUseCase
 import com.geopark.feature_locations_events.domain.use_case.locations.GetLocationById
 import com.geopark.feature_locations_events.domain.use_case.locations.GetLocations
 import com.geopark.feature_locations_events.domain.use_case.locations.LocationUseCases
@@ -142,6 +143,7 @@ object AppModule {
     fun provideEventsUseCases(repository: EventRepository): EventsUseCase {
         return EventsUseCase(
             getAllEvents = GetAllEvents(repository = repository),
+            getAllEventsFlowUseCase = GetAllEventsFlowUseCase(repository = repository),
             getAllEventsDistinct = GetAllEventsDistinct(repository = repository),
         )
     }

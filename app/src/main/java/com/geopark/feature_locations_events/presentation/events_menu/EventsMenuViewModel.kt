@@ -1,23 +1,17 @@
 package com.geopark.feature_locations_events.presentation.events_menu
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.geopark.core.util.Resource
-import com.geopark.feature_locations_events.data.local.GeoparkDatabase
-import com.geopark.feature_locations_events.data.local.entity.*
 import com.geopark.feature_locations_events.domain.use_case.events.EventsUseCase
 import com.geopark.feature_locations_events.domain.util.EventCategory
 import com.geopark.feature_locations_events.presentation.UiEvent
 import com.geopark.feature_locations_events.presentation.events_menu.calendar.CalendarPanelState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,10 +33,38 @@ class EventsMenuViewModel @Inject constructor(
     private var getEventsJob: Job? = null
 
 
+    private var getEventsJobFlow: Job? = null
+
     private var currentLocation = ".*"
 
     init {
-        getEventsDistinct(EventCategory.ALL)
+        getAllEvents()
+    //getEventsDistinct(EventCategory.ALL)
+    }
+
+    private fun getAllEvents() {
+        getEventsJobFlow?.cancel()
+        getEventsJobFlow = viewModelScope.launch {
+            eventsUseCase.getAllEventsFlowUseCase().collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        _eventsState.value = _eventsState.value.copy(
+                            events = result.data,
+                            isLoading = false
+                        )
+                    }
+                    is Resource.Loading -> {
+                        _eventsState.value = _eventsState.value.copy(
+                            events = result.data,
+                            isLoading = true
+                        )
+                    }
+                    else -> {
+
+                    }
+                }
+            }
+        }
     }
 
 
@@ -55,8 +77,8 @@ class EventsMenuViewModel @Inject constructor(
                         _eventsState.value = _eventsState.value.copy(
                             events = result.data,
                             category = category,
-                            eventsLocations = result.data.distinctBy { it /*it.organizer.name */}
-                                .map { it.event.eventTitle /*it.organizer.name*/  },
+                            eventsLocations = result.data.distinctBy { it /*it.organizer.name */ }
+                                .map { it.event.eventTitle /*it.organizer.name*/ },
                             isLoading = false
                         )
                     }
@@ -64,8 +86,8 @@ class EventsMenuViewModel @Inject constructor(
                         _eventsState.value = _eventsState.value.copy(
                             events = result.data,
                             category = category,
-                            eventsLocations = result.data.distinctBy { it /*it.organizer.name */}
-                                .map { it.event.eventTitle /*it.organizer.name*/  },
+                            eventsLocations = result.data.distinctBy { it /*it.organizer.name */ }
+                                .map { it.event.eventTitle /*it.organizer.name*/ },
                             isLoading = true
                         )
                     }
@@ -73,8 +95,8 @@ class EventsMenuViewModel @Inject constructor(
                         _eventsState.value = _eventsState.value.copy(
                             events = result.data,
                             category = category,
-                            eventsLocations = result.data.distinctBy { it /*it.organizer.name */}
-                                .map { it.event.eventTitle /*it.organizer.name*/  },
+                            eventsLocations = result.data.distinctBy { it /*it.organizer.name */ }
+                                .map { it.event.eventTitle /*it.organizer.name*/ },
                             isLoading = false
                         )
                         _eventFlow.emit(
@@ -90,7 +112,7 @@ class EventsMenuViewModel @Inject constructor(
     fun onEvent(event: EventsMenuEvent) {
         when (event) {
             is EventsMenuEvent.ChangeCategory -> {
-                getEventsDistinct(event.category)
+               // getEventsDistinct(event.category)
             }
         }
     }

@@ -34,7 +34,7 @@ class MenuViewModel @Inject constructor(
 
 
     init {
-        getLocations(locationType = LocationType.All)
+        //getLocations(locationType = LocationType.All)
     }
 
     fun onEvent(menuEvent: MenuLocationsEvent) {
@@ -43,7 +43,7 @@ class MenuViewModel @Inject constructor(
                 if (menuEvent.locationType == state.value.locationType)
                     return
 
-                getLocations(menuEvent.locationType)
+                //getLocations(menuEvent.locationType)
 
             }
         }
@@ -51,7 +51,6 @@ class MenuViewModel @Inject constructor(
 
 
     private fun getLocations(locationType: LocationType) {
-
         getLocationsJob?.cancel()
         getLocationsJob = locationUseCases.getLocations(locationType)
             .onEach { result ->

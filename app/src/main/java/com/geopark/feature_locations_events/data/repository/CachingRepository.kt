@@ -6,6 +6,7 @@ import com.geopark.feature_locations_events.data.remote.GeoparkApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Thread.sleep
 import javax.inject.Inject
 
 class CachingRepository(
@@ -22,9 +23,11 @@ class CachingRepository(
 )  {
 
 
+
     private fun deleteData() = scope.launch(Dispatchers.IO){
             deleteAll()
     }
+
 
     @Throws
     suspend fun cacheData() {

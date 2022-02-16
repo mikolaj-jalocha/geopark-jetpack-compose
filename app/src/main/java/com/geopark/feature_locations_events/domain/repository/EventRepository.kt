@@ -5,5 +5,6 @@ import com.geopark.feature_locations_events.data.local.model.Event
 import kotlinx.coroutines.flow.Flow
 
 interface EventRepository {
-    fun getEvents() : Flow<Resource<List<Event>>>
+    fun getEvents(): Flow<Resource<List<Event>>>
+    fun getEventsFlow(): Flow<Resource<List<Event>>>
 }

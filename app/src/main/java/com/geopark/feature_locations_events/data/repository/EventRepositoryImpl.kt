@@ -9,8 +9,11 @@ import com.geopark.feature_locations_events.data.local.dao.EventDao
 import com.geopark.feature_locations_events.data.local.model.Event
 import com.geopark.feature_locations_events.data.remote.NoInternetConnection
 import com.geopark.feature_locations_events.domain.repository.EventRepository
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -20,6 +23,24 @@ class EventRepositoryImpl(
     private val preferences: SharedPreferences,
     private val cachingRepository: CachingRepository
 ) : EventRepository {
+
+    // DELETE ASAP: for testing purposes only
+    init {
+        GlobalScope.launch {
+            cachingRepository.cacheData()
+        }
+    }
+
+
+    override fun getEventsFlow() = dao.getEventsFlow().map {
+
+        if (it.isEmpty()) {
+            Resource.Loading(data = emptyList())
+        }
+        else
+            Resource.Success(data = it)
+    }
+
 
     override fun getEvents(): Flow<Resource<List<Event>>> = flow {
 
@@ -34,26 +55,26 @@ class EventRepositoryImpl(
             ).dayOfYear else -1
 
 
-         if (lastUpdateDate != null && (lastUpdateDate.isEmpty() || daysFromLastUpdate > Constants.DAYS_FOR_CACHING_UPDATE)) {
-             try {
-                 cachingRepository.cacheData()
-                 preferences.edit {
-                     putString(Constants.CACHING_UPDATE_DATE, LocalDate.now().toString())
-                 }
-             } catch (e: HttpException) {
-                 emit(
-                     Resource.Error(
-                         e.localizedMessage ?: "An unexpected error occurred",
-                         data = emptyList()
-                     )
-                 )
-             } catch (e: NoInternetConnection) {
-                 emit(Resource.Error(e.message, data = emptyList()))
-             } catch (e: Exception) {
-                 Log.d("EVENT_REPOSITORY", "${e.message} ")
-                 emit(Resource.Error(e.message ?: "Unknown error occurred", data = emptyList()))
-             }
-         }
+        if (lastUpdateDate != null && (lastUpdateDate.isEmpty() || daysFromLastUpdate > Constants.DAYS_FOR_CACHING_UPDATE)) {
+            try {
+                cachingRepository.cacheData()
+                preferences.edit {
+                    putString(Constants.CACHING_UPDATE_DATE, LocalDate.now().toString())
+                }
+            } catch (e: HttpException) {
+                emit(
+                    Resource.Error(
+                        e.localizedMessage ?: "An unexpected error occurred",
+                        data = emptyList()
+                    )
+                )
+            } catch (e: NoInternetConnection) {
+                emit(Resource.Error(e.message, data = emptyList()))
+            } catch (e: Exception) {
+                Log.d("EVENT_REPOSITORY", "${e.message} ")
+                emit(Resource.Error(e.message ?: "Unknown error occurred", data = emptyList()))
+            }
+        }
         emit(Resource.Success(dao.getEvents()))
     }
 
