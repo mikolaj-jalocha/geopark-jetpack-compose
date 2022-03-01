@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
 import com.geopark.core.presentation.util.Screen
-import com.geopark.feature_locations_events.domain.util.LocationOrder
 import com.geopark.feature_locations_events.presentation.UiEvent
 import com.geopark.feature_locations_events.presentation.components.TileTitleSortBy
 import com.geopark.feature_locations_events.presentation.list.ListLocationsEvent
@@ -82,7 +81,7 @@ fun ListScreen(
                         state.locationType.toString()
                     ) {
                         viewModel.onEvent(
-                            ListLocationsEvent.Order(LocationOrder.Name(it)),
+                            ListLocationsEvent.Order(it),
                         )
                     }
                 }

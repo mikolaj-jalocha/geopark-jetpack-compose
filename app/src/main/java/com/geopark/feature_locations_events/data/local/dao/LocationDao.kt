@@ -8,6 +8,7 @@ import com.geopark.feature_locations_events.data.local.bridge.location_bridge.Lo
 import com.geopark.feature_locations_events.data.local.entity.LocationEntity
 import com.geopark.feature_locations_events.data.local.model.Location
 import com.geopark.feature_locations_events.data.remote.dto.LocationDto
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -16,6 +17,10 @@ interface LocationDao : BaseDao<LocationEntity> {
     @Transaction
     @Query("SELECT * FROM LocationEntity")
     suspend fun getLocations(): List<Location>
+
+    @Transaction
+    @Query("SELECT * FROM LocationEntity")
+     fun getLocationsFlow(): Flow<List<Location>>
 
     @Transaction
     @Query("SELECT * FROM LocationEntity WHERE locationId=:locationId")

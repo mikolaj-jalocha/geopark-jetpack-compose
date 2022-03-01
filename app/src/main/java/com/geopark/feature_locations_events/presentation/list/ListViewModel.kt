@@ -1,6 +1,5 @@
 package com.geopark.feature_locations_events.presentation.list
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -8,17 +7,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.geopark.core.util.Resource
 import com.geopark.feature_locations_events.domain.use_case.locations.LocationUseCases
-import com.geopark.feature_locations_events.domain.util.LocationOrder
 import com.geopark.feature_locations_events.domain.util.LocationType
-import com.geopark.feature_locations_events.domain.util.OrderType
+import com.geopark.feature_locations_events.domain.util.SortType
 import com.geopark.feature_locations_events.presentation.LocationsState
 import com.geopark.feature_locations_events.presentation.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,6 +36,7 @@ class ListViewModel @Inject constructor(
 
 
     private var getLocationsJob: Job? = null
+    private var getLocationsJobFlow: Job? = null
 
 
     init {
@@ -49,76 +47,68 @@ class ListViewModel @Inject constructor(
             LocationType.Explore.toString() -> LocationType.Explore
             else -> LocationType.All
         }
-        getLocations(locationType, LocationOrder.Name(OrderType.Default))
+
+        getLocationsFlow(locationType, SortType.Default)
     }
+
+
+    private fun getLocationsFlow(
+        locationType: LocationType,
+        sortType: SortType,
+        searchQuery: String = ""
+    ) {
+        getLocationsJobFlow?.cancel()
+        getLocationsJobFlow = viewModelScope.launch {
+            locationUseCases.getFilteredLocationsUseCase(
+                searchQuery,
+                locationType,
+                sortType
+            ).collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        _state.value = _state.value.copy(
+                            locations = result.data,
+                            locationType = locationType,
+                            sortType = sortType,
+                            isLoading = false
+                        )
+                    }
+                    is Resource.Loading -> {
+                        _state.value = _state.value.copy(
+                            locations = result.data,
+                            locationType = locationType,
+                            isLoading = true
+                        )
+                    }
+                    else -> {
+                    }
+                }
+
+            }
+        }
+    }
+
 
     fun onEvent(listEvent: ListLocationsEvent) {
         when (listEvent) {
             is ListLocationsEvent.ChangeSearchQuery -> {
                 _searchQuery.value = listEvent.query
-
-                getLocations(
+                getLocationsFlow(
                     state.value.locationType,
-                    state.value.locationOrder,
+                    state.value.sortType,
                     listEvent.query
                 )
             }
 
             is ListLocationsEvent.Order -> {
-                if (state.value.locationOrder::class == listEvent.locationOrder::class &&
-                    state.value.locationOrder.orderType == listEvent.locationOrder.orderType
+                if (state.value.sortType::class == listEvent.sortType::class &&
+                    state.value.sortType == listEvent.sortType
                 ) {
                     return
                 }
-                getLocations(state.value.locationType, listEvent.locationOrder)
+                getLocationsFlow(state.value.locationType, listEvent.sortType)
             }
         }
     }
 
-    private fun getLocations(
-        locationType: LocationType,
-        locationOrder: LocationOrder,
-        searchQuery: String = ""
-    ) {
-    val TAG = "GET_LOCATIONS"
-
-        Log.d(TAG, "getLocations called ")
-
-            getLocationsJob?.cancel()
-            getLocationsJob =
-                locationUseCases.getLocations(locationType, locationOrder,searchQuery).onEach { result ->
-                    when (result) {
-                        is Resource.Success -> {
-                            _state.value = state.value.copy(
-                                locations = result.data ?: emptyList(),
-                                locationType = locationType,
-                                locationOrder = locationOrder,
-                                isLoading = false
-                            )
-                        }
-                        is Resource.Loading<*> -> {
-                            _state.value = state.value.copy(
-                                locations = result.data ?: emptyList(),
-                                locationType = locationType,
-                                locationOrder = locationOrder,
-                                isLoading = true
-                            )
-                        }
-                        is Resource.Error<*> -> {
-                            _state.value = state.value.copy(
-                                locations = result.data ?: emptyList(),
-                                locationType = locationType,
-                                locationOrder = locationOrder,
-                                isLoading = false
-                            )
-                            _eventFlow.emit(
-                                UiEvent.ShowSnackbar(
-                                    message = result.message
-                                )
-                            )
-                        }
-                    }
-
-                }.launchIn(viewModelScope)
-        }
-    }
+}

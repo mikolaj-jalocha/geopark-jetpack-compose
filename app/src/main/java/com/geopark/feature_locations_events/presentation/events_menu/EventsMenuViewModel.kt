@@ -68,7 +68,7 @@ class EventsMenuViewModel @Inject constructor(
     }
 
 
-    private fun getEventsDistinct(category: EventCategory) {
+    /*private fun getEventsDistinct(category: EventCategory) {
         getEventsJob?.cancel()
         getEventsJob =
             eventsUseCase.getAllEventsDistinct(category).onEach { result ->
@@ -77,8 +77,8 @@ class EventsMenuViewModel @Inject constructor(
                         _eventsState.value = _eventsState.value.copy(
                             events = result.data,
                             category = category,
-                            eventsLocations = result.data.distinctBy { it /*it.organizer.name */ }
-                                .map { it.event.eventTitle /*it.organizer.name*/ },
+                            eventsLocations = result.data.distinctBy { it *//*it.organizer.name *//* }
+                                .map { it.event.eventTitle *//*it.organizer.name*//* },
                             isLoading = false
                         )
                     }
@@ -86,8 +86,8 @@ class EventsMenuViewModel @Inject constructor(
                         _eventsState.value = _eventsState.value.copy(
                             events = result.data,
                             category = category,
-                            eventsLocations = result.data.distinctBy { it /*it.organizer.name */ }
-                                .map { it.event.eventTitle /*it.organizer.name*/ },
+                            eventsLocations = result.data.distinctBy { it *//*it.organizer.name *//* }
+                                .map { it.event.eventTitle *//*it.organizer.name*//* },
                             isLoading = true
                         )
                     }
@@ -95,8 +95,8 @@ class EventsMenuViewModel @Inject constructor(
                         _eventsState.value = _eventsState.value.copy(
                             events = result.data,
                             category = category,
-                            eventsLocations = result.data.distinctBy { it /*it.organizer.name */ }
-                                .map { it.event.eventTitle /*it.organizer.name*/ },
+                            eventsLocations = result.data.distinctBy { it *//*it.organizer.name *//* }
+                                .map { it.event.eventTitle *//*it.organizer.name*//* },
                             isLoading = false
                         )
                         _eventFlow.emit(
@@ -107,7 +107,7 @@ class EventsMenuViewModel @Inject constructor(
                     }
                 }
             }.launchIn(viewModelScope)
-    }
+    }*/
 
     fun onEvent(event: EventsMenuEvent) {
         when (event) {

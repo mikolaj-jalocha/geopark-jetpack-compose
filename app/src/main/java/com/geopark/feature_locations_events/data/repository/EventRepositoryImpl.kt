@@ -20,20 +20,9 @@ import java.time.format.DateTimeFormatter
 
 class EventRepositoryImpl(
     private val dao: EventDao,
-    private val preferences: SharedPreferences,
-    private val cachingRepository: CachingRepository
 ) : EventRepository {
 
-    // DELETE ASAP: for testing purposes only
-    init {
-        GlobalScope.launch {
-            cachingRepository.cacheData()
-        }
-    }
-
-
     override fun getEventsFlow() = dao.getEventsFlow().map {
-
         if (it.isEmpty()) {
             Resource.Loading(data = emptyList())
         }
@@ -46,36 +35,11 @@ class EventRepositoryImpl(
 
         emit(Resource.Loading(data = emptyList()))
         val localEvents = dao.getEvents()
-        emit(Resource.Loading(localEvents))
-        val lastUpdateDate = preferences.getString(Constants.CACHING_UPDATE_DATE, "")
-        val daysFromLastUpdate = if (!lastUpdateDate.isNullOrEmpty())
-            LocalDate.now().dayOfYear - LocalDate.parse(
-                lastUpdateDate,
-                DateTimeFormatter.ISO_DATE
-            ).dayOfYear else -1
+        if (localEvents.isEmpty())
+            emit(Resource.Loading(localEvents))
+        else
+            emit(Resource.Success(localEvents))
 
-
-        if (lastUpdateDate != null && (lastUpdateDate.isEmpty() || daysFromLastUpdate > Constants.DAYS_FOR_CACHING_UPDATE)) {
-            try {
-                cachingRepository.cacheData()
-                preferences.edit {
-                    putString(Constants.CACHING_UPDATE_DATE, LocalDate.now().toString())
-                }
-            } catch (e: HttpException) {
-                emit(
-                    Resource.Error(
-                        e.localizedMessage ?: "An unexpected error occurred",
-                        data = emptyList()
-                    )
-                )
-            } catch (e: NoInternetConnection) {
-                emit(Resource.Error(e.message, data = emptyList()))
-            } catch (e: Exception) {
-                Log.d("EVENT_REPOSITORY", "${e.message} ")
-                emit(Resource.Error(e.message ?: "Unknown error occurred", data = emptyList()))
-            }
-        }
-        emit(Resource.Success(dao.getEvents()))
     }
 
 

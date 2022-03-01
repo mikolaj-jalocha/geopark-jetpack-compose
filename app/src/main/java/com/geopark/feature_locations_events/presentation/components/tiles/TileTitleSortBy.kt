@@ -10,14 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.geopark.feature_locations_events.domain.util.OrderType
+import com.geopark.feature_locations_events.domain.util.SortType
 import com.geopark.ui.theme.BabyBlue
 
 
 @ExperimentalMaterialApi
 @Composable
-
-fun TileTitleSortBy(modifier : Modifier = Modifier, title : String , onSortClick : (OrderType) -> Unit) {
+fun TileTitleSortBy(modifier : Modifier = Modifier, title : String , onSortClick : (SortType) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     Row(
         horizontalArrangement = Arrangement.SpaceBetween, modifier = modifier
@@ -32,7 +31,7 @@ fun TileTitleSortBy(modifier : Modifier = Modifier, title : String , onSortClick
         Row (modifier = Modifier.clickable { expanded = true }){
                 Row (horizontalArrangement = Arrangement.SpaceBetween){
                     Text(
-                        text = "Sort by",
+                        text = "Sort",
                         style = MaterialTheme.typography.h6,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -48,15 +47,12 @@ fun TileTitleSortBy(modifier : Modifier = Modifier, title : String , onSortClick
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
                 ) {
-                    DropdownMenuItem(onClick = { onSortClick(OrderType.Ascending)}) {
+                    DropdownMenuItem(onClick = { onSortClick(SortType.Ascending)}) {
                         Text("Ascending")
 
                     }
-                    DropdownMenuItem(onClick = {  onSortClick(OrderType.Descending)}) {
+                    DropdownMenuItem(onClick = {  onSortClick(SortType.Descending)}) {
                         Text("Descending")
-                    }
-                    DropdownMenuItem(onClick = { onSortClick(OrderType.CertificatedFirst)}) {
-                        Text("Certificated First")
                     }
                 }
 

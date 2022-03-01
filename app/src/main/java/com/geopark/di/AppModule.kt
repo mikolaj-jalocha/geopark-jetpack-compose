@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
 import com.geopark.core.util.Constants
+import com.geopark.core.util.Constants.DATABASE_NAME
 import com.geopark.feature_locations_events.data.local.Converters
 import com.geopark.feature_locations_events.data.local.GeoparkDatabase
 import com.geopark.feature_locations_events.data.remote.ConnectivityInterceptor
@@ -19,9 +20,7 @@ import com.geopark.feature_locations_events.domain.use_case.events.EventsUseCase
 import com.geopark.feature_locations_events.domain.use_case.events.GetAllEvents
 import com.geopark.feature_locations_events.domain.use_case.events.GetAllEventsDistinct
 import com.geopark.feature_locations_events.domain.use_case.events.GetAllEventsFlowUseCase
-import com.geopark.feature_locations_events.domain.use_case.locations.GetLocationById
-import com.geopark.feature_locations_events.domain.use_case.locations.GetLocations
-import com.geopark.feature_locations_events.domain.use_case.locations.LocationUseCases
+import com.geopark.feature_locations_events.domain.use_case.locations.*
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -40,23 +39,22 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-
     @Provides
     @Singleton
     fun provideSharedPreferences(app: Application): SharedPreferences {
         // TODO: Rename variable name
-        return app.getSharedPreferences("GEOPARK_CACHE_SETTINGS", Context.MODE_PRIVATE)
+        return app.getSharedPreferences("GEOPARK_SETTINGS", Context.MODE_PRIVATE)
     }
 
 
     @Provides
     @Singleton
     fun provideGeoparkDatabase(
-        app: Application
+        app: Application,
     ): GeoparkDatabase {
         return Room.databaseBuilder(
             app, GeoparkDatabase::class.java,
-            "test_database"
+            DATABASE_NAME
         ).addTypeConverter(Converters(GsonParser(Gson())))
             .fallbackToDestructiveMigration()
             .build()
@@ -91,30 +89,98 @@ object AppModule {
     @Provides
     @Singleton
     fun provideLocationRepository(
-        db: GeoparkDatabase,
-        preferences: SharedPreferences,
-        cachingRepository: CachingRepository
+        db: GeoparkDatabase
     ): LocationRepository {
-        return LocationRepositoryImpl(db.locationDao, preferences, cachingRepository)
+        return LocationRepositoryImpl(db.locationDao)
     }
+
 
     @Provides
     @Singleton
-    fun provideLocationUseCases(repository: LocationRepository): LocationUseCases {
+    fun provideGetAllLocationsUseCase(repository: LocationRepository) =
+        GetAllLocationsUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideGetLocationsByTypeUseCase(getAllLocations: GetAllLocationsUseCase) =
+        GetLocationsByTypeUseCase(getAllLocations)
+
+    @Provides
+    @Singleton
+    fun provideGetOrderedLocationsUseCase(getLocationsByType: GetLocationsByTypeUseCase) =
+        GetOrderedLocationsUseCase(getLocationsByType)
+
+    @Provides
+    @Singleton
+    fun provideGetFilteredLocationsUseCase(
+        getLocationsByType: GetLocationsByTypeUseCase,
+        getOrderedLocationsUseCase: GetOrderedLocationsUseCase
+    ) = GetFilteredLocationsUseCase(getLocationsByType, getOrderedLocationsUseCase)
+
+
+    @Provides
+    @Singleton
+    fun provideLocationUseCases(
+        allLocationsUseCase: GetAllLocationsUseCase,
+        getLocationsByType: GetLocationsByTypeUseCase,
+        getOrderedLocationsUseCase: GetOrderedLocationsUseCase,
+        getFilteredLocationsUseCase: GetFilteredLocationsUseCase
+
+    ) = LocationUseCases(
+        allLocationsUseCase,
+        getLocationsByType,
+        getOrderedLocationsUseCase,
+        getFilteredLocationsUseCase
+    )
+
+
+/*    @Provides
+    @Singleton
+    fun provideLocationUseCases(
+        getAllLocations: GetAllLocationsFlowUseCase,
+        getLocationsByType: GetLocationsByTypeUseCase,
+        getOrderedLocationsUseCase: GetOrderedLocationsFlowUseCase,
+        getFilteredLocationsUseCase: GetFilteredLocationsFlowUseCase
+    ): LocationUseCases {
         return LocationUseCases(
-            getLocations = GetLocations(repository),
-            getLocationById = GetLocationById(repository)
+            getAllLocationsFlowUseCase =getAllLocations,
+            getLocationsByTypeUseCase = getLocationsByType,
+            getOrderedLocationsFlowUseCase = GetOrderedLocationsFlowUseCase(
+                getLocationsByType = GetLocationsByTypeUseCase(GetAllLocationsFlowUseCase(repository))
+            ),
+            getFilteredLocationsFlowUseCase = GetFilteredLocationsFlowUseCase(
+                getLocationsByType = GetLocationsByTypeUseCase(
+                    GetAllLocationsFlowUseCase(
+                        repository
+                    )
+                ), GetOrderedLocationsFlowUseCase(
+                    getLocationsByType = GetLocationsByTypeUseCase(
+                        GetAllLocationsFlowUseCase(
+                            repository
+                        )
+                    )
+                )
+            )
+        )
+    }*/
+
+    @Provides
+    @Singleton
+    fun provideEventsUseCases(repository: EventRepository): EventsUseCase {
+        return EventsUseCase(
+            getAllEvents = GetAllEvents(repository = repository),
+            getAllEventsFlowUseCase = GetAllEventsFlowUseCase(repository = repository),
+            getAllEventsDistinct = GetAllEventsDistinct(repository = repository),
         )
     }
+
 
     @Provides
     @Singleton
     fun provideEventRepository(
         db: GeoparkDatabase,
-        preferences: SharedPreferences,
-        cachingRepository: CachingRepository
     ): EventRepository {
-        return EventRepositoryImpl(db.eventDao, preferences, cachingRepository)
+        return EventRepositoryImpl(db.eventDao)
     }
 
     @Provides
@@ -133,19 +199,9 @@ object AppModule {
             db.eventDao,
             db.locationDao,
             provideApplicationScope()
-        ){
+        ) {
             db.clearAllTables()
         }
-    }
-
-    @Provides
-    @Singleton
-    fun provideEventsUseCases(repository: EventRepository): EventsUseCase {
-        return EventsUseCase(
-            getAllEvents = GetAllEvents(repository = repository),
-            getAllEventsFlowUseCase = GetAllEventsFlowUseCase(repository = repository),
-            getAllEventsDistinct = GetAllEventsDistinct(repository = repository),
-        )
     }
 
 
@@ -156,10 +212,6 @@ object AppModule {
     @Retention(AnnotationRetention.RUNTIME)
     @Qualifier
     annotation class ConnectivityClient
-
-    @Retention(AnnotationRetention.RUNTIME)
-    @Qualifier
-    annotation class LocationsQuery
 
 
 }
