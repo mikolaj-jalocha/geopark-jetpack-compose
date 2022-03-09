@@ -14,4 +14,6 @@ data class CalendarPanelState(
     val day: DayOfWeek? = selectedDayOfMonth?.let { LocalDate.of(year, month, it).dayOfWeek },
     val currentDay : Int = if(LocalDate.now().month != month || LocalDate.now().year != year) 1 else LocalDate.now().dayOfMonth,
     val numberOfDays : Int  = if(LocalDate.now().month != month) daysInMonth else  daysInMonth - currentDay +1
-)
+){
+        fun getSelectedDate(): LocalDate = LocalDate.of(year,month,selectedDayOfMonth ?: currentDay)
+}

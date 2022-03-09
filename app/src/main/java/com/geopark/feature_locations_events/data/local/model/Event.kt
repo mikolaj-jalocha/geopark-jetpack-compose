@@ -8,14 +8,14 @@ import com.geopark.feature_locations_events.data.local.entity.*
 
 
 data class Event(
-    @Embedded val event: EventEntity,
+    @Embedded val event: EventEntity = EventEntity(),
 
     @Relation(
         entity = OrganizerEntity::class,
         parentColumn = "eventOrganizerId",
         entityColumn = "organizerId"
     )
-    val organizer: OrganizerEntity,
+    val organizer: OrganizerEntity = OrganizerEntity(),
 
     @Relation(
         entity = LocationEntity::class,
@@ -23,33 +23,33 @@ data class Event(
         entityColumn = "locationId",
         associateBy = Junction(EventLocationCrossRef::class)
     )
-    val locations: List<Location>,
+    val locations: List<Location> = emptyList(),
 
     @Relation(
         parentColumn = "eventId",
         entityColumn = "labelId",
         associateBy = Junction(EventLabelCrossRef::class)
     )
-    val labels: List<LabelEntity>,
+    val labels: List<LabelEntity> = emptyList(),
     @Relation(
         parentColumn = "eventId",
         entityColumn = "categoryId",
         associateBy = Junction(EventCategoryCrossRef::class)
     )
-    val categories: List<CategoryEntity>,
+    val categories: List<CategoryEntity> = emptyList(),
     @Relation(
         parentColumn = "eventId",
         entityColumn = "tagId",
         associateBy = Junction(EventTagCrossRef::class)
     )
-    val tags: List<TagEntity>,
+    val tags: List<TagEntity> = emptyList(),
 
     @Relation(
         parentColumn = "eventId",
         entityColumn = "photoId",
         associateBy = Junction(EventPhotoCrossRef::class)
     )
-    val photos: List<PhotoEntity>
+    val photos: List<PhotoEntity> = emptyList()
 
 
 )

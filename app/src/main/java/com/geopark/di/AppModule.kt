@@ -16,10 +16,7 @@ import com.geopark.feature_locations_events.data.repository.LocationRepositoryIm
 import com.geopark.feature_locations_events.data.util.GsonParser
 import com.geopark.feature_locations_events.domain.repository.EventRepository
 import com.geopark.feature_locations_events.domain.repository.LocationRepository
-import com.geopark.feature_locations_events.domain.use_case.events.EventsUseCase
-import com.geopark.feature_locations_events.domain.use_case.events.GetAllEvents
-import com.geopark.feature_locations_events.domain.use_case.events.GetAllEventsDistinct
-import com.geopark.feature_locations_events.domain.use_case.events.GetAllEventsFlowUseCase
+import com.geopark.feature_locations_events.domain.use_case.events.*
 import com.geopark.feature_locations_events.domain.use_case.locations.*
 import com.google.gson.Gson
 import dagger.Module
@@ -168,9 +165,9 @@ object AppModule {
     @Singleton
     fun provideEventsUseCases(repository: EventRepository): EventsUseCase {
         return EventsUseCase(
-            getAllEvents = GetAllEvents(repository = repository),
             getAllEventsFlowUseCase = GetAllEventsFlowUseCase(repository = repository),
-            getAllEventsDistinct = GetAllEventsDistinct(repository = repository),
+            getEventsForCategoryUseCase = GetEventsForCategoryUseCase(GetAllEventsFlowUseCase(repository = repository)),
+            getEventsForDateUseCase = GetEventsForDateUseCase(GetEventsForCategoryUseCase(GetAllEventsFlowUseCase(repository = repository)))
         )
     }
 

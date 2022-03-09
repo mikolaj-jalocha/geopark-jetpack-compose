@@ -6,10 +6,12 @@ import com.geopark.feature_locations_events.data.util.EventDate
 
 @Entity
 data class EventEntity(
-    @PrimaryKey val eventId: String,
-    val eventTitle: String,
-    val eventDescription: String,
-    val eventOrganizerId : String,
-    val eventDate: List<EventDate>
+    @PrimaryKey val eventId: String = "",
+    val eventTitle: String ="",
+    val eventDescription: String = "",
+    val eventOrganizerId: String = "",
+    val eventDate: List<EventDate> = emptyList()
 )
+
+
 

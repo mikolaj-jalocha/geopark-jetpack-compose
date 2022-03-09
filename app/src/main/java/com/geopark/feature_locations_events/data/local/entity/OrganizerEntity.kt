@@ -6,11 +6,11 @@ import androidx.room.PrimaryKey
 @Entity
 data class OrganizerEntity(
     @PrimaryKey
-    val organizerId: String,
-    val name: String,
-    val email: String,
-    val telephone: String,
-    val photo: String,
-    val website: String,
-    val description: String
+    val organizerId: String = "",
+    val name: String = "",
+    val email: String = "",
+    val telephone: String = "",
+    val photo: String = "",
+    val website: String = "",
+    val description: String = ""
 )

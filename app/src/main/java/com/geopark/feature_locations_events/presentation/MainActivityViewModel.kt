@@ -30,7 +30,7 @@ class MainActivityViewModel @Inject constructor(
 
     fun applyCaching() {
 
-        /*if (!geoparkSettings.getBoolean(IS_DATABASE_INITIALIZED, false)) {
+        if (!geoparkSettings.getBoolean(IS_DATABASE_INITIALIZED, false)) {
             try {
                 cachingRepository.cacheData()
             } catch (e: HttpException) {
@@ -42,7 +42,7 @@ class MainActivityViewModel @Inject constructor(
             }
             geoparkSettings.edit().putBoolean(IS_DATABASE_INITIALIZED, true).apply()
         }
-*/
+
         val cachingRequest = PeriodicWorkRequestBuilder<CachingWorker>(MIN_PERIODIC_INTERVAL_MILLIS, TimeUnit.MILLISECONDS)
             .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
             .build()

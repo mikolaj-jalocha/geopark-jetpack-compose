@@ -51,7 +51,7 @@ interface EventDao {
                         eventTitle,
                         eventDescription,
                         eventOrganizerId,
-                        eventDate
+                        eventDate.sorted()
                     )
                 )
                 locationsIds.forEach { id ->

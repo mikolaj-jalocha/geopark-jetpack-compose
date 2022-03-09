@@ -1,16 +1,17 @@
 package com.geopark.feature_locations_events.domain.util
 
-enum class EventCategory(val categoryName: String){
-    ALL("All"),
-    ADULTS("For adults"),
-    FAMILIES("For families"),
-    GEOLOGY("Geology and minerals"),
-    HISTORY("History"),
-    CULINARY("Culinary"),
-    PASSPORT("Explorer's Passport"),
-    ROOF("Under the roof"),
-    NATURE("Nature"),
-    CRAFTS("Crafts and arts"),
-    SPORT("Sport"),
-    FIELD("In the field")
+enum class EventCategory(val categoryName: String, val categoryId : String){
+    ALL("Wszystkie",""),
+    ADULTS("Dla dorosłych","dla-doroslych"),
+    FAMILIES("Dla rodzin","dla-rodzin"),
+    KIDS("Z dziećmi","z-dziecmi"),
+    GEOLOGY("Geologia i minerały","geologia-mineraly"),
+    HISTORY("Historia","historia"),
+    CULINARY("Kulinaria","kulinaria"),
+    ROOF("Pod dachem","pod-dachem"),
+    PASSPORT("Paszport Odkrywcy","paszportkww"),
+    NATURE("Przyrodnicze","przyrodnicze"),
+    CRAFTS("Rzemiosło i sztuka","rzemioslo-sztuka"),
+    SPORT("Sport","sport"),
+    FIELD("W terenie","w-terenie")
 }

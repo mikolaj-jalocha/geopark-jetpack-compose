@@ -27,7 +27,7 @@ fun ContainerScreen(navigateTo: (String) -> Unit) {
     Scaffold(
         topBar = { MenuTopBar(pagerState = pagerState) }
     ) {
-        HorizontalPager(count = 5, state = pagerState) { page ->
+        HorizontalPager(count = 2, state = pagerState) { page ->
             when (page) {
                 0 -> MenuScreen(navigateTo = navigateTo)
                 1 -> EventMenuScreen()

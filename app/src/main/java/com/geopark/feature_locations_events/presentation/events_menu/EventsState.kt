@@ -5,7 +5,7 @@ import com.geopark.feature_locations_events.domain.util.EventCategory
 
 data class EventsState(
     val events : List<Event> = emptyList(),
-    val eventsLocations : List<String> = emptyList(),
     val category : EventCategory =  EventCategory.ALL,
-    val isLoading : Boolean = false
+    val isLoading : Boolean = false,
+    val upcomingEvents : Boolean = false
 )
