@@ -30,7 +30,7 @@ fun ContainerScreen(navigateTo: (String) -> Unit) {
         HorizontalPager(count = 2, state = pagerState) { page ->
             when (page) {
                 0 -> MenuScreen(navigateTo = navigateTo)
-                1 -> EventMenuScreen()
+                1 -> EventMenuScreen(navigateTo = navigateTo)
             }
         }
 

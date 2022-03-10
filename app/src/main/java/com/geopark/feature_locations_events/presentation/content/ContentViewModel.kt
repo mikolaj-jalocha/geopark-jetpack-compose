@@ -52,7 +52,7 @@ class ContentViewModel @Inject constructor(
         val locationName = savedStateHandle.get<String>("locationName") ?: ""
         if (locationName.isNotBlank()) {
                 viewModelScope.launch {
-                   //_locationsState.value = locationsUseCases.getLocationById(locationName)
+                   _locationsState.value = locationsUseCases.getLocationByIdUseCase(locationName)
                 }
         }
 

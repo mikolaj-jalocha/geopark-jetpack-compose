@@ -7,5 +7,6 @@ data class LocationUseCases(
     val getAllLocationsUseCase : GetAllLocationsUseCase,
     val getLocationsByTypeUseCase: GetLocationsByTypeUseCase,
     val getOrderedLocationsUseCase: GetOrderedLocationsUseCase,
-    val getFilteredLocationsUseCase: GetFilteredLocationsUseCase
+    val getFilteredLocationsUseCase: GetFilteredLocationsUseCase,
+    val getLocationByIdUseCase : GetLocationByIdUseCase
 )

@@ -1,6 +1,5 @@
 package com.geopark.feature_locations_events.presentation.list.components
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,7 +20,6 @@ import com.geopark.feature_locations_events.presentation.list.ListViewModel
 import com.geopark.feature_locations_events.presentation.menu.composables.Tile
 import kotlinx.coroutines.flow.collectLatest
 
-@ExperimentalAnimationApi
 @ExperimentalCoilApi
 @ExperimentalMaterialApi
 @Composable
@@ -33,7 +31,7 @@ fun ListScreen(
 
     val state = viewModel.state.value
     val scaffoldState = rememberScaffoldState()
-    val scope = rememberCoroutineScope()
+
 
     var isSearchBarEnabled by rememberSaveable {
         mutableStateOf(false)
@@ -95,13 +93,7 @@ fun ListScreen(
                         this@LazyColumn.itemsIndexed(state.locations) { _, location ->
                             Tile(
                                 modifier = Modifier.clickable {
-                                    navigateTo(Screen.ContentScreen.route + "/${location.location.name}")
-                                    viewModel.onEvent(
-                                        ListLocationsEvent.ChangeRecentlyWatched(
-                                            true,
-                                            location
-                                        )
-                                    )
+                                    navigateTo(Screen.ContentScreen.route + "/${location.location.locationId}")
                                 },
                                 photoPath = location.photos[0].url,
                                 name = location.location.name,

@@ -3,7 +3,7 @@ package com.geopark.feature_locations_events.presentation.events_menu.composable
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,12 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
 import com.geopark.R
+import com.geopark.core.presentation.util.Screen
 import com.geopark.feature_locations_events.domain.util.EventCategory
 import com.geopark.feature_locations_events.presentation.UiEvent
 import com.geopark.feature_locations_events.presentation.events_list.composables.CalendarPanel
@@ -39,13 +39,12 @@ import java.time.format.TextStyle
 import java.util.*
 
 
+@ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @ExperimentalCoilApi
-@ExperimentalFoundationApi
-@ExperimentalMaterialApi
+
 @Composable
-@Preview
-fun EventMenuScreen(viewModel: EventsMenuViewModel = hiltViewModel()) {
+fun EventMenuScreen(viewModel: EventsMenuViewModel = hiltViewModel(), navigateTo: (String) -> Unit) {
 
     val eventsState = viewModel.eventsState.value
 
@@ -207,7 +206,10 @@ fun EventMenuScreen(viewModel: EventsMenuViewModel = hiltViewModel()) {
                                         )
                                     }
                                     nextDateEvents.forEach { event ->
-                                        Tile(
+                                        Tile(modifier = Modifier
+                                            .clickable {
+                                                navigateTo(Screen.ContentScreen.route + "/${event.event.eventId}")
+                                            },
                                             photoPath = event.photos[0].url,
                                             name = event.event.eventTitle,
                                             isWide = false,
@@ -221,7 +223,7 @@ fun EventMenuScreen(viewModel: EventsMenuViewModel = hiltViewModel()) {
                                 i += 1
                             }
                         } else {
-                            if (!viewModel.eventsState.value.isLoading && viewModel.eventsState.value.events.isNotEmpty())
+                            if (!viewModel.eventsState.value.isLoading && viewModel.eventsState.value.events.isNotEmpty() && selectedChipIndex.value != 1)
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.Center
@@ -258,6 +260,7 @@ fun EventMenuScreen(viewModel: EventsMenuViewModel = hiltViewModel()) {
 }
 
 
+
 @ExperimentalMaterialApi
 @Composable
 fun TypeSelectionPanel(
@@ -277,6 +280,7 @@ fun TypeSelectionPanel(
 
     }
 }
+
 
 @ExperimentalMaterialApi
 @Composable

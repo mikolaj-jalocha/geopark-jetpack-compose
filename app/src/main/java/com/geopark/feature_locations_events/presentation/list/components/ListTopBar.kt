@@ -25,7 +25,7 @@ import com.google.accompanist.insets.systemBarsPadding
 
 // TODO: Add suggestions to typed query https://material.io/design/navigation/search.html#persistent-search
 
-@ExperimentalAnimationApi
+
 @ExperimentalCoilApi
 @ExperimentalMaterialApi
 @Composable
@@ -36,6 +36,8 @@ fun  ListTopBar(
     onSearchBarClick: (Boolean) -> Unit,
     onValueChange: (String) -> Unit = {}
 ) {
+
+
     Surface(onClick = {onSearchBarClick(false)},indication = null) {
         Row(
             Modifier
@@ -47,7 +49,9 @@ fun  ListTopBar(
             RoundedIcon(
                 modifier = Modifier.padding(16.dp),
                 iconId = R.drawable.ic_arrow_back
-            ) { onNavigateUp() }
+            ) {
+                onNavigateUp()
+            }
 
             val durationSlow = 700
             val durationFast = 300
@@ -90,7 +94,6 @@ fun  ListTopBar(
                     )
                 ) {
                     OutlinedTextField(
-
                         modifier = Modifier.padding(end = 16.dp),
                         shape = RoundedCornerShape(10.dp),
                         value = text,

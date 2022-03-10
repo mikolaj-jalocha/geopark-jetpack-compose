@@ -46,13 +46,12 @@ fun ContentScreen(
         viewModel.eventFlow.collectLatest { event ->
             onEvent(event)
         }
-
     }
     Scaffold {
         Column {
             Box {
                 Image(
-                    painter = rememberImagePainter(state.photos[0].url),
+                    painter = rememberImagePainter(if(state.photos.isNotEmpty()) state.photos[0].url else ""),
                     contentDescription = "Main photography",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier

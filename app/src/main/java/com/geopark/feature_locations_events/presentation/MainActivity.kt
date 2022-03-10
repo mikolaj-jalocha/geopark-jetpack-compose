@@ -15,6 +15,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Snackbar
 import androidx.compose.material.Text
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
@@ -56,6 +57,10 @@ class MainActivity : ComponentActivity() {
 
             ProvideWindowInsets {
                 GeoparkTheme {
+                    val config = LocalConfiguration.current
+
+                    Log.d("MAIN-ACTIVITY", "width: ${config.screenWidthDp} \n height: ${config.screenHeightDp}")
+
 
                     val navController = rememberNavController()
                     NavHost(

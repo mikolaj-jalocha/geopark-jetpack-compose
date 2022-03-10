@@ -28,7 +28,6 @@ import kotlinx.coroutines.flow.collectLatest
 
 
 @ExperimentalCoilApi
-@ExperimentalMaterialApi
 @Composable
 fun MenuScreen(
     viewModel: MenuViewModel = hiltViewModel(),

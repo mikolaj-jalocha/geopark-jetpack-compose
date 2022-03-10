@@ -24,12 +24,24 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.geopark.R
 import androidx.compose.material.MaterialTheme.colors
-import com.geopark.core.util.Constants.SMALL_TILE_SIZE
-import com.geopark.core.util.Constants.WIDE_TILE_SIZE
-import com.geopark.ui.theme.CinnabarRed
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.Dp
+
+
+
+
+
+
+
+enum class  TileSizes(val width : Dp, val height : Dp){
+    SMALL_NORMAL(180.dp,200.dp),
+    SMALL_SMALL(170.dp,190.dp),
+    WIDE_NORMAL(360.dp,200.dp),
+    WIDE_SMALL(340.dp,190.dp)
+}
+
 
 @ExperimentalCoilApi
-@ExperimentalMaterialApi
 @Composable
 fun Tile(
     modifier: Modifier = Modifier,
@@ -39,10 +51,23 @@ fun Tile(
     isFavorite: Boolean,
     onFavoriteClick: () -> Unit
 ) {
+
+
+    val config = LocalConfiguration.current
+     val dimensions = when{
+        config.screenWidthDp < 380 && isWide -> TileSizes.WIDE_SMALL
+        config.screenWidthDp > 380 && isWide -> TileSizes.WIDE_NORMAL
+        config.screenWidthDp < 380 && !isWide -> TileSizes.SMALL_SMALL
+        config.screenWidthDp > 380 && !isWide -> TileSizes.SMALL_NORMAL
+        else -> {
+            TileSizes.SMALL_NORMAL
+        }
+    }
+
     Card(
         shape = RoundedCornerShape(26.dp), modifier = modifier
-            .width(if (isWide) WIDE_TILE_SIZE.dp else SMALL_TILE_SIZE.dp)
-            .height(200.dp)
+            .width(dimensions.width)
+            .height(dimensions.height)
     ) {
         Box {
             Image(
@@ -57,16 +82,18 @@ fun Tile(
             val animatedColor =
                 animateColorAsState(if (isRed.value) colors.primary else colors.onSurface)
 
-            IconButton(onClick = {
-                isRed.value = !isRed.value
-                onFavoriteClick()
-            },
+            IconButton(
+                onClick = {
+                    isRed.value = !isRed.value
+                    onFavoriteClick()
+                },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(14.dp)
                     .size(35.dp)
                     .clip(CircleShape)
-                    .background(colors.surface)) {
+                    .background(colors.surface)
+            ) {
                 Icon(
                     painter = painterResource(if (isRed.value) R.drawable.ic_bookmark_filled else R.drawable.ic_bookmark_outline),
                     tint = animatedColor.value,

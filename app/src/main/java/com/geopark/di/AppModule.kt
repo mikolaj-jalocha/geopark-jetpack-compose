@@ -114,6 +114,10 @@ object AppModule {
         getOrderedLocationsUseCase: GetOrderedLocationsUseCase
     ) = GetFilteredLocationsUseCase(getLocationsByType, getOrderedLocationsUseCase)
 
+    @Provides
+    @Singleton
+    fun provideGetLocationByIdUseCase(repository: LocationRepository) =
+        GetLocationByIdUseCase(repository)
 
     @Provides
     @Singleton
@@ -121,13 +125,15 @@ object AppModule {
         allLocationsUseCase: GetAllLocationsUseCase,
         getLocationsByType: GetLocationsByTypeUseCase,
         getOrderedLocationsUseCase: GetOrderedLocationsUseCase,
-        getFilteredLocationsUseCase: GetFilteredLocationsUseCase
+        getFilteredLocationsUseCase: GetFilteredLocationsUseCase,
+        getLocationByIdUseCase : GetLocationByIdUseCase
 
     ) = LocationUseCases(
         allLocationsUseCase,
         getLocationsByType,
         getOrderedLocationsUseCase,
-        getFilteredLocationsUseCase
+        getFilteredLocationsUseCase,
+        getLocationByIdUseCase
     )
 
 
