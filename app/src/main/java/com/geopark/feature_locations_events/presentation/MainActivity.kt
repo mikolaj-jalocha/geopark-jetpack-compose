@@ -11,9 +11,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Snackbar
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.view.WindowCompat
@@ -34,6 +33,7 @@ import com.geoparkcompose.ui.menu.MenuScreen
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 @ExperimentalPagerApi
@@ -57,44 +57,54 @@ class MainActivity : ComponentActivity() {
 
             ProvideWindowInsets {
                 GeoparkTheme {
-                    val config = LocalConfiguration.current
 
-                    Log.d("MAIN-ACTIVITY", "width: ${config.screenWidthDp} \n height: ${config.screenHeightDp}")
-
-
-                    val navController = rememberNavController()
-                    NavHost(
-                        navController = navController,
-                        startDestination = Screen.ContainerScreen.route
-                    ) {
-
-                        composable(route = Screen.ContainerScreen.route) {
-                            ContainerScreen(navigateTo = navController::navigate)
+                    val scaffoldState = rememberScaffoldState()
+                    LaunchedEffect(key1 = true) {
+                        viewModel.eventFlow.collectLatest { event ->
+                            when (event) {
+                                is UiEvent.ShowSnackbar -> {
+                                    scaffoldState.snackbarHostState.showSnackbar(
+                                        message = event.message
+                                    )
+                                }
+                            }
                         }
-                        composable(route = Screen.MenuScreen.route) {
-                            MenuScreen(navigateTo = navController::navigate)
-                        }
-                        composable(
-                            route = Screen.ListScreen.route + "/{locationType}",
-                            arguments = listOf(navArgument("locationType") {
-                                type = NavType.StringType
-                            })
+                    }
+                    Scaffold (scaffoldState = scaffoldState){
+                        val navController = rememberNavController()
+                        NavHost(
+                            navController = navController,
+                            startDestination = Screen.ContainerScreen.route
                         ) {
-                            ListScreen(
-                                navigateTo = navController::navigate,
-                                navigateUp = navController::navigateUp
-                            )
-                        }
-                        composable(
-                            route = Screen.ContentScreen.route + "/{locationName}",
-                            arguments = listOf(navArgument("locationName") {
-                                type = NavType.StringType
-                            })
-                        ) {
-                            ContentScreen(
-                                onEvent = this@MainActivity::onEvent,
-                                navigateUp = navController::navigateUp
-                            )
+                            composable(route = Screen.ContainerScreen.route) {
+                                ContainerScreen(navigateTo = navController::navigate)
+                            }
+                            composable(route = Screen.MenuScreen.route) {
+                                MenuScreen(navigateTo = navController::navigate)
+                            }
+                            composable(
+                                route = Screen.ListScreen.route + "/{locationType}",
+                                arguments = listOf(navArgument("locationType") {
+                                    type = NavType.StringType
+                                })
+                            ) {
+                                ListScreen(
+                                    navigateTo = navController::navigate,
+                                    navigateUp = navController::navigateUp
+                                )
+                            }
+                            composable(
+                                route = Screen.ContentScreen.route + "/{locationName}",
+                                arguments = listOf(navArgument("locationName") {
+                                    type = NavType.StringType
+                                })
+                            ) {
+                                ContentScreen(
+                                    onEvent = this@MainActivity::onEvent,
+                                    navigateUp = navController::navigateUp
+                                )
+                            }
+
                         }
 
                     }
@@ -102,7 +112,6 @@ class MainActivity : ComponentActivity() {
                 }
 
             }
-
         }
     }
 

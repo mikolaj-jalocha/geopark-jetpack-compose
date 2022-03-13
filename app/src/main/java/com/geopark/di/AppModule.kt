@@ -137,35 +137,6 @@ object AppModule {
     )
 
 
-/*    @Provides
-    @Singleton
-    fun provideLocationUseCases(
-        getAllLocations: GetAllLocationsFlowUseCase,
-        getLocationsByType: GetLocationsByTypeUseCase,
-        getOrderedLocationsUseCase: GetOrderedLocationsFlowUseCase,
-        getFilteredLocationsUseCase: GetFilteredLocationsFlowUseCase
-    ): LocationUseCases {
-        return LocationUseCases(
-            getAllLocationsFlowUseCase =getAllLocations,
-            getLocationsByTypeUseCase = getLocationsByType,
-            getOrderedLocationsFlowUseCase = GetOrderedLocationsFlowUseCase(
-                getLocationsByType = GetLocationsByTypeUseCase(GetAllLocationsFlowUseCase(repository))
-            ),
-            getFilteredLocationsFlowUseCase = GetFilteredLocationsFlowUseCase(
-                getLocationsByType = GetLocationsByTypeUseCase(
-                    GetAllLocationsFlowUseCase(
-                        repository
-                    )
-                ), GetOrderedLocationsFlowUseCase(
-                    getLocationsByType = GetLocationsByTypeUseCase(
-                        GetAllLocationsFlowUseCase(
-                            repository
-                        )
-                    )
-                )
-            )
-        )
-    }*/
 
     @Provides
     @Singleton
@@ -200,8 +171,7 @@ object AppModule {
             db.photoDao,
             db.categoryDao,
             db.eventDao,
-            db.locationDao,
-            provideApplicationScope()
+            db.locationDao
         ) {
             db.clearAllTables()
         }

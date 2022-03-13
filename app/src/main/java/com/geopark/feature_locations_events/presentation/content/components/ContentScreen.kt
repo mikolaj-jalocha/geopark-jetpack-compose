@@ -27,6 +27,8 @@ import com.geopark.ui.theme.BabyBlue
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import androidx.compose.material.MaterialTheme.colors
+import com.geopark.feature_locations_events.presentation.UiEvent
+import kotlinx.coroutines.flow.SharedFlow
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @ExperimentalFoundationApi
@@ -46,6 +48,7 @@ fun ContentScreen(
         viewModel.eventFlow.collectLatest { event ->
             onEvent(event)
         }
+
     }
     Scaffold {
         Column {
