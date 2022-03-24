@@ -16,6 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import okhttp3.ResponseBody
 import retrofit2.HttpException
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -42,12 +43,14 @@ class MainActivityViewModel @Inject constructor(
                     geoparkSettings.edit().putBoolean(IS_DATABASE_INITIALIZED, true).apply()
                 } catch (e: Exception) {
                     _eventFlow.emit(UiEvent.ShowSnackbar("${e.message}"))
+
                 } finally {
+
                     val cachingRequest = PeriodicWorkRequestBuilder<CachingWorker>(
                         MIN_PERIODIC_INTERVAL_MILLIS,
                         TimeUnit.MILLISECONDS
                     )
-                        .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+                        .setConstraints(Constraints.Builder().setRequiresDeviceIdle(true).setRequiredNetworkType(NetworkType.CONNECTED).build())
                         .build()
 
                     workManager.enqueueUniquePeriodicWork(

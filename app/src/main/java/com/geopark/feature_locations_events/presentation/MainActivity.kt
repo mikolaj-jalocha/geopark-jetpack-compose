@@ -43,9 +43,7 @@ import kotlinx.coroutines.flow.collectLatest
 @ExperimentalMaterialApi
 class MainActivity : ComponentActivity() {
 
-
       val viewModel : MainActivityViewModel by viewModels()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +55,6 @@ class MainActivity : ComponentActivity() {
 
             ProvideWindowInsets {
                 GeoparkTheme {
-
                     val scaffoldState = rememberScaffoldState()
                     LaunchedEffect(key1 = true) {
                         viewModel.eventFlow.collectLatest { event ->
@@ -106,11 +103,8 @@ class MainActivity : ComponentActivity() {
                             }
 
                         }
-
                     }
-
                 }
-
             }
         }
     }
