@@ -47,7 +47,6 @@ class CalendarPanelTest {
         composeTestRule.onNodeWithContentDescription("Selected month").assertTextEquals("${Month.JANUARY}, ${LocalDate.now().year+1}")
     }
 
-
     @Test
     fun goingToPastIsNotPossible(){
 
