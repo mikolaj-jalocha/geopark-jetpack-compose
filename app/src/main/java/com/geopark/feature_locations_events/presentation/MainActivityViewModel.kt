@@ -50,7 +50,7 @@ class MainActivityViewModel @Inject constructor(
                         MIN_PERIODIC_INTERVAL_MILLIS,
                         TimeUnit.MILLISECONDS
                     )
-                        .setConstraints(Constraints.Builder().setRequiresDeviceIdle(true).setRequiredNetworkType(NetworkType.CONNECTED).build())
+                        .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
                         .build()
 
                     workManager.enqueueUniquePeriodicWork(
