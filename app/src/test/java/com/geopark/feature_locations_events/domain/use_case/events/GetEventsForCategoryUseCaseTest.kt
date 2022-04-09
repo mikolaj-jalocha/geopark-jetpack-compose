@@ -16,50 +16,54 @@ class GetEventsForCategoryUseCaseTest {
     lateinit var categoryUseCase: GetEventsForCategoryUseCase
     lateinit var getAllUseCase: GetAllEventsFlowUseCase
     private lateinit var repository: FakeEventRepository
-    lateinit var categories : List<EventCategory>
+    lateinit var categories: List<EventCategory>
 
     @Before
     fun setupUseCase() {
         repository = FakeEventRepository()
         getAllUseCase = GetAllEventsFlowUseCase(repository)
         categoryUseCase = GetEventsForCategoryUseCase(getAllUseCase)
-        val allCategories = EventCategory.values().toMutableList()
-        allCategories.remove(EventCategory.ALL)
-        categories = allCategories.sorted()
+        categories = repository.eventCategories.sorted()
     }
 
     @Test
-    fun returnsEventForCategory() = runBlocking {
+    fun `returned events match given category`() = runBlocking {
 
+        categories.forEach { expectedCategory ->
+            val filteredData = categoryUseCase(expectedCategory).first().data
+            filteredData.onEach { event ->
 
-        val allData = getAllUseCase().first().data
-
-        // get  ALL events
-        assert(categoryUseCase(EventCategory.ALL).first().data.size == allData.size)
-
-        // other categories
-
-        categories.forEach { category ->
-            val filteredData = categoryUseCase(category).first().data
-                filteredData.onEach { event ->
-                    assert(
-                        event.categories.map { it.categoryId }.contains(category.categoryId)
-                    )
+                val actualCategories = event.categories.map { it.categoryId }
+                assert(actualCategories.contains(expectedCategory.categoryId))
 
             }
         }
     }
 
+
     @Test
-    fun returnSameResultTypeAsInInput() = runBlocking {
+    fun `events returned for ALL category are all events that exist`() = runBlocking {
+
+        val actualValue = categoryUseCase(EventCategory.ALL).first().data
+        val expectedValue = getAllUseCase().first().data
+
+        assert(actualValue == expectedValue)
+    }
+
+
+    @Test
+    fun `returned Result type is 'Loading' `() = runBlocking {
 
         repository.returnLoadingState()
-        val loadingResource = categoryUseCase(EventCategory.ALL).first()
 
-        assert(loadingResource is Resource.Loading)
+        val actualReturnType  = categoryUseCase(EventCategory.ALL).first()
 
+        assert(actualReturnType is Resource.Loading)
+    }
+
+    @Test
+    fun `returned Result type is 'Success'`() = runBlocking {
         repository.returnSuccessState()
-
         val successResource = categoryUseCase(EventCategory.ALL).first()
 
         assert(successResource is Resource.Success)
