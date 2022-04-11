@@ -44,6 +44,8 @@ fun CalendarPanel(
             val dayRowState = rememberLazyListState(state.currentDay-1)
             val coroutineScope = rememberCoroutineScope()
 
+            val currentDate = LocalDate.now()
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround,
@@ -54,7 +56,7 @@ fun CalendarPanel(
                         onClick = {
                             onMonthChange(-1)
                             coroutineScope.launch {
-                                dayRowState.animateScrollToItem(if (state.month.minus(1) == LocalDate.now().month) LocalDate.now().dayOfMonth else 0)
+                                dayRowState.animateScrollToItem(if (state.month.minus(1) == currentDate.month && state.year == currentDate.year) currentDate.dayOfMonth-1 else 0)
                             }
                         },
                         modifier = Modifier.semantics {
@@ -68,7 +70,7 @@ fun CalendarPanel(
                 IconButton(onClick = {
                     onMonthChange(1)
                     coroutineScope.launch {
-                        dayRowState.animateScrollToItem(if (state.month.plus(1) == LocalDate.now().month) LocalDate.now().dayOfMonth else 0)
+                        dayRowState.animateScrollToItem(if (state.month.plus(1) == LocalDate.now().month && state.year == LocalDate.now().year) LocalDate.now().dayOfMonth-1 else 0)
                     }
                 }, modifier = Modifier.semantics { contentDescription = "Next month" }) {
                     Icon(Icons.Filled.ArrowForward, "Next month")
@@ -91,7 +93,7 @@ fun CalendarPanel(
                             i + 1
                         ).dayOfWeek.getShortName(), //or get name here
                         dayNumber = i + 1,
-                        isSelected = state.selectedDayOfMonth == i + 1
+                        isSelected = (state.selectedDayOfMonth == i + 1 && state.year == currentDate.year)
                     ) {
                         onDayChange(i + 1)
                     }
