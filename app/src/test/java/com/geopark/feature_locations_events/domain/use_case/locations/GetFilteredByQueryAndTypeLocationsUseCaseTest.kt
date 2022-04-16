@@ -7,15 +7,14 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 
-class GetFilteredLocationsUseCaseTest {
+class GetFilteredByQueryAndTypeLocationsUseCaseTest {
 
 
     private val repository: FakeLocationRepository = FakeLocationRepository()
     private val getAllLocations = GetAllLocationsUseCase(repository)
     private val getLocationByType = GetLocationsByTypeUseCase(getAllLocations)
-    private val getOrderedLocations = GetOrderedLocationsUseCase(getLocationByType)
     private val getFilteredLocations =
-        GetFilteredLocationsUseCase(getLocationByType, getOrderedLocations)
+        GetFilteredByQueryAndTypeLocationsUseCase(getLocationByType)
 
 
     @Test

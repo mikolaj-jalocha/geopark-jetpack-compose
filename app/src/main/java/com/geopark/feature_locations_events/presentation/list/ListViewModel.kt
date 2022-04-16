@@ -59,10 +59,10 @@ class ListViewModel @Inject constructor(
     ) {
         getLocationsJobFlow?.cancel()
         getLocationsJobFlow = viewModelScope.launch {
-            locationUseCases.getFilteredLocationsUseCase(
-                searchQuery,
+            locationUseCases.getOrderedAndFilteredLocationsUseCase(
+                sortType,
                 locationType,
-                sortType
+                searchQuery
             ).collect { result ->
                 when (result) {
                     is Resource.Success -> {

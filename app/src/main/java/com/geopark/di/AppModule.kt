@@ -104,15 +104,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideGetOrderedLocationsUseCase(getLocationsByType: GetLocationsByTypeUseCase) =
-        GetOrderedLocationsUseCase(getLocationsByType)
+    fun provideGetOrderedAndFilteredLocationsUseCase(getFilteredByQueryAndTypeLocationsUseCase: GetFilteredByQueryAndTypeLocationsUseCase) =
+        GetOrderedAndFilteredLocationsUseCase(getFilteredByQueryAndTypeLocationsUseCase)
 
     @Provides
     @Singleton
     fun provideGetFilteredLocationsUseCase(
         getLocationsByType: GetLocationsByTypeUseCase,
-        getOrderedLocationsUseCase: GetOrderedLocationsUseCase
-    ) = GetFilteredLocationsUseCase(getLocationsByType, getOrderedLocationsUseCase)
+    ) = GetFilteredByQueryAndTypeLocationsUseCase(getLocationsByType)
 
     @Provides
     @Singleton
@@ -122,20 +121,17 @@ object AppModule {
     @Provides
     @Singleton
     fun provideLocationUseCases(
-        allLocationsUseCase: GetAllLocationsUseCase,
         getLocationsByType: GetLocationsByTypeUseCase,
-        getOrderedLocationsUseCase: GetOrderedLocationsUseCase,
-        getFilteredLocationsUseCase: GetFilteredLocationsUseCase,
-        getLocationByIdUseCase : GetLocationByIdUseCase
+        getOrderedAndFilteredLocationsUseCase: GetOrderedAndFilteredLocationsUseCase,
+        getFilteredByQueryAndTypeLocationsUseCase: GetFilteredByQueryAndTypeLocationsUseCase,
+        getLocationByIdUseCase: GetLocationByIdUseCase
 
     ) = LocationUseCases(
-        allLocationsUseCase,
         getLocationsByType,
-        getOrderedLocationsUseCase,
-        getFilteredLocationsUseCase,
+        getOrderedAndFilteredLocationsUseCase,
+        getFilteredByQueryAndTypeLocationsUseCase,
         getLocationByIdUseCase
     )
-
 
 
     @Provides
@@ -143,8 +139,16 @@ object AppModule {
     fun provideEventsUseCases(repository: EventRepository): EventsUseCase {
         return EventsUseCase(
             getAllEventsFlowUseCase = GetAllEventsFlowUseCase(repository = repository),
-            getEventsForCategoryUseCase = GetEventsForCategoryUseCase(GetAllEventsFlowUseCase(repository = repository)),
-            getEventsForDateUseCase = GetEventsForDateUseCase(GetEventsForCategoryUseCase(GetAllEventsFlowUseCase(repository = repository)))
+            getEventsForCategoryUseCase = GetEventsForCategoryUseCase(
+                GetAllEventsFlowUseCase(
+                    repository = repository
+                )
+            ),
+            getEventsForDateUseCase = GetEventsForDateUseCase(
+                GetEventsForCategoryUseCase(
+                    GetAllEventsFlowUseCase(repository = repository)
+                )
+            )
         )
     }
 

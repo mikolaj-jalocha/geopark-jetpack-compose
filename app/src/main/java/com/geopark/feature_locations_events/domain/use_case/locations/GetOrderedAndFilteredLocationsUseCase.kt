@@ -7,17 +7,17 @@ import com.geopark.feature_locations_events.domain.util.SortType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class GetOrderedLocationsUseCase(
-    private val getLocationsByType: GetLocationsByTypeUseCase,
+class GetOrderedAndFilteredLocationsUseCase(
+    private val getFilteredLocations: GetFilteredByQueryAndTypeLocationsUseCase,
 
 ) {
 
     operator fun invoke(
         sortType: SortType,
-        locationType: LocationType
+        locationType: LocationType,
+        searchQuery  : String
     ) =
-        orderLocations(getLocationsByType(locationType), sortType)
-
+        orderLocations(getFilteredLocations(searchQuery,locationType), sortType)
 
     private fun orderLocations(data: Flow<Resource<List<Location>>>, sortType: SortType) =
         data.map { result ->

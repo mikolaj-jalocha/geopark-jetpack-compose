@@ -8,19 +8,12 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 
-class GetOrderedLocationsUseCaseTest {
+class GetOrderedAndFilteredLocationsUseCaseTest {
 
 
     private val repository: FakeLocationRepository = FakeLocationRepository()
-    private val getAllLocations = GetAllLocationsUseCase(repository)
-    private val getLocationByType = GetLocationsByTypeUseCase(getAllLocations)
-    private val getOrderedLocations = GetOrderedLocationsUseCase(getLocationByType)
-
-
-    private val sortTypes = listOf(
-        SortType.Descending,
-        SortType.Ascending,
-        SortType.Default
+    private val getOrderedLocations = GetOrderedAndFilteredLocationsUseCase(
+        GetFilteredByQueryAndTypeLocationsUseCase(GetLocationsByTypeUseCase(GetAllLocationsUseCase(repository)))
     )
 
     @Test
@@ -28,7 +21,8 @@ class GetOrderedLocationsUseCaseTest {
 
         val actualLocationsOrder = getOrderedLocations(
             sortType = SortType.Ascending,
-            LocationType.All
+            LocationType.All,
+            ""
         ).first().data.map { it.location.name }
 
         val expectedLocationsOrder = repository.data.map { it.location.name }.sorted()
@@ -47,7 +41,8 @@ class GetOrderedLocationsUseCaseTest {
 
         val actualLocationsOrder = getOrderedLocations(
             sortType = SortType.Default,
-            LocationType.All
+            LocationType.All,
+            ""
         ).first().data.map { it.location.name }
 
         val expectedLocationsOrder = repository.data.map { it.location.name }.sorted()
@@ -65,7 +60,8 @@ class GetOrderedLocationsUseCaseTest {
 
         val actualLocationsOrder = getOrderedLocations(
             sortType = SortType.Descending,
-            LocationType.All
+            LocationType.All,
+            ""
         ).first().data.map { it.location.name }
 
         val expectedLocationsOrder = repository.data.map { it.location.name }.sortedDescending()
@@ -83,7 +79,7 @@ class GetOrderedLocationsUseCaseTest {
 
         repository.returnLoadingState()
 
-        val actualReturnType = getOrderedLocations(SortType.Default, locationType = LocationType.All).first()
+        val actualReturnType = getOrderedLocations(SortType.Default, locationType = LocationType.All,"").first()
 
         assert(actualReturnType is Resource.Loading)
     }
@@ -91,7 +87,7 @@ class GetOrderedLocationsUseCaseTest {
     @Test
     fun `returned Result type is 'Success'`() = runBlocking {
         repository.returnSuccessState()
-        val successResource = getOrderedLocations(SortType.Default, locationType = LocationType.All).first()
+        val successResource = getOrderedLocations(SortType.Default, locationType = LocationType.All,"").first()
 
 
         assert(successResource is Resource.Success)
