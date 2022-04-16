@@ -13,17 +13,18 @@ import org.junit.Test
 class GetEventsForCategoryUseCaseTest {
 
 
-    lateinit var categoryUseCase: GetEventsForCategoryUseCase
-    lateinit var getAllUseCase: GetAllEventsFlowUseCase
-    private lateinit var repository: FakeEventRepository
-    lateinit var categories: List<EventCategory>
+    private val repository: FakeEventRepository = FakeEventRepository()
+    private val getAllUseCase : GetAllEventsFlowUseCase= GetAllEventsFlowUseCase(repository)
+    private val categoryUseCase: GetEventsForCategoryUseCase =
+        GetEventsForCategoryUseCase(getAllUseCase)
+    private val categories: List<EventCategory> = repository.eventCategories.sorted()
+
+
+
 
     @Before
     fun setupUseCase() {
-        repository = FakeEventRepository()
-        getAllUseCase = GetAllEventsFlowUseCase(repository)
-        categoryUseCase = GetEventsForCategoryUseCase(getAllUseCase)
-        categories = repository.eventCategories.sorted()
+
     }
 
     @Test
@@ -56,7 +57,7 @@ class GetEventsForCategoryUseCaseTest {
 
         repository.returnLoadingState()
 
-        val actualReturnType  = categoryUseCase(EventCategory.ALL).first()
+        val actualReturnType = categoryUseCase(EventCategory.ALL).first()
 
         assert(actualReturnType is Resource.Loading)
     }

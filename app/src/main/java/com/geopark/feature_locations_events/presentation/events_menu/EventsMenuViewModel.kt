@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.geopark.core.util.Resource
-import com.geopark.feature_locations_events.data.local.model.Event
 import com.geopark.feature_locations_events.domain.use_case.events.EventsUseCase
 import com.geopark.feature_locations_events.domain.util.EventCategory
 import com.geopark.feature_locations_events.presentation.UiEvent
@@ -123,7 +122,7 @@ class EventsMenuViewModel @Inject constructor(
             isLoading = true
         )
         getEventsJobFlow = viewModelScope.launch {
-            eventsUseCase.getEventsForDateUseCase(eventCategory, date).collect { result ->
+            eventsUseCase.getEventsForDateAndCategoryUseCase(eventCategory, date).collect { result ->
                 when (result) {
                     is Resource.Success -> {
                         _eventsState.value = _eventsState.value.copy(

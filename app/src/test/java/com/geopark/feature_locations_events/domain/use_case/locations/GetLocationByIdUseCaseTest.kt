@@ -8,14 +8,10 @@ import org.junit.Test
 class GetLocationByIdUseCaseTest {
 
 
-    private lateinit var repository: FakeLocationRepository
-    private lateinit var getLocationById: GetLocationByIdUseCase
+    private  val repository: FakeLocationRepository =  FakeLocationRepository()
+    private  val getLocationById: GetLocationByIdUseCase = GetLocationByIdUseCase(repository)
 
-    @Before
-    fun setUp() {
-        repository = FakeLocationRepository()
-        getLocationById = GetLocationByIdUseCase(repository)
-    }
+
 
     @Test
     fun `returned location's id match passed id`() = runBlocking {

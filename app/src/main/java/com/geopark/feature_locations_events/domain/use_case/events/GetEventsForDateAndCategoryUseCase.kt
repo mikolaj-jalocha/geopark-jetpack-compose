@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class GetEventsForDateUseCase(val getEventsForCategory: GetEventsForCategoryUseCase) {
+class GetEventsForDateAndCategoryUseCase(val getEventsForCategory: GetEventsForCategoryUseCase) {
 
     operator fun invoke(eventCategory: EventCategory, date: LocalDate) =
         getEventsForCategory(eventCategory).map { result ->

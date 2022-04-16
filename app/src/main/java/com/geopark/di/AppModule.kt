@@ -144,7 +144,7 @@ object AppModule {
                     repository = repository
                 )
             ),
-            getEventsForDateUseCase = GetEventsForDateUseCase(
+            getEventsForDateAndCategoryUseCase = GetEventsForDateAndCategoryUseCase(
                 GetEventsForCategoryUseCase(
                     GetAllEventsFlowUseCase(repository = repository)
                 )
