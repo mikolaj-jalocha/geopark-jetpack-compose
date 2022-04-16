@@ -30,17 +30,4 @@ class EventRepositoryImpl(
             Resource.Success(data = it)
     }
 
-
-    override fun getEvents(): Flow<Resource<List<Event>>> = flow {
-
-        emit(Resource.Loading(data = emptyList()))
-        val localEvents = dao.getEvents()
-        if (localEvents.isEmpty())
-            emit(Resource.Loading(localEvents))
-        else
-            emit(Resource.Success(localEvents))
-
-    }
-
-
 }

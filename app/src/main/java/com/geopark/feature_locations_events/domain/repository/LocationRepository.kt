@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocationRepository {
 
-        fun getLocations() : Flow<Resource<List<Location>>>
         fun getLocationsFlow(): Flow<Resource<List<Location>>>
 
         suspend fun getLocationById(id : String) : Location?

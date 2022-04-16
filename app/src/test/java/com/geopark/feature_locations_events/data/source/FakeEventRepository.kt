@@ -78,7 +78,4 @@ class FakeEventRepository : EventRepository {
     }
 
 
-    override fun getEvents(): Flow<Resource<List<Event>>> {
-        TODO("Not yet implemented")
-    }
 }

@@ -11,11 +11,6 @@ import kotlinx.coroutines.flow.flow
 
 class FakeLocationRepository : LocationRepository {
 
-    override fun getLocations(): Flow<Resource<List<Location>>> {
-        TODO("Not yet implemented")
-    }
-
-
     private var isLoading = false
 
      val data = listOf<Location>(
