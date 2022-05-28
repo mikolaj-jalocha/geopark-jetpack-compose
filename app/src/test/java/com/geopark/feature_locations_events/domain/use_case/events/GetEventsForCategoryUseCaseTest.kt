@@ -1,30 +1,28 @@
 package com.geopark.feature_locations_events.domain.use_case.events
 
 import com.geopark.core.util.Resource
-import com.geopark.feature_locations_events.data.local.entity.CategoryEntity
 import com.geopark.feature_locations_events.data.source.FakeEventRepository
 import com.geopark.feature_locations_events.domain.util.EventCategory
-import kotlinx.coroutines.flow.*
+import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
 class GetEventsForCategoryUseCaseTest {
 
 
-    private val repository: FakeEventRepository = FakeEventRepository()
-    private val getAllUseCase : GetAllEventsFlowUseCase= GetAllEventsFlowUseCase(repository)
-    private val categoryUseCase: GetEventsForCategoryUseCase =
-        GetEventsForCategoryUseCase(getAllUseCase)
-    private val categories: List<EventCategory> = repository.eventCategories.sorted()
-
-
-
+    private lateinit var repository: FakeEventRepository
+    private lateinit var  getAllUseCase : GetAllEventsFlowUseCase
+    private lateinit var categoryUseCase: GetEventsForCategoryUseCase
+    private lateinit var  categories: List<EventCategory>
 
     @Before
     fun setupUseCase() {
-
+        repository = FakeEventRepository()
+        getAllUseCase = GetAllEventsFlowUseCase(repository)
+        categoryUseCase = GetEventsForCategoryUseCase(getAllUseCase)
+        categories =  repository.eventCategories.sorted()
     }
 
     @Test
@@ -35,12 +33,14 @@ class GetEventsForCategoryUseCaseTest {
             filteredData.onEach { event ->
 
                 val actualCategories = event.categories.map { it.categoryId }
-                assert(actualCategories.contains(expectedCategory.categoryId))
+
+                assertThat(actualCategories).contains(expectedCategory.categoryId)
+
+               // assert(actualCategories.contains(expectedCategory.categoryId))
 
             }
         }
     }
-
 
     @Test
     fun `events returned for ALL category are all events that exist`() = runBlocking {
@@ -48,7 +48,9 @@ class GetEventsForCategoryUseCaseTest {
         val actualValue = categoryUseCase(EventCategory.ALL).first().data
         val expectedValue = getAllUseCase().first().data
 
-        assert(actualValue == expectedValue)
+        assertThat(actualValue).isEqualTo(expectedValue)
+
+        //assert(actualValue == expectedValue)
     }
 
 
@@ -59,15 +61,15 @@ class GetEventsForCategoryUseCaseTest {
 
         val actualReturnType = categoryUseCase(EventCategory.ALL).first()
 
-        assert(actualReturnType is Resource.Loading)
+        assertThat(actualReturnType is Resource.Loading).isTrue()
+
     }
 
     @Test
     fun `returned Result type is 'Success'`() = runBlocking {
         repository.returnSuccessState()
-        val successResource = categoryUseCase(EventCategory.ALL).first()
-
-        assert(successResource is Resource.Success)
+        val actualReturnType = categoryUseCase(EventCategory.ALL).first()
+        assertThat(actualReturnType is Resource.Success).isTrue()
 
     }
 

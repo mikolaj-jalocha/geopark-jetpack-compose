@@ -12,15 +12,12 @@ import kotlinx.coroutines.flow.flow
 
 class FakeEventRepository : EventRepository {
 
-
     private val categories: List<CategoryEntity>
-    val eventCategories : List<EventCategory>
+    val eventCategories: List<EventCategory>
     val dates: List<EventDate>
-
+    private val data: MutableList<Event>
 
     init {
-
-
 
         val allCategories = EventCategory.values().toMutableList()
         allCategories.remove(EventCategory.ALL)
@@ -32,7 +29,6 @@ class FakeEventRepository : EventRepository {
             mutableCategories.add(CategoryEntity(it.categoryId, it.categoryName))
         }
 
-
         categories = mutableCategories.toList()
 
         val mutableDates = mutableListOf<EventDate>()
@@ -41,23 +37,36 @@ class FakeEventRepository : EventRepository {
             mutableDates.add(EventDate("", "", "2022-04-$i"))
 
         dates = mutableDates.toList()
+        data = mutableListOf()
+
+        for (i in 3..10) {
+            data.add(
+                Event(
+                    event = EventEntity(
+                        eventDate = listOf(dates[i - 3], dates[i - 1], dates[i + 5])
+                    ),
+                    categories = listOf(categories[i - 3], categories[i - 2], categories[i + 1])
+                )
+            )
+        }
+        data.shuffle()
+
+        /*   data = listOf<Event>(
+                Event(
+                    event = EventEntity(eventDate = listOf(dates[0], dates[1], dates[2])),
+                    categories = listOf(categories[1], categories[2])
+                ),
+                Event(
+                    event = EventEntity(eventDate = listOf(dates[3])),
+                    categories = listOf(categories[3], categories[4])
+                ),
+                Event(
+                    event = EventEntity(eventDate = listOf(dates[4], dates[5], dates[0], dates[7])),
+                    categories = listOf(categories[5], categories[6])
+                )
+            ).shuffled()*/
     }
 
-
-    private val data = listOf<Event>(
-        Event(
-            event = EventEntity(eventDate = listOf(dates[0], dates[1], dates[2])),
-            categories = listOf(categories[1], categories[2])
-        ),
-        Event(
-            event = EventEntity(eventDate = listOf(dates[3])),
-            categories = listOf(categories[3], categories[4])
-        ),
-        Event(
-            event = EventEntity(eventDate = listOf(dates[4], dates[5], dates[0], dates[7])),
-            categories = listOf(categories[5], categories[6])
-        )
-    )
 
     private var isLoading = false
 
@@ -76,6 +85,4 @@ class FakeEventRepository : EventRepository {
         else
             emit(Resource.Success<List<Event>>(data = data))
     }
-
-
 }

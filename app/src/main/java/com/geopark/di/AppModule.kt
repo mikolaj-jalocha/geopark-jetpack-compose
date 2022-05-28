@@ -10,10 +10,11 @@ import com.geopark.feature_locations_events.data.local.Converters
 import com.geopark.feature_locations_events.data.local.GeoparkDatabase
 import com.geopark.feature_locations_events.data.remote.ConnectivityInterceptor
 import com.geopark.feature_locations_events.data.remote.GeoparkApi
-import com.geopark.feature_locations_events.data.repository.CachingRepository
+import com.geopark.feature_locations_events.data.repository.CachingRepositoryImpl
 import com.geopark.feature_locations_events.data.repository.EventRepositoryImpl
 import com.geopark.feature_locations_events.data.repository.LocationRepositoryImpl
 import com.geopark.feature_locations_events.data.util.GsonParser
+import com.geopark.feature_locations_events.domain.repository.CachingRepository
 import com.geopark.feature_locations_events.domain.repository.EventRepository
 import com.geopark.feature_locations_events.domain.repository.LocationRepository
 import com.geopark.feature_locations_events.domain.use_case.events.*
@@ -167,7 +168,7 @@ object AppModule {
         api: GeoparkApi,
         db: GeoparkDatabase
     ): CachingRepository {
-        return CachingRepository(
+        return CachingRepositoryImpl(
             api,
             db.organizerDao,
             db.tagDao,
@@ -189,6 +190,7 @@ object AppModule {
     @Retention(AnnotationRetention.RUNTIME)
     @Qualifier
     annotation class ConnectivityClient
+
 
 
 }

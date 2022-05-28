@@ -13,28 +13,16 @@ class FakeLocationRepository : LocationRepository {
 
     private var isLoading = false
 
-     val data = listOf<Location>(
-        Location(
-            location = LocationEntity(locationId = "location_1",name = "location_1_name"),
-            categories = listOf(
-                CategoryEntity(categoryId = "gastronomia",""),
-                CategoryEntity(categoryId = "noclegi","")
-            )
-        ),
-        Location(
-            location = LocationEntity(locationId = "location_2",name = "location_2_name"),
-            categories = listOf(
-                CategoryEntity(categoryId = "sport","")
-            )
-        ),
-        Location(
-            location = LocationEntity(locationId = "location_3",name = "location_3_name"),
-            categories = listOf(
-                CategoryEntity(categoryId = "gastronomia","")
-            )
-        ),
 
-    )
+    private val locations = mutableListOf<Location>()
+
+    fun getLocationsSize() = locations.size
+
+
+    fun insertLocation(location: Location){
+        locations.add(location)
+    }
+
 
     fun returnLoadingState() {
         isLoading = true
@@ -47,14 +35,14 @@ class FakeLocationRepository : LocationRepository {
     override fun getLocationsFlow() = flow {
 
         if (isLoading) {
-            emit(Resource.Loading(data = data))
+            emit(Resource.Loading(data = locations.toList()))
         }
         else
-              emit(Resource.Success(data = data))
+              emit(Resource.Success(data = locations.toList()))
 
     }
 
     override suspend fun getLocationById(id: String): Location? {
-            return  data.find { it.location.locationId == id }
+            return  locations.find { it.location.locationId == id }
     }
 }

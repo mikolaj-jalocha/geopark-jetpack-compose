@@ -8,18 +8,27 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
+import com.google.common.truth.Truth.assertThat
 
 class GetEventsForDateAndCategoryUseCaseTest {
-    private val repository: FakeEventRepository = FakeEventRepository()
-    private val getEventsForCategoryAndDateAndCategoryUseCase: GetEventsForDateAndCategoryUseCase =
-        GetEventsForDateAndCategoryUseCase(
-            GetEventsForCategoryUseCase(
-                GetAllEventsFlowUseCase(
-                    repository
+
+    private lateinit var repository: FakeEventRepository
+    private lateinit var getEventsForCategoryAndDateAndCategoryUseCase: GetEventsForDateAndCategoryUseCase
+    private lateinit var eventDates: List<EventDate>
+
+    @Before
+    fun setupUseCase() {
+        repository = FakeEventRepository()
+        getEventsForCategoryAndDateAndCategoryUseCase =
+            GetEventsForDateAndCategoryUseCase(
+                GetEventsForCategoryUseCase(
+                    GetAllEventsFlowUseCase(
+                        repository
+                    )
                 )
             )
-        )
-    private val eventDates: List<EventDate> = repository.dates
+        eventDates = repository.dates
+    }
 
 
     @Test
@@ -32,7 +41,7 @@ class GetEventsForDateAndCategoryUseCaseTest {
 
             filteredData.forEach { event ->
                 val actualDates = event.event.eventDate
-                assert(actualDates.contains(expectedDate))
+                assertThat(actualDates).contains(expectedDate)
 
             }
         }
@@ -48,18 +57,18 @@ class GetEventsForDateAndCategoryUseCaseTest {
             eventDates[0].getLocalDate()
         ).first()
 
-        assert(actualReturnType is Resource.Loading)
+        assertThat(actualReturnType is Resource.Loading).isTrue()
     }
 
     @Test
     fun `returned Result type is 'Success'`() = runBlocking {
         repository.returnSuccessState()
-        val successResource = getEventsForCategoryAndDateAndCategoryUseCase(
+        val actualReturnType = getEventsForCategoryAndDateAndCategoryUseCase(
             EventCategory.ALL,
             eventDates[0].getLocalDate()
         ).first()
 
-        assert(successResource is Resource.Success)
+        assertThat(actualReturnType is Resource.Success).isTrue()
 
     }
 

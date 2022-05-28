@@ -1,12 +1,10 @@
-package com.geopark.feature_locations_events.data.source
+package com.geopark.feature_locations_events.data.source.dao
 
-import androidx.annotation.VisibleForTesting
 import com.geopark.feature_locations_events.data.local.bridge.location_bridge.LocationCategoryCrossRef
 import com.geopark.feature_locations_events.data.local.bridge.location_bridge.LocationLabelCrossRef
 import com.geopark.feature_locations_events.data.local.bridge.location_bridge.LocationPhotoCrossRef
 import com.geopark.feature_locations_events.data.local.bridge.location_bridge.LocationTagCrossRef
 import com.geopark.feature_locations_events.data.local.dao.LocationDao
-import com.geopark.feature_locations_events.data.local.entity.CategoryEntity
 import com.geopark.feature_locations_events.data.local.entity.LocationEntity
 import com.geopark.feature_locations_events.data.local.model.Location
 import kotlinx.coroutines.flow.Flow

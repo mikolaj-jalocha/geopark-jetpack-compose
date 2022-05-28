@@ -1,14 +1,17 @@
 package com.geopark.feature_locations_events.domain.use_case.locations
 
 import com.geopark.core.util.Resource
+import com.geopark.feature_locations_events.data.local.entity.CategoryEntity
+import com.geopark.feature_locations_events.data.local.entity.LocationEntity
+import com.geopark.feature_locations_events.data.local.model.Location
 import com.geopark.feature_locations_events.data.source.FakeLocationRepository
-import com.geopark.feature_locations_events.domain.repository.LocationRepository
-import com.geopark.feature_locations_events.domain.util.EventCategory
 import com.geopark.feature_locations_events.domain.util.LocationType
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
+import kotlin.random.Random
+import com.google.common.truth.Truth.assertThat
 
 class GetLocationsByTypeUseCaseTest {
 
@@ -23,6 +26,34 @@ class GetLocationsByTypeUseCaseTest {
     )
 
 
+    @Before
+    fun setUp() {
+
+        val locationsToInsert = mutableListOf<Location>()
+        val categories = LocationType.All.toList().shuffled()
+
+        ('a'..'z').forEachIndexed { index, c ->
+
+            locationsToInsert.add(
+                Location(
+                    location = LocationEntity(
+                        locationId = c.toString() + "_id",
+                        name = c.toString() + "_name"
+                    ),
+                    categories = listOf(
+                        CategoryEntity(categoryId = categories[Random.nextInt(0, 3)], ""),
+                        CategoryEntity(categoryId = categories[Random.nextInt(4, 5)], "")
+                    )
+                )
+            )
+        }
+        locationsToInsert.shuffle()
+        locationsToInsert.forEach {
+            repository.insertLocation(it)
+        }
+
+    }
+
     @Test
     fun `returned locations match given type`() = runBlocking {
 
@@ -32,7 +63,8 @@ class GetLocationsByTypeUseCaseTest {
 
             filteredLocations.forEach { location ->
                 val actualType = location.categories.map { it.categoryId }
-                assert(actualType.contains(expectedType.toString()))
+
+                assertThat(actualType).contains(expectedType.toString())
             }
 
         }
@@ -41,11 +73,10 @@ class GetLocationsByTypeUseCaseTest {
     @Test
     fun `all locations are returned if passed type is ALL`() = runBlocking {
 
-        val expectedLocationsSize = repository.data.size
+        val expectedLocationsSize = repository.getLocationsSize()
         val actualLocationsSize = getLocationByType(LocationType.All).first().data.size
 
-        assert(expectedLocationsSize == actualLocationsSize)
-
+        assertThat(expectedLocationsSize).isEqualTo(actualLocationsSize)
     }
 
 
@@ -56,15 +87,15 @@ class GetLocationsByTypeUseCaseTest {
 
         val actualReturnType = getLocationByType(LocationType.All).first()
 
-        assert(actualReturnType is Resource.Loading)
+        assertThat(actualReturnType is Resource.Loading).isTrue()
     }
 
     @Test
     fun `returned Result type is 'Success'`() = runBlocking {
         repository.returnSuccessState()
-        val successResource = getLocationByType(LocationType.All).first()
+        val actualReturnType = getLocationByType(LocationType.All).first()
 
-        assert(successResource is Resource.Success)
+        assertThat(actualReturnType is Resource.Success).isTrue()
 
     }
 

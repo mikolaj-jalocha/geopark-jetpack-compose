@@ -1,11 +1,18 @@
 package com.geopark.feature_locations_events.domain.use_case.locations
 
 import com.geopark.core.util.Resource
+import com.geopark.feature_locations_events.data.local.entity.CategoryEntity
+import com.geopark.feature_locations_events.data.local.entity.LocationEntity
+import com.geopark.feature_locations_events.data.local.model.Location
 import com.geopark.feature_locations_events.data.source.FakeLocationRepository
 import com.geopark.feature_locations_events.domain.util.LocationType
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Test
+import kotlin.random.Random
+import com.google.common.truth.Truth.assertThat
+
 
 class GetFilteredByQueryAndTypeLocationsUseCaseTest {
 
@@ -17,10 +24,39 @@ class GetFilteredByQueryAndTypeLocationsUseCaseTest {
         GetFilteredByQueryAndTypeLocationsUseCase(getLocationByType)
 
 
+    @Before
+    fun setUp() {
+
+        val locationsToInsert = mutableListOf<Location>()
+        val categories = LocationType.All.toList().shuffled()
+
+        ('a'..'z').forEachIndexed { index, c ->
+
+            locationsToInsert.add(
+                Location(
+                    location = LocationEntity(
+                        locationId = c.toString() +"_id",
+                        name = c.toString() + "_name"
+                    ),
+                    categories = listOf(
+                        CategoryEntity(categoryId = categories[Random.nextInt(0, 3)], ""),
+                        CategoryEntity(categoryId = categories[Random.nextInt(4, 5)], "")
+                    )
+                )
+            )
+        }
+        locationsToInsert.shuffle()
+        locationsToInsert.forEach {
+            repository.insertLocation(it)
+        }
+
+    }
+
+
     @Test
     fun `returned locations contains query in their name`() = runBlocking {
 
-        val searchQueries = listOf("location", "name", "_", "2")
+        val searchQueries = listOf( "name", "_", "n")
 
         searchQueries.forEach { searchQuery ->
 
@@ -29,10 +65,10 @@ class GetFilteredByQueryAndTypeLocationsUseCaseTest {
                 searchQuery = searchQuery
             ).first().data.map { it.location.name }
 
-            assert(actualLocationsName.isNotEmpty())
+            assertThat(actualLocationsName).isNotEmpty()
 
             actualLocationsName.forEach { locationName ->
-                assert(locationName.contains(searchQuery))
+                assertThat(locationName).contains(searchQuery)
             }
         }
 
@@ -40,7 +76,7 @@ class GetFilteredByQueryAndTypeLocationsUseCaseTest {
 
     @Test
     fun `when passed exact name of location returns exactly matched locations`() = runBlocking {
-        val searchQuery = "location_2_name"
+        val searchQuery = "a_name"
 
         val actualLocations = getFilteredLocations(
             locationType = LocationType.All,
@@ -48,7 +84,7 @@ class GetFilteredByQueryAndTypeLocationsUseCaseTest {
         ).first().data
 
         actualLocations.forEach { location ->
-            assert(location.location.name == searchQuery)
+            assertThat(location.location.name).isEqualTo(searchQuery)
         }
     }
 
@@ -62,7 +98,7 @@ class GetFilteredByQueryAndTypeLocationsUseCaseTest {
             searchQuery = searchQuery
         ).first().data.size
 
-        assert(actualLocationsSize == 0)
+        assertThat(actualLocationsSize).isEqualTo(0)
     }
 
 
@@ -73,15 +109,15 @@ class GetFilteredByQueryAndTypeLocationsUseCaseTest {
 
         val actualReturnType = getFilteredLocations("", locationType = LocationType.All).first()
 
-        assert(actualReturnType is Resource.Loading)
+        assertThat(actualReturnType is Resource.Loading).isTrue()
     }
 
     @Test
     fun `returned Result type is 'Success'`() = runBlocking {
         repository.returnSuccessState()
-        val successResource = getFilteredLocations("", locationType = LocationType.All).first()
+        val actualReturnType = getFilteredLocations("", locationType = LocationType.All).first()
 
-        assert(successResource is Resource.Success)
+        assertThat(actualReturnType is Resource.Success).isTrue()
 
     }
 

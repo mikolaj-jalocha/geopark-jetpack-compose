@@ -1,4 +1,4 @@
-package com.geopark.feature_locations_events.data.source
+package com.geopark.feature_locations_events.data.source.dao
 
 
 import com.geopark.feature_locations_events.data.local.bridge.event_bridge.*

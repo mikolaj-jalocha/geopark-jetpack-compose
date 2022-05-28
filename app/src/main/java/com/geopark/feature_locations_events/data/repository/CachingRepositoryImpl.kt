@@ -3,9 +3,12 @@ package com.geopark.feature_locations_events.data.repository
 import android.util.Log
 import com.geopark.feature_locations_events.data.local.dao.*
 import com.geopark.feature_locations_events.data.remote.GeoparkApi
+import com.geopark.feature_locations_events.domain.repository.CachingRepository
+import dagger.Binds
 import kotlinx.coroutines.*
 
-class CachingRepository(
+
+class CachingRepositoryImpl(
     private val api: GeoparkApi,
     private val organizerDao: OrganizerDao,
     private val tagDao: TagDao,
@@ -15,14 +18,15 @@ class CachingRepository(
     private val eventDao: EventDao,
     private val locationDao: LocationDao,
     val deleteAll: suspend () -> Unit
-) {
+) : CachingRepository {
 
     private suspend fun deleteData() {
         deleteAll()
     }
 
-    suspend fun cacheData()  = coroutineScope(){
+    override suspend fun cacheData()  = coroutineScope(){
                 withContext(Dispatchers.IO) {
+
                     val organizers = api.getOrganizers()
                     val tags = api.getTags()
                     val labels = api.getLabels()
