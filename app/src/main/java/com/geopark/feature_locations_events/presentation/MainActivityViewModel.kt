@@ -41,7 +41,6 @@ class MainActivityViewModel @Inject constructor(
                     _eventFlow.emit(UiEvent.ShowSnackbar("${e.message}"))
 
                 } finally {
-
                     val cachingRequest = PeriodicWorkRequestBuilder<CachingWorker>(
                         MIN_PERIODIC_INTERVAL_MILLIS,
                         TimeUnit.MILLISECONDS

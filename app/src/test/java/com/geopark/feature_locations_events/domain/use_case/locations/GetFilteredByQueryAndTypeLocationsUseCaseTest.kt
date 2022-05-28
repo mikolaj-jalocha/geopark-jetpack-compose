@@ -56,24 +56,24 @@ class GetFilteredByQueryAndTypeLocationsUseCaseTest {
     @Test
     fun `returned locations contains query in their name`() = runBlocking {
 
-        val searchQueries = listOf( "name", "_", "n")
+        val searchQueries = listOf("name", "_", "n")
 
-        searchQueries.forEach { searchQuery ->
+            searchQueries.forEach { searchQuery ->
 
-            val actualLocationsName = getFilteredLocations(
-                locationType = LocationType.All,
-                searchQuery = searchQuery
-            ).first().data.map { it.location.name }
+                val actualLocationsName = getFilteredLocations(
+                    locationType = LocationType.All,
+                    searchQuery = searchQuery
+                ).first().data.map { it.location.name }
 
-            assertThat(actualLocationsName).isNotEmpty()
+                assertThat(actualLocationsName).isNotEmpty()
 
-            actualLocationsName.forEach { locationName ->
-                assertThat(locationName).contains(searchQuery)
+                actualLocationsName.forEach { locationName ->
+                    assertThat(locationName).contains(searchQuery)
+                }
             }
-        }
+
 
     }
-
     @Test
     fun `when passed exact name of location returns exactly matched locations`() = runBlocking {
         val searchQuery = "a_name"

@@ -21,6 +21,7 @@ sealed class LocationType{
         }
     }
 
+
     @VisibleForTesting
         fun toList () : List<String>{
         return  listOf(

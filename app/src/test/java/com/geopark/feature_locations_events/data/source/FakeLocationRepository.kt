@@ -6,6 +6,7 @@ import com.geopark.feature_locations_events.data.local.entity.LocationEntity
 import com.geopark.feature_locations_events.data.local.model.Event
 import com.geopark.feature_locations_events.data.local.model.Location
 import com.geopark.feature_locations_events.domain.repository.LocationRepository
+import com.geopark.feature_locations_events.domain.util.LocationType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -13,8 +14,8 @@ class FakeLocationRepository : LocationRepository {
 
     private var isLoading = false
 
-
     private val locations = mutableListOf<Location>()
+    val locationsTypes = LocationType.All.toList()
 
     fun getLocationsSize() = locations.size
 
